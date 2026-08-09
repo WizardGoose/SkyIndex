@@ -2,10 +2,10 @@ import type { IslandSnapshot } from "./types";
 import { validateSnapshot } from "./validate";
 
 /**
- * The clipboard transport: `SKYDEX-` + base64url(gzip(minified JSON)).
+ * Clipboard transports: compact `SKYDEX2-` binary and legacy `SKYDEX-` JSON.
  *
  * This is the "GitHub Pages" mode of the mod, for players who cannot or will
- * not run a localhost server. `/skyindex copy` in game puts the code on the
+ * not run a localhost server. `/skydex copy` in game puts the code on the
  * clipboard, the player pastes it here, and no data touches a network we own.
  *
  * WHY THE SEPARATOR IS A DASH, AND WHERE THE VERSION WENT
@@ -38,6 +38,7 @@ import { validateSnapshot } from "./validate";
  */
 
 export const CODE_PREFIX = "SKYDEX-";
+export const BINARY_CODE_PREFIX = "SKYDEX2-";
 
 /**
  * Prefixes this site still READS, newest first.
@@ -51,7 +52,7 @@ export const CODE_PREFIX = "SKYDEX-";
  * can start emitting the new prefix whenever it is next rebuilt; until then
  * everything pastes.
  */
-const READ_PREFIXES = [CODE_PREFIX, "SKYDEX1.", "SKYINDEX1."] as const;
+const READ_PREFIXES = [BINARY_CODE_PREFIX, CODE_PREFIX, "SKYDEX1.", "SKYINDEX1."] as const;
 
 /**
  * The family prefixes, used only to tell "wrong version" from "not one of ours".
@@ -100,6 +101,180 @@ const toBase64Url = (bytes: Uint8Array): string => {
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 };
 
+/** Strict reader for the mod's SKYDEX2 binary payload. */
+class BinaryReader {
+  private offset = 0;
+  private readonly text = new TextDecoder("utf-8", { fatal: true });
+
+  private readonly bytes: Uint8Array;
+
+  constructor(bytes: Uint8Array) {
+    this.bytes = bytes;
+  }
+
+  byte(label: string): number {
+    if (this.offset >= this.bytes.length) throw new Error(`binary data ended while reading ${label}`);
+    return this.bytes[this.offset++];
+  }
+
+  varint(label: string): number {
+    let value = 0;
+    let factor = 1;
+    for (let i = 0; i < 10; i++) {
+      const next = this.byte(label);
+      value += (next & 0x7f) * factor;
+      if (!Number.isSafeInteger(value)) throw new Error(`${label} is too large`);
+      if ((next & 0x80) === 0) return value;
+      factor *= 128;
+    }
+    throw new Error(`${label} varint is too long`);
+  }
+
+  count(label: string): number {
+    const value = this.varint(label);
+    if (value > this.bytes.length - this.offset + 1) throw new Error(`${label} exceeds the remaining data`);
+    return value;
+  }
+
+  signed(label: string): number {
+    const value = this.varint(label);
+    return value % 2 === 0 ? value / 2 : -(value + 1) / 2;
+  }
+
+  string(label: string): string {
+    const length = this.varint(`${label} length`);
+    if (length > this.bytes.length - this.offset) throw new Error(`${label} exceeds the remaining data`);
+    const value = this.text.decode(this.bytes.subarray(this.offset, this.offset + length));
+    this.offset += length;
+    return value;
+  }
+
+  end(): void {
+    if (this.offset !== this.bytes.length) throw new Error("binary data has trailing bytes");
+  }
+}
+
+const decodeBinarySnapshot = (bytes: Uint8Array): unknown => {
+  const input = new BinaryReader(bytes);
+  const magic = String.fromCharCode(input.byte("magic"), input.byte("magic"), input.byte("magic"), input.byte("magic"));
+  if (magic !== "SKDX") throw new Error("binary data has the wrong Skydex signature");
+  if (input.byte("version") !== 2) throw new Error("binary data uses an unsupported version");
+
+  const exportedAt = input.varint("exportedAt");
+  const pool = Array.from({ length: input.count("string pool size") }, (_, i) => input.string(`string pool ${i}`));
+  const ref = (label: string): string | null => {
+    const encoded = input.varint(label);
+    if (encoded === 0) return null;
+    const value = pool[encoded - 1];
+    if (value === undefined) throw new Error(`${label} is outside the string pool`);
+    return value;
+  };
+
+  const playerUuid = ref("player uuid");
+  const playerName = ref("player name");
+  const profileName = ref("profile name");
+  const gameMode = ref("game mode");
+
+  const extras = Array.from({ length: input.count("extras count") }, (_, i) => {
+    const reforge = ref(`extra ${i} reforge`);
+    const stars = input.varint(`extra ${i} stars`);
+    const ench: Record<string, number> = {};
+    for (let j = 0, n = input.count(`extra ${i} enchantments`); j < n; j++) {
+      const id = ref("enchantment id");
+      if (id === null) throw new Error("enchantment id is missing");
+      ench[id] = input.varint("enchantment level");
+    }
+    const recomb = input.varint(`extra ${i} recomb`) !== 0;
+    const skin = ref(`extra ${i} skin`);
+    return {
+      ...(reforge !== null ? { reforge } : {}),
+      ...(stars !== 0 ? { stars } : {}),
+      ...(Object.keys(ench).length ? { ench } : {}),
+      ...(recomb ? { recomb: true } : {}),
+      ...(skin !== null ? { skin } : {}),
+    };
+  });
+
+  const section = (): unknown[] => {
+    const count = input.count("section entries");
+    const slots = Array.from({ length: count }, () => input.varint("slot") - 1);
+    const ids = Array.from({ length: count }, () => {
+      const id = ref("item id");
+      if (id === null) throw new Error("item id is missing");
+      return id;
+    });
+    const counts = Array.from({ length: count }, () => input.varint("item count"));
+    const names = new Map<number, string>();
+    for (let i = 0, n = input.count("section names"); i < n; i++) {
+      const at = input.varint("name entry");
+      const name = ref("item name");
+      if (at >= count || name === null) throw new Error("invalid item name reference");
+      names.set(at, name);
+    }
+    const itemExtras = new Map<number, unknown>();
+    for (let i = 0, n = input.count("section extras"); i < n; i++) {
+      const at = input.varint("extra entry");
+      const which = input.varint("extra index");
+      if (at >= count || extras[which] === undefined) throw new Error("invalid item extra reference");
+      itemExtras.set(at, extras[which]);
+    }
+    return ids.map((id, i) => ({
+      id,
+      ...(names.has(i) ? { name: names.get(i) } : {}),
+      count: counts[i],
+      ...(slots[i] >= 0 ? { slot: slots[i] } : {}),
+      ...(itemExtras.has(i) ? { extra: itemExtras.get(i) } : {}),
+    }));
+  };
+
+  const flags = input.byte("section flags");
+  if ((flags & ~0x3f) !== 0) throw new Error("binary data has unknown section flags");
+  const snapshot: Record<string, unknown> = {
+    schema: 1,
+    exportedAt,
+    player: { uuid: playerUuid, name: playerName },
+    profile: { name: profileName, gameMode },
+  };
+  if (flags & 1) {
+    const sacks: Record<string, number> = {};
+    for (let i = 0, n = input.count("sacks"); i < n; i++) {
+      const id = ref("sack id");
+      if (id === null) throw new Error("sack id is missing");
+      sacks[id] = input.varint("sack total");
+    }
+    snapshot.sacks = sacks;
+  }
+  if (flags & 2) {
+    snapshot.chests = Array.from({ length: input.count("chests") }, () => ({
+      pos: [input.signed("chest x"), input.signed("chest y"), input.signed("chest z")],
+      name: ref("chest name"),
+      lastSeen: input.varint("chest lastSeen"),
+      items: section(),
+    }));
+  }
+  if (flags & 4) snapshot.inventory = section();
+  if (flags & 8) snapshot.enderChest = section();
+  if (flags & 16) snapshot.storage = section();
+  if (flags & 32) {
+    const observedAt = input.varint("greenhouse observedAt");
+    const width = input.varint("greenhouse width");
+    const height = input.varint("greenhouse height");
+    const cells = Array.from({ length: input.count("greenhouse cells") }, () => {
+      const x = input.varint("greenhouse x");
+      const y = input.varint("greenhouse y");
+      const id = ref("greenhouse id");
+      if (id === null) throw new Error("greenhouse id is missing");
+      const kind = input.byte("greenhouse kind");
+      if (kind > 1) throw new Error("greenhouse kind is invalid");
+      const mutation = kind === 1;
+      const nextStageAt = input.varint("greenhouse nextStageAt");
+      return { x, y, ...(mutation ? { mutation: id } : { crop: id }), ...(nextStageAt > 0 ? { nextStageAt } : {}) };
+    });
+    snapshot.greenhouse = { observedAt, size: [width, height], cells };
+  }
+  input.end();
+  return snapshot;
+};
 /**
  * Decode a pasted code into a validated snapshot.
  *
@@ -114,7 +289,7 @@ export async function decodeIslandCode(code: string): Promise<IslandSnapshot> {
   const clean = String(code ?? "").replace(/\s+/g, "");
 
   if (!clean) {
-    throw new Error("Paste an island code first. Run /skyindex copy in game to put one on your clipboard.");
+    throw new Error("Paste an island code first. Run /skydex copy in game to put one on your clipboard.");
   }
 
   const matched = READ_PREFIXES.find((p) => clean.startsWith(p));
@@ -160,17 +335,19 @@ export async function decodeIslandCode(code: string): Promise<IslandSnapshot> {
     throw new Error(NO_STREAMS);
   }
 
-  let json: string;
+  let unpacked: Uint8Array;
   try {
     const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-    json = await new Response(stream).text();
+    unpacked = new Uint8Array(await new Response(stream).arrayBuffer());
   } catch {
     throw new Error("That code could not be unpacked (the compressed data is corrupt or incomplete).");
   }
 
   let parsed: unknown;
   try {
-    parsed = JSON.parse(json);
+    parsed = matched === BINARY_CODE_PREFIX
+      ? decodeBinarySnapshot(unpacked)
+      : JSON.parse(new TextDecoder().decode(unpacked));
   } catch {
     throw new Error("That code unpacked, but what came out was not valid island data.");
   }

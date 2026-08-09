@@ -49,6 +49,29 @@ const gzipCode = async (text: string): Promise<string> => {
 };
 
 describe("island code round trip", () => {
+  it("decodes the exact SKYDEX2 code produced by the Java mod", async () => {
+    const javaCode =
+      "SKYDEX2-H4sIAAAAAAAA_wv2dolgaphw4UCbMaegY3CAq3NIvL9bfIiHa7yrn4ugY3FBanKJQn6aQklGqoJrXgqrc0ZqcYmEq5-zh6NfiKtLvFOQf7hfvG9osEeQv78" +
+      "vu7-jd7yPvztXcElRYnlSalFRJXd4ZlViUYp7fn5xqkqqYZpBskmKka4BEOiagAgLEGGAAIbsmUX5ebmJeRzsbJwM7IwsDScYGSV6GJ2ZIc5kZGV1YGBgBA" +
+      "EGJgYAytIaZ8AAAAA";
+
+    const out = await decodeIslandCode(javaCode);
+    expect(out).toStrictEqual({
+      schema: 1,
+      exportedAt: 1754092800000,
+      player: { uuid: "e1f0c4d2-0000-4000-8000-000000000001", name: "WizardGoose" },
+      profile: { name: "Strawberry", gameMode: "ironman" },
+      sacks: { ENCHANTED_BROWN_MUSHROOM: 25600 },
+      chests: [{
+        pos: [12, 70, -34],
+        name: "Chest",
+        lastSeen: 1754092800000,
+        items: [{ id: "OAK_LOG", name: "Oak Log", count: 64, slot: 4 }],
+      }],
+      inventory: [{ id: "ASPECT_OF_THE_END", name: "Aspect of the End", count: 1, slot: 0 }],
+    });
+  });
+
   it("survives encode then decode unchanged", async () => {
     const code = await encodeIslandCode(fixture);
     expect(code.startsWith(CODE_PREFIX)).toBe(true);
@@ -126,8 +149,8 @@ describe("island code rejections", () => {
     await expect(decodeIslandCode("SKYINDEX2.abcdef")).rejects.toThrow(/different version.*SKYINDEX2\./i);
   });
 
-  it("names the version when handed a future SKYDEX2- code", async () => {
-    await expect(decodeIslandCode("SKYDEX2-abcdef")).rejects.toThrow(/different version.*SKYDEX2-/i);
+  it("recognises SKYDEX2- as current and rejects corrupt payload data", async () => {
+    await expect(decodeIslandCode("SKYDEX2-abcdef")).rejects.toThrow(/could not be unpacked/i);
   });
 
   it("treats the retired WZSKY family as foreign, not as a version mismatch", async () => {

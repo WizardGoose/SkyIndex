@@ -11,17 +11,17 @@ here is not part of the contract.
 ## Modes (mod-side setting, chosen in the GUI)
 
 The mod has a **site mode** setting, picked in its GUI (opened with
-`/skyindex`), styled to match the website (obsidian ground, Index blue accent):
+`/skydex`), styled to match the website (obsidian ground, Index blue accent):
 
 - **Locally hosted** - the localhost server runs; the site connects and
   updates live. Manual export still works.
 - **GitHub Pages** - the localhost server is stopped (the hosted site cannot
   reach it anyway on some setups, and there is no point burning a port);
-  updates are manual: `/skyindex copy` or the GUI's Copy button puts the
+  updates are manual: `/skydex copy` or the GUI's Copy button puts the
   current code on the clipboard.
 
-Commands: `/skyindex` (open GUI) · `/skyindex copy` (clipboard code) ·
-`/skyindex status` (chat summary: captured counts, mode, server state).
+Commands: `/skydex` (open GUI) · `/skydex copy` (clipboard code) ·
+`/skydex status` (chat summary: captured counts, mode, server state).
 
 GUI copy, exact strings: title **"How do you use Skydex?"**, options
 **"GitHub Pages"** / **"Locally Hosted"**.
@@ -184,21 +184,17 @@ outside `size` are a validation error, not a silent clamp.
 
 ## Transport 2: clipboard code
 
-- Format: `SKYINDEX1.` + base64url( gzip( minified JSON ) )
-- `SKYINDEX1` pins schema v1; a v2 would use `SKYINDEX2.` so old sites reject
-  new codes cleanly instead of misparsing. The family prefix for "one of ours,
-  wrong version" detection is `SKYINDEX`.
-- **v2 decision record (2026-08-02): emission stays v1, by measurement.** A
-  string-pooled compact format was implemented twice (JSON form and a
-  fuzz-hardened binary form, the latter retained in the mod as `BinaryCodec`,
-  unwired). Measured post-gzip on the owner's real export it came out at
-  1.22x at best and 0.88x (LARGER) on the honest shape: his island holds 605
-  distinct ids across 2,134 entries, and gzip already dedupes what a pool
-  would, so the pool only pays on artificially repetitive fixtures. The size
-  lever that actually works is the section-sourcing policy above (codes
-  excluding inventory/enderChest/storage). Do not relitigate v2 without a new
-  measurement on real data.
-- Mod: `/skyindex copy` or the GUI Copy button puts the code on the clipboard.
+- Current formats: `SKYDEX2-` + base64url(gzip(binary v2)), or `SKYDEX-` +
+  base64url(gzip(minified schema-v1 JSON)). The producer builds both and emits
+  the shorter complete representation; both are unpadded and use maximum gzip.
+- Binary v2 uses `SKDX` magic, version byte 2, LEB128 integers, a frequency-
+  ordered string pool, interned extras, sparse item name/extra tables, explicit
+  presence flags, and carries every snapshot section including greenhouse.
+- Compatibility is read-many: the website also accepts the retired JSON labels
+  `SKYDEX1.` and `SKYINDEX1.`. No code already in circulation is invalidated.
+- Measurement on the realistic test island: current JSON is 7,807 characters;
+  binary v2 is 6,407 (about 18% shorter). Binary can lose on highly diverse ids,
+  which is why selection is per snapshot rather than hardcoded.- Mod: `/skydex copy` or the GUI Copy button puts the code on the clipboard.
 - Website has a paste box; on paste it validates the prefix, inflates, parses,
   and stores.
 
@@ -244,10 +240,10 @@ rules and is out of scope permanently.
   malformed bodies (readers should also tolerate plain-text 400s).
 - The mod stores ONE current layout (new push replaces old), persists it, and
   renders the overlay only on the private island, only while enabled.
-- In-game control: `/skyindex layout` toggles the overlay, `/skyindex layout
+- In-game control: `/skydex layout` toggles the overlay, `/skydex layout
   clear` drops the stored layout; the GUI shows the loaded label + a toggle.
 - Anchoring: the player sets the grid origin in game (stand at / look at the
-  greenhouse corner and run `/skyindex layout anchor`); the mod never guesses
+  greenhouse corner and run `/skydex layout anchor`); the mod never guesses
   world coordinates and never reads server data to find the plot.
 - CORS `*` like the rest; `OPTIONS` preflight for POST must be answered.
 
