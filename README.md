@@ -17,7 +17,8 @@ Skydex is a Hypixel SkyBlock toolkit that runs entirely in your browser.
 
 # Skydex
 
-Skydex is a passion project, all contributions, suggestions/requests,
+Skydex is a passion project: [contributions](docs/contributing.md),
+[suggestions and requests](https://github.com/WizardGoose/Skydex/issues),
 forks/edits - so on, so on.. are all welcome!
 
 Skydex isnt currently in a state I exactly want it to be, however, I don't have
@@ -31,9 +32,19 @@ site is a folder of static files, and every calculation happens on your own
 machine. The greenhouse solver and the expansion optimizer are local and work
 offline, so they keep going even when nothing else does!
 
-New here and just want to run it? Start with [docs/SETUP.md](docs/SETUP.md),
+New here and just want to run it? Start with the [setup guide](docs/SETUP.md),
 which walks through it from scratch and assumes you have never run a Node
 project before (that is not a dig, it is genuinely who it is written for).
+
+## Getting started
+
+The quickest, easiest way to start is
+[Skydex on GitHub Pages](https://wizardgoose.github.io/Skydex/): open it in a
+browser and use Skydex. No install, no account and no local server.
+
+The companion mod is the other route for island data. Run `/skyindex copy` in
+game, then paste the code into the Island page. Skydex imports it locally in
+your browser, so the code does not go anywhere else.
 
 <div align="center">
 
@@ -44,7 +55,8 @@ actually have to go and get. (a real screenshot, not a mockup!)</sub></p>
 
 </div>
 
-[What is inside](#what-is-inside) - [Quick start](#quick-start) -
+[What is inside](#what-is-inside) - [Getting started](#getting-started) -
+[Quick start](#quick-start) -
 [Configuration](#configuration) - [Privacy](#privacy) -
 [The companion mod](#the-companion-mod) - [Credits](#credits) -
 [Contributing](#contributing) - [A note on storage](#a-note-on-storage) -
@@ -70,7 +82,7 @@ Five sections, plus the dashboard tucked behind the wordmark.
 ## Quick start
 
 You will want Node **20.19 or newer, or 22.12 or newer**, and pnpm (this project
-is built with pnpm 10.18.1). [docs/SETUP.md](docs/SETUP.md) covers installing
+is built with pnpm 10.18.1). The [setup guide](docs/SETUP.md) covers installing
 both if that sentence meant nothing to you, which is a completely fair thing for
 it to have meant.
 
@@ -168,7 +180,7 @@ be here.
 
 ## Contributing
 
-[docs/contributing.md](docs/contributing.md) covers the layout of the codebase,
+The [contribution guide](docs/contributing.md) covers the layout of the codebase,
 the data pipeline, the house rules and the gates a change has to pass. If you
 want to change something, please do! (and if a gate yells at you and it is
 wrong, tell me, because then the gate is the bug)

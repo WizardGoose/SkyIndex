@@ -1,0 +1,25 @@
+{
+  "cargoInstalled": false,
+  "probeError": "MediaWiki API error: badvalue - Unrecognized value for parameter \"action\": cargoquery.",
+  "note": "This wiki (hypixelskyblock.minecraft.wiki) does not run Cargo or Semantic MediaWiki. Confirmed via action=query&meta=siteinfo&siprop=extensions (no Cargo/SemanticMediaWiki extension listed) and a live action=cargoquery probe (returns badvalue: unrecognized action).",
+  "fallback": {
+    "structuredDataModules": [
+      "Module:Crafting/Data - master crafting-recipe table for the ENTIRE wiki (QRS format)",
+      "Module:Item/Data - per-item overrides (skulls/textures/tier/npc_sell_price) for special items",
+      "Module:Pet/Data - full pet database",
+      "Module:Minion/Data - full minion database",
+      "Module:Enchantment/Data - full enchantment database",
+      "Module:Attribute/Data - attribute shard descriptions + level scaling values",
+      "Module:NPC/Data - NPC database",
+      "Module:Rarity/Data - rarity tier metadata (color/order/short code)",
+      "Module:Bazaar/Items - set of item IDs sellable on the Bazaar (booleans only, no live prices)",
+      "Module:AuctionHouse/Items - set of item IDs sellable on the Auction House (booleans only)"
+    ],
+    "howToFetch": "node wiki-dump.mjs module \"Module:Crafting/Data\"",
+    "pageBasedFallbacks": [
+      "action=query&list=categorymembers&cmtitle=Category:X - enumerate pages in a category",
+      "action=parse&page=X&prop=wikitext - raw wikitext of a page (infobox params, tables)",
+      "action=parse&page=X&prop=text - rendered HTML (needed to read {{Crafting Table|Item}} output, since the 3x3 grid itself is rendered by Module:Crafting/UI from the QRS string, not present as plain wikitext params)"
+    ]
+  }
+}

@@ -1,0 +1,60 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vercel
+graphify-out
+
+# Snapshots the networth parity gate downloads for itself. The SkyHelper
+# prices file carries no licence, so no copy of it is ever committed.
+tools/.cache
+
+# Local working aids, kept off the released project. Layout.tsx discovers this
+# folder with import.meta.glob rather than importing it, so the app builds and
+# runs the same when it is not here, which is the case for every clone.
+src/dev-local/
+
+# Design scratch. Colour and frame studies that fed the visual work but are not
+# part of the shipped app.
+bench/
+
+# Internal intel notes written while studying other projects. Working material,
+# not documentation for this project.
+docs/design-intel.md
+docs/skycrypt-style-intel.md
+
+# Editor and agent workspace configuration. The repository should read the same
+# to every contributor and every tool, so no local session scaffolding ships.
+.claude/
+CLAUDE.md
+AGENTS.md
+*.claude.md
+
+# Dataset build scripts that carry a maintainer contact address in their
+# User-Agent header. They are held back so no personal email is published; the
+# datasets they produce are committed, so the app builds without them.
+tools/build-item-icons.mjs
+tools/build-planner-targets.mjs
+tools/dump-datasets.mjs
+tools/wiki-dump.mjs
+

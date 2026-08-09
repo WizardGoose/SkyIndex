@@ -1,0 +1,265 @@
+{
+ "glasscorn": {
+  "yield": 9,
+  "crops": {
+   "startlevine": 26,
+   "chloronite": 38
+  }
+ },
+ "startlevine": {
+  "yield": 16,
+  "crops": {
+   "blastberry": 23,
+   "cheesebite": 42
+  }
+ },
+ "blastberry": {
+  "yield": 16,
+  "crops": {
+   "chocoberry": 31,
+   "ashwreath": 34
+  }
+ },
+ "chocoberry": {
+  "yield": 16,
+  "crops": {
+   "gloomgourd": 24,
+   "choconut": 41
+  }
+ },
+ "choconut": {
+  "yield": 72,
+  "crops": {
+   "cocoa_beans": 26
+  }
+ },
+ "gloomgourd": {
+  "yield": 72,
+  "crops": {
+   "pumpkin": 15,
+   "melon": 12
+  }
+ },
+ "ashwreath": {
+  "yield": 52,
+  "crops": {
+   "nether_wart": 24,
+   "fire": 24
+  }
+ },
+ "cheesebite": {
+  "yield": 16,
+  "crops": {
+   "fermento": 23,
+   "creambloom": 42
+  }
+ },
+ "creambloom": {
+  "yield": 16,
+  "crops": {
+   "choconut": 65
+  }
+ },
+ "chloronite": {
+  "yield": 16,
+  "crops": {
+   "thornshade": 24,
+   "coalroot": 41
+  }
+ },
+ "coalroot": {
+  "yield": 16,
+  "crops": {
+   "scourroot": 34,
+   "ashwreath": 31
+  }
+ },
+ "scourroot": {
+  "yield": 72,
+  "crops": {
+   "potato": 15,
+   "carrot": 12
+  }
+ },
+ "thornshade": {
+  "yield": 16,
+  "crops": {
+   "wild_rose": 42,
+   "veilshroom": 23
+  }
+ },
+ "veilshroom": {
+  "yield": 72,
+  "crops": {
+   "red_mushroom": 13,
+   "brown_mushroom": 14
+  }
+ },
+ "devourer": {
+  "yield": 16,
+  "crops": {
+   "puffercloud": 25,
+   "zombud": 40
+  }
+ },
+ "puffercloud": {
+  "yield": 11,
+  "crops": {
+   "do_not_eat_shroom": 45,
+   "snoozling": 3
+  }
+ },
+ "snoozling": {
+  "yield": 4,
+  "crops": {
+   "duskbloom": 5,
+   "thornshade": 6,
+   "dustgrain": 12,
+   "witherbloom": 12,
+   "creambloom": 10
+  }
+ },
+ "dustgrain": {
+  "yield": 72,
+  "crops": {
+   "wheat": 26
+  }
+ },
+ "witherbloom": {
+  "yield": 52,
+  "crops": {
+   "dead_plant": 46
+  }
+ },
+ "duskbloom": {
+  "yield": 16,
+  "crops": {
+   "moonflower": 18,
+   "sunflower": 24,
+   "dustgrain": 10,
+   "shadevine": 13
+  }
+ },
+ "shadevine": {
+  "yield": 72,
+  "crops": {
+   "sugar_cane": 12,
+   "cactus": 15
+  }
+ },
+ "do_not_eat_shroom": {
+  "yield": 16,
+  "crops": {
+   "scourroot": 42,
+   "veilshroom": 23
+  }
+ },
+ "zombud": {
+  "yield": 16,
+  "crops": {
+   "dead_plant": 42,
+   "fleshtrap": 10,
+   "cindershade": 13
+  }
+ },
+ "cindershade": {
+  "yield": 16,
+  "crops": {
+   "ashwreath": 42,
+   "witherbloom": 23
+  }
+ },
+ "fleshtrap": {
+  "yield": 16,
+  "crops": {
+   "cindershade": 42,
+   "lonelily": 23
+  }
+ },
+ "lonelily": {
+  "yield": 100,
+  "crops": {}
+ },
+ "all_in_aloe": {
+  "yield": 16,
+  "crops": {
+   "plantboy_advance": 6,
+   "magic_jellybean": 54
+  }
+ },
+ "magic_jellybean": {
+  "yield": 16,
+  "crops": {
+   "sugar_cane": 49,
+   "duskbloom": 16
+  }
+ },
+ "plantboy_advance": {
+  "yield": 4,
+  "crops": {
+   "snoozling": 3,
+   "thunderling": 22
+  }
+ },
+ "thunderling": {
+  "yield": 13,
+  "crops": {
+   "soggybud": 41,
+   "noctilume": 9
+  }
+ },
+ "soggybud": {
+  "yield": 52,
+  "crops": {
+   "melon": 27,
+   "gloomgourd": 21
+  }
+ },
+ "noctilume": {
+  "yield": 9,
+  "crops": {
+   "lonelily": 26,
+   "duskbloom": 38
+  }
+ },
+ "phantomleaf": {
+  "yield": 16,
+  "crops": {
+   "chorus_fruit": 23,
+   "shellfruit": 42
+  }
+ },
+ "chorus_fruit": {
+  "yield": 16,
+  "crops": {
+   "magic_jellybean": 34,
+   "chloronite": 31
+  }
+ },
+ "shellfruit": {
+  "yield": 100,
+  "crops": {}
+ },
+ "turtlellini": {
+  "yield": 16,
+  "crops": {
+   "choconut": 42,
+   "soggybud": 23
+  }
+ },
+ "timestalk": {
+  "yield": 16,
+  "crops": {
+   "chorus_fruit": 18,
+   "stoplight_petal": 23,
+   "shellfruit": 24
+  }
+ },
+ "stoplight_petal": {
+  "yield": 4,
+  "crops": {
+   "snoozling": 4,
+   "noctilume": 7
+  }
+ }
+}

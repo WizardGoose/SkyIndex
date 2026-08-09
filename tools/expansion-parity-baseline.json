@@ -1,0 +1,187 @@
+{
+ "captured_at": "2026-08-02T12:58:15.835Z",
+ "source": "https://api.skyshards.com/greenhouse/expansion",
+ "note": "gloomgourd potential of the unlocked set, read back as steps[0].gloomgourd_potential minus steps[0].gloomgourd_gain. Recorded once; the comparison run is offline.",
+ "cases": {
+  "default-diamond-12": {
+   "unlocked_count": 12,
+   "potential": 8,
+   "final": 72,
+   "total_steps": 88,
+   "first_cell": [
+    3,
+    3
+   ]
+  },
+  "corner-3x3": {
+   "unlocked_count": 9,
+   "potential": 6,
+   "final": 72,
+   "total_steps": 91,
+   "first_cell": [
+    3,
+    1
+   ]
+  },
+  "rect-4x4": {
+   "unlocked_count": 16,
+   "potential": 10,
+   "final": 72,
+   "total_steps": 84,
+   "first_cell": [
+    2,
+    4
+   ]
+  },
+  "rect-5x5": {
+   "unlocked_count": 25,
+   "potential": 17,
+   "final": 72,
+   "total_steps": 75,
+   "first_cell": [
+    1,
+    5
+   ]
+  },
+  "rect-6x6": {
+   "unlocked_count": 36,
+   "potential": 26,
+   "final": 72,
+   "total_steps": 64,
+   "first_cell": [
+    6,
+    1
+   ]
+  },
+  "rect-7x7": {
+   "unlocked_count": 49,
+   "potential": 34,
+   "final": 72,
+   "total_steps": 51,
+   "first_cell": [
+    0,
+    7
+   ]
+  },
+  "rect-8x8": {
+   "unlocked_count": 64,
+   "potential": 46,
+   "final": 72,
+   "total_steps": 36,
+   "first_cell": [
+    3,
+    8
+   ]
+  },
+  "rect-9x9": {
+   "unlocked_count": 81,
+   "potential": 60,
+   "final": 72,
+   "total_steps": 19,
+   "first_cell": [
+    4,
+    9
+   ]
+  },
+  "rect-2x10": {
+   "unlocked_count": 20,
+   "potential": 12,
+   "final": 72,
+   "total_steps": 80,
+   "first_cell": [
+    2,
+    4
+   ]
+  },
+  "rect-10x2": {
+   "unlocked_count": 20,
+   "potential": 12,
+   "final": 72,
+   "total_steps": 80,
+   "first_cell": [
+    6,
+    2
+   ]
+  },
+  "rect-5x10": {
+   "unlocked_count": 50,
+   "potential": 35,
+   "final": 72,
+   "total_steps": 50,
+   "first_cell": [
+    5,
+    5
+   ]
+  },
+  "band-3x10": {
+   "unlocked_count": 30,
+   "potential": 22,
+   "final": 72,
+   "total_steps": 70,
+   "first_cell": [
+    3,
+    8
+   ]
+  },
+  "ring-outer": {
+   "unlocked_count": 36,
+   "potential": 18,
+   "final": 72,
+   "total_steps": 64,
+   "first_cell": [
+    8,
+    8
+   ]
+  },
+  "ell-shape": {
+   "unlocked_count": 64,
+   "potential": 44,
+   "final": 72,
+   "total_steps": 36,
+   "first_cell": [
+    5,
+    4
+   ]
+  },
+  "full-minus-corner": {
+   "unlocked_count": 99,
+   "potential": 72,
+   "final": 72,
+   "total_steps": 1,
+   "first_cell": [
+    9,
+    9
+   ]
+  },
+  "full-minus-centre": {
+   "unlocked_count": 99,
+   "potential": 71,
+   "final": 72,
+   "total_steps": 1,
+   "first_cell": [
+    4,
+    4
+   ]
+  },
+  "diamond-plus-8": {
+   "unlocked_count": 20,
+   "potential": 13,
+   "final": 72,
+   "total_steps": 80,
+   "first_cell": [
+    6,
+    6
+   ]
+  },
+  "centre-block-6x6": {
+   "unlocked_count": 36,
+   "potential": 26,
+   "final": 72,
+   "total_steps": 64,
+   "first_cell": [
+    3,
+    1
+   ]
+  }
+ }
+}

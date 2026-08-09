@@ -1,0 +1,228 @@
+import React, { useEffect, useRef, useState } from "react";
+import { SkinViewer } from "skinview3d";
+import { bodyUrl, skinUrl } from "./heads";
+import { applyVoxelLayers } from "./voxelLayers";
+
+/**
+ * The player, standing in the profile page's sharp channel.
+ *
+ * Rendered by skinview3d (MIT, bs-community; pinned in package.json and
+ * credited in NOTICE.md). The skin comes from MCHeads' `/skin/<uuid>` endpoint
+ * because a WebGL texture demands a CORS-clean image and that endpoint was
+ * verified to serve one; see heads.ts.
+ *
+ * This is the gui-redesign prototype's viewer carrying the
+ * live site's fallback discipline. What each parent contributed:
+ *
+ * FROM THE LIVE SITE, learned the hard way here first:
+ *   - DELIBERATELY STILL. No idle/walk/wave animation; drag to turn, zoom off.
+ *   - THE SKIN LOADS THROUGH THE PROMISE, not the constructor. `new
+ *     SkinViewer({ skin })` fires `loadSkin` asynchronously and nothing
+ *     catches it, so a failed fetch leaves an UNTEXTURED dark smear. Failure
+ *     here falls back to the flat MCHeads render with a title that says why;
+ *     lost WebGL contexts get the same treatment; and if the flat render ALSO
+ *     fails it hides rather than showing a broken-image glyph.
+ *   - NO ARMOR MESHES: skinview3d 3.4.2 renders skin, cape, ears and elytra
+ *     only (verified against the library's exports), so worn armor is shown
+ *     in the Gear tab rather than on the body.
+ *
+ * FROM THE PROTOTYPE, each measured there:
+ *   - THE CANVAS IS CREATED PER VIEWER, not held in JSX. A WebGL context is
+ *     bound to its canvas element for the element's life, so React
+ *     StrictMode's double-mount threw on the reused canvas and silently showed
+ *     the fallback - in dev only, which is why production looked fine.
+ *   - IT SIZES ITSELF. The host div is measured with a ResizeObserver and the
+ *     viewer follows it, so the caller sets size with CSS (pin an aspect
+ *     ratio; the framing correction depends on it).
+ *   - CAMERA framing, not model translation: the model stays on the origin so
+ *     the orbit pivot is its own middle, and the known projection offset is
+ *     corrected with a CSS translate that OrbitControls (delta-based) never
+ *     notice.
+ *   - VOXEL LAYERS: the outer skin layer built as real geometry (one voxel
+ *     per opaque texel) instead of a flat transparent shell, with the hidden
+ *     hat-underside culled and the z-fighting EPSILON + polygon offset
+ *     measured there. Failure degrades to the library's own flat shell.
+ */
+
+interface Props {
+  uuid: string;
+  /** Size with CSS on the caller, pinned to an aspect (e.g. aspect-[360/612]). */
+  className?: string;
+  yaw?: number;
+  pitch?: number;
+  zoom?: number;
+  /** Framing correction, in % of the canvas. Measured at aspect 360/612. */
+  frameX?: number;
+  frameY?: number;
+  voxelLayers?: boolean;
+}
+
+export const PlayerModel: React.FC<Props> = ({
+  uuid,
+  className = "",
+  yaw = -0.34,
+  pitch = 0.04,
+  zoom = 0.78,
+  frameX = -2.8,
+  frameY = 6.9,
+  voxelLayers = true,
+}) => {
+  const hostRef = useRef<HTMLDivElement | null>(null);
+  const viewerRef = useRef<SkinViewer | null>(null);
+  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
+  const [fallback, setFallback] = useState<null | "webgl" | "skin" | "context">(null);
+  const [flatFailed, setFlatFailed] = useState(false);
+
+  const skin = skinUrl(uuid);
+  const flat = bodyUrl(uuid);
+
+  /* Measure first. Nothing is built until there is a real size to build at. */
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (width > 0 && height > 0) setSize({ w: Math.round(width), h: Math.round(height) });
+    });
+    ro.observe(host);
+    return () => ro.disconnect();
+  }, [fallback === null]);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || !size || !skin) return;
+
+    /* A brand new element every time. See the header. */
+    const canvas = document.createElement("canvas");
+    canvas.style.display = "block";
+    canvas.style.cursor = "grab";
+    canvas.title = "Drag to turn the model.";
+    canvas.setAttribute("aria-label", "3D render of the player's skin. Drag to rotate.");
+    /* The projection offset correction. See the header: CSS moves the
+       picture, the scene and its pivot stay put. */
+    canvas.style.transform = `translate(${frameX}%, ${frameY}%)`;
+    host.appendChild(canvas);
+
+    let viewer: SkinViewer | null = null;
+    let live = true;
+
+    const onContextLost = () => {
+      if (live) setFallback("context");
+    };
+
+    try {
+      viewer = new SkinViewer({ canvas, width: size.w, height: size.h });
+      viewer.controls.enableZoom = false;
+      viewer.autoRotate = false;
+      viewer.zoom = zoom;
+
+      /* The second skin layer, set explicitly for all six parts: "defaults to
+         on" is not the same as "is on", and on skins whose crown IS the hat
+         layer its absence is invisible until you know what to look for. */
+      const skinObj = viewer.playerObject.skin;
+      for (const part of [
+        skinObj.head,
+        skinObj.body,
+        skinObj.rightArm,
+        skinObj.leftArm,
+        skinObj.rightLeg,
+        skinObj.leftLeg,
+      ]) {
+        part.innerLayer.visible = true;
+        part.outerLayer.visible = true;
+      }
+
+      /* Pose via the CAMERA, keeping the model on the origin so the orbit
+         pivot is its own middle. Only the azimuth turns; the pitch is a small
+         lift, never a replacement of the camera's Y. */
+      const cam = viewer.camera;
+      const target = viewer.controls.target;
+      const dx = cam.position.x - target.x;
+      const dz = cam.position.z - target.z;
+      const radius = Math.hypot(dx, dz);
+      const azimuth = Math.atan2(dx, dz) + yaw;
+      cam.position.x = target.x + Math.sin(azimuth) * radius;
+      cam.position.z = target.z + Math.cos(azimuth) * radius;
+      cam.position.y += pitch * radius;
+      viewer.controls.update();
+      viewerRef.current = viewer;
+    } catch {
+      canvas.remove();
+      setFallback("webgl");
+      return;
+    }
+
+    canvas.addEventListener("webglcontextlost", onContextLost, false);
+
+    let disposeVoxels: (() => void) | null = null;
+    const built = viewer;
+
+    viewer
+      .loadSkin(skin)
+      .then(() => {
+        if (!live || !voxelLayers) return;
+        /* The sheet is decoded a second time, deliberately: reading texels
+           back off the GPU is slower and lossier than re-decoding the 64x64
+           PNG from cache. crossOrigin because the canvas reads its pixels. */
+        const sheet = new Image();
+        sheet.crossOrigin = "anonymous";
+        sheet.onload = () => {
+          if (!live) return;
+          try {
+            disposeVoxels = applyVoxelLayers(built.playerObject, sheet);
+          } catch {
+            /* Geometry failed; the flat shell is still there and still right,
+               so this degrades to the normal render rather than to nothing. */
+          }
+        };
+        sheet.src = skin;
+      })
+      .catch(() => {
+        if (live) setFallback("skin");
+      });
+
+    return () => {
+      live = false;
+      canvas.removeEventListener("webglcontextlost", onContextLost, false);
+      disposeVoxels?.();
+      viewer?.dispose();
+      viewerRef.current = null;
+      canvas.remove();
+    };
+    /* Size is intentionally NOT a dependency: a resize should resize the
+       viewer (the effect below), not rebuild the WebGL context. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [skin, size !== null, yaw, pitch, zoom, frameX, frameY, voxelLayers]);
+
+  useEffect(() => {
+    if (size && viewerRef.current) viewerRef.current.setSize(size.w, size.h);
+  }, [size]);
+
+  if (!skin) return null;
+
+  if (fallback !== null) {
+    if (!flat || flatFailed) return null;
+    const title =
+      fallback === "webgl"
+        ? "3D view needs WebGL, which this browser is not offering; this is the flat render instead."
+        : fallback === "skin"
+          ? "The skin image did not load, so the 3D model would have rendered wrong; this is the flat render instead."
+          : "The browser dropped the 3D canvas, so this is the flat render instead.";
+    return (
+      <div className={`flex items-center justify-center ${className}`}>
+        <img
+          src={flat}
+          alt=""
+          title={title}
+          onError={() => setFlatFailed(true)}
+          className="h-full max-h-[280px] w-auto object-contain"
+          style={{ imageRendering: "pixelated" }}
+        />
+      </div>
+    );
+  }
+
+  return <div ref={hostRef} className={className} />;
+};
+
+export default PlayerModel;

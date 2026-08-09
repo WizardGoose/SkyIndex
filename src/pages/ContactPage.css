@@ -1,0 +1,27 @@
+/* Contact surfaces: the Contact page and the contact block at the foot of the
+   About page. Both copy a handle to the clipboard, and both confirm it the
+   same way, so the confirmation lives here rather than in either page.
+
+   The tick replaces the copy glyph in place, so it only has to arrive. No
+   travel, no toast, no layout shift. */
+
+@keyframes ws-copy-ack {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ws-copy-ack {
+  animation: ws-copy-ack 0.16s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-copy-ack {
+    animation: none;
+  }
+}
