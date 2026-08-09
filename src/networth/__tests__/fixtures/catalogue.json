@@ -1,0 +1,622 @@
+{
+ "note": "Trimmed entries from GET /v2/resources/skyblock/items for exactly the ids used above.",
+ "capturedAt": "2026-08-03T04:32:41.884Z",
+ "source": "https://api.hypixel.net/v2/resources/skyblock/items",
+ "items": {
+  "HYPERION": {
+   "id": "HYPERION",
+   "name": "Hyperion",
+   "category": "SWORD",
+   "tier": "LEGENDARY",
+   "upgrade_costs": [
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 150
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 300
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 500
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 900
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 1500
+     }
+    ]
+   ],
+   "gemstone_slots": [
+    {
+     "slot_type": "SAPPHIRE",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 250000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_SAPPHIRE_GEM",
+       "amount": 4
+      }
+     ]
+    },
+    {
+     "slot_type": "COMBAT",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 250000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_JASPER_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_SAPPHIRE_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_RUBY_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_AMETHYST_GEM",
+       "amount": 1
+      }
+     ]
+    }
+   ]
+  },
+  "CHAMP_ROD": {
+   "id": "CHAMP_ROD",
+   "name": "Rod of Champions",
+   "category": "FISHING_ROD",
+   "tier": "RARE",
+   "gemstone_slots": [
+    {
+     "slot_type": "AQUAMARINE",
+     "costs": [
+      {
+       "type": "ITEM",
+       "item_id": "FINE_AQUAMARINE_GEM",
+       "amount": 1
+      },
+      {
+       "type": "COINS",
+       "coins": 50000
+      }
+     ]
+    }
+   ]
+  },
+  "TANK_WITHER_CHESTPLATE": {
+   "id": "TANK_WITHER_CHESTPLATE",
+   "name": "Goldor's Chestplate",
+   "category": "CHESTPLATE",
+   "tier": "LEGENDARY",
+   "upgrade_costs": [
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 100
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 200
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 350
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 600
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 1000
+     }
+    ]
+   ],
+   "gemstone_slots": [
+    {
+     "slot_type": "DEFENSIVE",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 250000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_RUBY_GEM",
+       "amount": 2
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_AMETHYST_GEM",
+       "amount": 2
+      }
+     ]
+    },
+    {
+     "slot_type": "COMBAT",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 250000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_JASPER_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_SAPPHIRE_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_RUBY_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_AMETHYST_GEM",
+       "amount": 1
+      }
+     ]
+    }
+   ]
+  },
+  "TITANIUM_DRILL_2": {
+   "id": "TITANIUM_DRILL_2",
+   "name": "Titanium Drill DR-X455",
+   "category": "DRILL",
+   "tier": "EPIC",
+   "gemstone_slots": [
+    {
+     "slot_type": "AMBER"
+    }
+   ]
+  },
+  "NUTCRACKER_HELMET": {
+   "id": "NUTCRACKER_HELMET",
+   "name": "Nutcracker Helmet",
+   "category": "HELMET",
+   "tier": "LEGENDARY",
+   "gemstone_slots": [
+    {
+     "slot_type": "COMBAT"
+    },
+    {
+     "slot_type": "COMBAT",
+     "costs": [
+      {
+       "type": "ITEM",
+       "item_id": "FINE_JASPER_GEM",
+       "amount": 4
+      },
+      {
+       "type": "COINS",
+       "coins": 100000
+      }
+     ]
+    },
+    {
+     "slot_type": "AQUAMARINE",
+     "costs": [
+      {
+       "type": "ITEM",
+       "item_id": "FINE_AQUAMARINE_GEM",
+       "amount": 1
+      },
+      {
+       "type": "COINS",
+       "coins": 50000
+      }
+     ]
+    }
+   ]
+  },
+  "GREAT_SPOOK_BOOTS": {
+   "id": "GREAT_SPOOK_BOOTS",
+   "name": "Great Spook Boots",
+   "category": "BOOTS",
+   "tier": "EPIC",
+   "museum": true
+  },
+  "PARTY_HAT_SLOTH": {
+   "id": "PARTY_HAT_SLOTH",
+   "name": "Sloth Hat of Celebration",
+   "category": "ACCESSORY",
+   "tier": "SPECIAL",
+   "museum": true
+  },
+  "NEW_YEAR_CAKE": {
+   "id": "NEW_YEAR_CAKE",
+   "name": "New Year Cake",
+   "tier": "SPECIAL",
+   "museum": true
+  },
+  "NEW_YEAR_CAKE_BAG": {
+   "id": "NEW_YEAR_CAKE_BAG",
+   "name": "New Year Cake Bag",
+   "category": "ACCESSORY",
+   "tier": "UNCOMMON"
+  },
+  "PULSE_RING": {
+   "id": "PULSE_RING",
+   "name": "Pulse Ring",
+   "category": "ACCESSORY",
+   "tier": "UNCOMMON"
+  },
+  "ASPECT_OF_THE_VOID": {
+   "id": "ASPECT_OF_THE_VOID",
+   "name": "Aspect of the Void",
+   "category": "SWORD",
+   "tier": "EPIC",
+   "gemstone_slots": [
+    {
+     "slot_type": "SAPPHIRE"
+    }
+   ]
+  },
+  "FIGSTONE_AXE": {
+   "id": "FIGSTONE_AXE",
+   "name": "Figstone Splitter",
+   "category": "AXE",
+   "tier": "EPIC",
+   "upgrade_costs": [
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "FOREST",
+      "amount": 100
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "FOREST",
+      "amount": 200
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "FOREST",
+      "amount": 300
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "FOREST",
+      "amount": 400
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "FOREST",
+      "amount": 500
+     }
+    ]
+   ],
+   "gemstone_slots": [
+    {
+     "slot_type": "CITRINE",
+     "costs": [
+      {
+       "type": "ITEM",
+       "item_id": "FINE_CITRINE_GEM",
+       "amount": 20
+      },
+      {
+       "type": "COINS",
+       "coins": 50000
+      }
+     ]
+    },
+    {
+     "slot_type": "CITRINE",
+     "costs": [
+      {
+       "type": "ITEM",
+       "item_id": "FINE_CITRINE_GEM",
+       "amount": 40
+      },
+      {
+       "type": "COINS",
+       "coins": 100000
+      }
+     ]
+    }
+   ]
+  },
+  "ADVANCED_GARDENING_HOE": {
+   "id": "ADVANCED_GARDENING_HOE",
+   "name": "Advanced Gardening Hoe",
+   "category": "FARMING_TOOL",
+   "tier": "RARE",
+   "gemstone_slots": [
+    {
+     "slot_type": "PERIDOT"
+    }
+   ]
+  },
+  "TITANIUM_DRILL_4": {
+   "id": "TITANIUM_DRILL_4",
+   "name": "Titanium Drill DR-X655",
+   "category": "DRILL",
+   "tier": "LEGENDARY",
+   "gemstone_slots": [
+    {
+     "slot_type": "AMBER"
+    },
+    {
+     "slot_type": "JADE",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 50000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_JADE_GEM",
+       "amount": 20
+      }
+     ]
+    },
+    {
+     "slot_type": "MINING",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 250000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_JADE_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_AMBER_GEM",
+       "amount": 1
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FLAWLESS_TOPAZ_GEM",
+       "amount": 1
+      }
+     ]
+    }
+   ]
+  },
+  "GYROKINETIC_WAND": {
+   "id": "GYROKINETIC_WAND",
+   "name": "Gyrokinetic Wand",
+   "category": "WAND",
+   "tier": "EPIC"
+  },
+  "HEGEMONY_ARTIFACT": {
+   "id": "HEGEMONY_ARTIFACT",
+   "name": "Hegemony Artifact",
+   "category": "ACCESSORY",
+   "tier": "LEGENDARY"
+  },
+  "PET": {
+   "id": "PET",
+   "name": "Pet"
+  },
+  "STARRED_BAT_WAND": {
+   "id": "STARRED_BAT_WAND",
+   "name": "Spirit Sceptre",
+   "category": "SWORD",
+   "tier": "LEGENDARY",
+   "upgrade_costs": [
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 20
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 50
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 100
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 200
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "WITHER",
+      "amount": 300
+     }
+    ]
+   ],
+   "gemstone_slots": [
+    {
+     "slot_type": "SAPPHIRE",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 50000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_SAPPHIRE_GEM",
+       "amount": 20
+      }
+     ]
+    }
+   ]
+  },
+  "STARRED_MIDAS_SWORD": {
+   "id": "STARRED_MIDAS_SWORD",
+   "name": "Midas' Sword",
+   "category": "SWORD",
+   "tier": "LEGENDARY",
+   "upgrade_costs": [
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "GOLD",
+      "amount": 25
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "GOLD",
+      "amount": 50
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "GOLD",
+      "amount": 75
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "GOLD",
+      "amount": 125
+     }
+    ],
+    [
+     {
+      "type": "ESSENCE",
+      "essence_type": "GOLD",
+      "amount": 200
+     }
+    ]
+   ],
+   "gemstone_slots": [
+    {
+     "slot_type": "JASPER",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 50000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_JASPER_GEM",
+       "amount": 20
+      }
+     ]
+    },
+    {
+     "slot_type": "COMBAT",
+     "costs": [
+      {
+       "type": "COINS",
+       "coins": 100000
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_JASPER_GEM",
+       "amount": 40
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_SAPPHIRE_GEM",
+       "amount": 40
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_RUBY_GEM",
+       "amount": 40
+      },
+      {
+       "type": "ITEM",
+       "item_id": "FINE_AMETHYST_GEM",
+       "amount": 40
+      }
+     ]
+    }
+   ]
+  },
+  "LARGE_SCAFFOLDING": {
+   "id": "LARGE_SCAFFOLDING",
+   "name": "Large Scaffolding",
+   "tier": "EPIC"
+  },
+  "PET_ITEM_BUBBLEGUM": {
+   "id": "PET_ITEM_BUBBLEGUM",
+   "name": "Bubblegum",
+   "category": "PET_ITEM",
+   "tier": "RARE"
+  },
+  "PET_ITEM_MINING_SKILL_BOOST_RARE": {
+   "id": "PET_ITEM_MINING_SKILL_BOOST_RARE",
+   "name": "Mining Exp Boost",
+   "category": "PET_ITEM",
+   "tier": "RARE"
+  },
+  "DWARF_TURTLE_SHELMET": {
+   "id": "DWARF_TURTLE_SHELMET",
+   "name": "Dwarf Turtle Shelmet",
+   "category": "PET_ITEM",
+   "tier": "EPIC"
+  }
+ }
+}

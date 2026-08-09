@@ -1,0 +1,42 @@
+{
+  "category": "Category:Garden",
+  "fetchedAt": "2026-07-28T06:30:41.858Z",
+  "count": 7,
+  "members": [
+    {
+      "pageid": 96477,
+      "ns": 0,
+      "title": "Compost"
+    },
+    {
+      "pageid": 96478,
+      "ns": 0,
+      "title": "Compost Bundle"
+    },
+    {
+      "pageid": 97784,
+      "ns": 0,
+      "title": "Composter"
+    },
+    {
+      "pageid": 104751,
+      "ns": 0,
+      "title": "Crop Fortune"
+    },
+    {
+      "pageid": 75517,
+      "ns": 0,
+      "title": "Farming Fortune"
+    },
+    {
+      "pageid": 97858,
+      "ns": 0,
+      "title": "Garden Visitors/List"
+    },
+    {
+      "pageid": 96457,
+      "ns": 0,
+      "title": "The Garden"
+    }
+  ]
+}

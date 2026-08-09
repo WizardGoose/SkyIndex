@@ -12,12 +12,14 @@ Skydex is a Hypixel SkyBlock toolkit that runs entirely in your browser.
 <a href="#quick-start"><img src="docs/assets/badge-browser.svg" alt="runs in your browser" height="20"></a>
 <a href="#privacy"><img src="docs/assets/badge-no-tracking.svg" alt="no ads, no tracking" height="20"></a>
 <a href="#privacy"><img src="docs/assets/badge-api-key.svg" alt="API key: Hypixel only" height="20"></a>
+<a href="https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml"><img src="https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml/badge.svg" alt="companion mod build status" height="20"></a>
 
 </div>
 
 # Skydex
 
-Skydex is a passion project, all contributions, suggestions/requests,
+Skydex is a passion project: [contributions](docs/contributing.md),
+[suggestions and requests](https://github.com/WizardGoose/Skydex/issues),
 forks/edits - so on, so on.. are all welcome!
 
 Skydex isnt currently in a state I exactly want it to be, however, I don't have
@@ -31,9 +33,23 @@ site is a folder of static files, and every calculation happens on your own
 machine. The greenhouse solver and the expansion optimizer are local and work
 offline, so they keep going even when nothing else does!
 
-New here and just want to run it? Start with [docs/SETUP.md](docs/SETUP.md),
+New here and just want to run it? Start with the [setup guide](docs/SETUP.md),
 which walks through it from scratch and assumes you have never run a Node
 project before (that is not a dig, it is genuinely who it is written for).
+
+## Getting started
+
+The quickest, easiest way to start is
+[Skydex on GitHub Pages](https://wizardgoose.github.io/Skydex/): open it in a
+browser and use Skydex. No install, no account and no local server.
+
+The companion mod is the other route for island data. Run `/skydex copy` in
+game, then paste the code into the Island page. Skydex imports it locally in
+your browser, so the code does not go anywhere else.
+
+Want the mod without compiling anything? Grab its ready-made JAR from the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest),
+then follow the short install notes below.
 
 <div align="center">
 
@@ -44,7 +60,8 @@ actually have to go and get. (a real screenshot, not a mockup!)</sub></p>
 
 </div>
 
-[What is inside](#what-is-inside) - [Quick start](#quick-start) -
+[What is inside](#what-is-inside) - [Getting started](#getting-started) -
+[Quick start](#quick-start) -
 [Configuration](#configuration) - [Privacy](#privacy) -
 [The companion mod](#the-companion-mod) - [Credits](#credits) -
 [Contributing](#contributing) - [A note on storage](#a-note-on-storage) -
@@ -70,7 +87,7 @@ Five sections, plus the dashboard tucked behind the wordmark.
 ## Quick start
 
 You will want Node **20.19 or newer, or 22.12 or newer**, and pnpm (this project
-is built with pnpm 10.18.1). [docs/SETUP.md](docs/SETUP.md) covers installing
+is built with pnpm 10.18.1). The [setup guide](docs/SETUP.md) covers installing
 both if that sentence meant nothing to you, which is a completely fair thing for
 it to have meant.
 
@@ -134,7 +151,50 @@ site works without it. When it is running, the site talks to it over plain HTTP
 at `http://127.0.0.1:27916` on your own machine: it checks whether the mod is
 up, listens for live updates, and sends a greenhouse layout across when you
 press the button to do so. That traffic never leaves your computer and none of
-it is reachable from the network. The mod is MIT, in its own repository.
+it is reachable from the network.
+
+### Install it (no compiling needed)
+
+Most people should download the JAR whose filename ends with their Minecraft
+version from the [latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest):
+`skydex-1.0+26.1.2.jar` for Minecraft 26.1.2 or
+`skydex-1.0+26.2.jar` for Minecraft 26.2. Put that JAR and the matching
+[Fabric API](https://modrinth.com/mod/fabric-api) in the instance's `mods`
+folder. Both versions use Java 25. Close Minecraft before replacing the JAR;
+Java keeps the old archive open and a live swap can make it crash later in a
+very confusing way.
+
+### Build it yourself
+
+The full Fabric source lives in [`mod/`](mod/), right beside the website. A
+clone can build either half without installing the other toolchain:
+
+```sh
+# Website only: needs Node 20.19+ (or 22.12+) and pnpm; no Java or Gradle.
+pnpm install
+pnpm run build:site
+
+# Mod only: defaults to Minecraft 26.1.2; no Node install required.
+cd mod
+./gradlew build             # macOS / Linux
+# .\gradlew.bat build       # Windows PowerShell
+
+# Minecraft 26.2:
+./gradlew build -Pminecraft_version=26.2 -Pfabric_api_version=0.156.0+26.2
+
+# Both, from the repository root: needs pnpm and uses the mod's Gradle wrapper.
+pnpm run build:all
+```
+
+`pnpm run build:mod` is also the cross-platform root command when Node/pnpm is
+already installed. Mod builds write the JAR to `mod/build/libs/`; that output is
+ignored on purpose. Every mod change is also tested by
+[GitHub Actions](https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml),
+where its logs and short-lived, GitHub-built JARs are available as build
+evidence and previews. Publishing a tagged GitHub Release runs the same matrix
+and attaches both versioned JARs only after both builds pass. Use the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest)
+for stable downloads.
 
 (so yes, it is your computer talking to itself. Weird? A bit. Local? Entirely.)
 
@@ -155,6 +215,12 @@ that literally, not as a polite thing to put in a readme.
 - **[SkyCrypt](https://cupcake.shiiyu.moe)** and other community sites were studied
   for how they present dense data. Nothing was copied from them: the influence
   is on layout and restraint, not on code.
+- **[SkyOcean](https://github.com/meowdding/SkyOcean)** by meowdding and its
+  contributors was a major inspiration for the companion mod and for treating
+  many SkyBlock utilities as one cohesive, in-game-first toolkit. Its chest-
+  tracking and sack-handling features informed the standalone mod design; the
+  Skydex implementation was rewritten for its own Java/Fabric transport and
+  data model. No SkyOcean source files or non-code assets are copied into Skydex.
 
 Item, recipe and mutation data and item images are loaded live from the Hypixel
 SkyBlock Wiki under CC BY-NC-SA 3.0, and player avatars come from MCHeads. None
@@ -168,7 +234,7 @@ be here.
 
 ## Contributing
 
-[docs/contributing.md](docs/contributing.md) covers the layout of the codebase,
+The [contribution guide](docs/contributing.md) covers the layout of the codebase,
 the data pipeline, the house rules and the gates a change has to pass. If you
 want to change something, please do! (and if a gate yells at you and it is
 wrong, tell me, because then the gate is the bug)
@@ -182,12 +248,15 @@ not the site name, and it survives renames on purpose: renaming it would orphan
 every saved planner, target list, profile and island snapshot. Nobody is losing
 their planner over a tidy string.
 
-The repo's directory name is the same kind of namespace. The companion mod,
-which shipped under the earlier SkyIndex name, keeps its `/skyindex` commands
-(a command is muscle memory, not branding), and as of this release both the mod
-and the site write island codes with the `SKYDEX-` prefix. Both still read
-`SKYDEX-`, `SKYDEX1.` and the older `SKYINDEX1.` alike, so every code already
-in circulation still pastes. See the comment in `src/ui/brand.ts`.
+The repo's directory name is the same kind of namespace. The companion mod now
+uses the Skydex id, filename, chat tag and primary `/skydex` command; `/skyindex`
+remains only as a compatibility alias. New installs store data under
+`config/skydex`, while upgrades can keep reading their existing
+`config/skyindex` data.
+
+Clipboard exports choose the shorter of two lossless formats for each island:
+`SKYDEX2-` binary or `SKYDEX-` compressed JSON. The site reads both, plus the
+older `SKYDEX1.` and `SKYINDEX1.` JSON forms, so existing codes still paste.
 
 ## License
 
@@ -199,5 +268,4 @@ are loaded at runtime under their own terms and are not part of this grant.
 
 ---
 
-if you're a fellow ironman mole person like me, wait in line to get your
-cheese :3
+if you're a fellow ironman mole person like me, COME GET YOUR CHEESE!!! :3

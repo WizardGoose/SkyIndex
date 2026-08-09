@@ -1,0 +1,3496 @@
+{
+ "note": "Verbatim item documents from Hypixel's keyless auction endpoints, cut out of tools/fixtures/networth/preparsed.json. One per modifier under test. Nothing here was written by hand.",
+ "capturedAt": "2026-08-03T04:32:41.884Z",
+ "source": "https://api.hypixel.net/v2/skyblock/auctions (pages 0-7) and /auctions_ended, keyless; item documents verbatim",
+ "items": {
+  "recombobulated": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "enchanted": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/fishing/rod/rod_of_champions",
+    "minecraft:tooltip_style": "hypixel_skyblock:rare"
+   },
+   "id": 346,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+100",
+      "§7Strength: §c+125 §9(+25)",
+      "§7Crit Damage: §9+20% §9(+20%)",
+      "§7Attack Speed: §e+4% §9(+4%)",
+      "§7Fishing Speed: §b+65",
+      "§7Sea Creature Chance: §3+9%",
+      "§7Treasure Chance: §6+2.5%",
+      "§7Gemstones: §8[§8§8]",
+      "",
+      "§9Angler V, §9Blessing V, §9Caster V",
+      "§9Frail V, §9Impaling V, §9Looting III",
+      "§9Luck of the Sea V, §9Lure V, §9Magnet V",
+      "§9Piscary V, §9Pyroclasm V, §9Spiked Hook V",
+      "",
+      "§9ථ §9Common Hook",
+      "§7Increases the chance to catch",
+      "§7§F§LCOMMON §3Sea Creatures §7by §a25%§7.",
+      "",
+      "§9ꨃ §9Speedy Line",
+      "§7Grants §b+10 Fishing Speed§7.",
+      "",
+      "§9࿉ §9Junk Sinker",
+      "§7Grants §6+10 Treasure Chance §7while",
+      "§7in the §2Backwater Bayou §7but replaces",
+      "§7all §6Treasure §7catches with §2Junk§7!",
+      "",
+      "§9§lRARE FISHING ROD"
+     ],
+     "Name": "§9Epic Rod of Champions"
+    },
+    "ExtraAttributes": {
+     "hook": {
+      "part": "common_hook",
+      "uuid": "ad8b82a6-cc3f-425e-aa6b-29b1b06513f2"
+     },
+     "line": {
+      "part": "speedy_line",
+      "uuid": "1f9e8b2c-5023-41da-b6e3-254eaf6d1b51"
+     },
+     "modifier": "epic",
+     "sinker": {
+      "part": "junk_sinker",
+      "uuid": "85045237-69ae-493c-9b84-6f583cefad8f"
+     },
+     "id": "CHAMP_ROD",
+     "enchantments": {
+      "caster": 5,
+      "impaling": 5,
+      "piscary": 5,
+      "spiked_hook": 5,
+      "looting": 3,
+      "magmarizer": 5,
+      "frail": 5,
+      "angler": 5,
+      "luck_of_the_sea": 5,
+      "magnet": 5,
+      "lure": 5,
+      "blessing": 5
+     },
+     "uuid": "8ce98fc1-125f-4c28-afc6-ef3e75940e47",
+     "timestamp": [
+      415,
+      -1249453662
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "reforged": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/fishing/rod/rod_of_champions",
+    "minecraft:tooltip_style": "hypixel_skyblock:rare"
+   },
+   "id": 346,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+100",
+      "§7Strength: §c+125 §9(+25)",
+      "§7Crit Damage: §9+20% §9(+20%)",
+      "§7Attack Speed: §e+4% §9(+4%)",
+      "§7Fishing Speed: §b+65",
+      "§7Sea Creature Chance: §3+9%",
+      "§7Treasure Chance: §6+2.5%",
+      "§7Gemstones: §8[§8§8]",
+      "",
+      "§9Angler V, §9Blessing V, §9Caster V",
+      "§9Frail V, §9Impaling V, §9Looting III",
+      "§9Luck of the Sea V, §9Lure V, §9Magnet V",
+      "§9Piscary V, §9Pyroclasm V, §9Spiked Hook V",
+      "",
+      "§9ථ §9Common Hook",
+      "§7Increases the chance to catch",
+      "§7§F§LCOMMON §3Sea Creatures §7by §a25%§7.",
+      "",
+      "§9ꨃ §9Speedy Line",
+      "§7Grants §b+10 Fishing Speed§7.",
+      "",
+      "§9࿉ §9Junk Sinker",
+      "§7Grants §6+10 Treasure Chance §7while",
+      "§7in the §2Backwater Bayou §7but replaces",
+      "§7all §6Treasure §7catches with §2Junk§7!",
+      "",
+      "§9§lRARE FISHING ROD"
+     ],
+     "Name": "§9Epic Rod of Champions"
+    },
+    "ExtraAttributes": {
+     "hook": {
+      "part": "common_hook",
+      "uuid": "ad8b82a6-cc3f-425e-aa6b-29b1b06513f2"
+     },
+     "line": {
+      "part": "speedy_line",
+      "uuid": "1f9e8b2c-5023-41da-b6e3-254eaf6d1b51"
+     },
+     "modifier": "epic",
+     "sinker": {
+      "part": "junk_sinker",
+      "uuid": "85045237-69ae-493c-9b84-6f583cefad8f"
+     },
+     "id": "CHAMP_ROD",
+     "enchantments": {
+      "caster": 5,
+      "impaling": 5,
+      "piscary": 5,
+      "spiked_hook": 5,
+      "looting": 3,
+      "magmarizer": 5,
+      "frail": 5,
+      "angler": 5,
+      "luck_of_the_sea": 5,
+      "magnet": 5,
+      "lure": 5,
+      "blessing": 5
+     },
+     "uuid": "8ce98fc1-125f-4c28-afc6-ef3e75940e47",
+     "timestamp": [
+      415,
+      -1249453662
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "gemstoned": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "starred": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "masterStarred": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 299,
+   "Count": 1,
+   "tag": {
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1470 §8(5000)",
+      "§7Health: §c+528 §e(+60) §c[+40] §9(+7) §d(+30) §8(+2,957.15)",
+      "§7Defense: §a+394.5 §e(+30) §9(+7) §d(+30) §8(+2,183.65)",
+      "§7True Defense: §f+5 §8(+7.5)",
+      "§7Strength: §c+35 §9(+35) §8(+208.25)",
+      "§7Crit Chance: §9+15% §9(+15%) §8(+22.5%)",
+      "§7Crit Damage: §9+46% §9(+46%) §8(+273.7%)",
+      "§7Intelligence: §b+47 §9(+25) §8(+267.75)",
+      "§7Health Regen: §c+5 §8(+5)",
+      "§7Gemstones: §6[§c☤§6] §6[§5⚔§6]",
+      "",
+      "§d§l§d§lLegion V, §9Growth VI, §9Protection VI",
+      "§9Rejuvenate V, §9Strong Vitality VI, §9True Protection I",
+      "",
+      "§7Reduces the damage you take from",
+      "§7withers by §c10%§7.",
+      "",
+      "§6Full Set Bonus: Witherborn §7(0/4)",
+      "§7Spawns a wither minion every §e30",
+      "§e§7seconds up to a maximum §a1 §7wither.",
+      "§7Your withers will travel to and",
+      "§7explode on nearby enemies.",
+      "",
+      "§9Ancient Bonus",
+      "§7Grants §a+1 §9 Crit Damage §7per",
+      "§7§cCatacombs §7level.",
+      "",
+      "§6✿ Chocolate Dyed",
+      "§d§l§ka§r §d§lMYTHIC DUNGEON CHESTPLATE §d§l§ka"
+     ],
+     "color": 8077056,
+     "Name": "§6✿ §dAncient Goldor's Chestplate §6✪✪✪✪✪§c➍"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "modifier": "ancient",
+     "dungeon_item_level": 4,
+     "upgrade_level": 9,
+     "originTag": "WITHER_CHESTPLATE",
+     "enchantments": {
+      "strong_mana": 6,
+      "true_protection": 1,
+      "ultimate_legion": 5,
+      "rejuvenate": 5,
+      "growth": 6,
+      "protection": 6
+     },
+     "uuid": "9df5046c-363c-47bf-b54c-d874b8bd1005",
+     "dye_item": "DYE_CHOCOLATE",
+     "hot_potato_count": 15,
+     "gems": {
+      "DEFENSIVE_0": "PERFECT",
+      "DEFENSIVE_0_gem": "RUBY",
+      "COMBAT_0": "PERFECT",
+      "COMBAT_0_gem": "AMETHYST"
+     },
+     "id": "TANK_WITHER_CHESTPLATE",
+     "artOfPeaceApplied": 1,
+     "timestamp": [
+      379,
+      -1485272480
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "hotPotato": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "fumingPotato": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "artOfWar": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "artOfPeace": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 299,
+   "Count": 1,
+   "tag": {
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1470 §8(5000)",
+      "§7Health: §c+528 §e(+60) §c[+40] §9(+7) §d(+30) §8(+2,957.15)",
+      "§7Defense: §a+394.5 §e(+30) §9(+7) §d(+30) §8(+2,183.65)",
+      "§7True Defense: §f+5 §8(+7.5)",
+      "§7Strength: §c+35 §9(+35) §8(+208.25)",
+      "§7Crit Chance: §9+15% §9(+15%) §8(+22.5%)",
+      "§7Crit Damage: §9+46% §9(+46%) §8(+273.7%)",
+      "§7Intelligence: §b+47 §9(+25) §8(+267.75)",
+      "§7Health Regen: §c+5 §8(+5)",
+      "§7Gemstones: §6[§c☤§6] §6[§5⚔§6]",
+      "",
+      "§d§l§d§lLegion V, §9Growth VI, §9Protection VI",
+      "§9Rejuvenate V, §9Strong Vitality VI, §9True Protection I",
+      "",
+      "§7Reduces the damage you take from",
+      "§7withers by §c10%§7.",
+      "",
+      "§6Full Set Bonus: Witherborn §7(0/4)",
+      "§7Spawns a wither minion every §e30",
+      "§e§7seconds up to a maximum §a1 §7wither.",
+      "§7Your withers will travel to and",
+      "§7explode on nearby enemies.",
+      "",
+      "§9Ancient Bonus",
+      "§7Grants §a+1 §9 Crit Damage §7per",
+      "§7§cCatacombs §7level.",
+      "",
+      "§6✿ Chocolate Dyed",
+      "§d§l§ka§r §d§lMYTHIC DUNGEON CHESTPLATE §d§l§ka"
+     ],
+     "color": 8077056,
+     "Name": "§6✿ §dAncient Goldor's Chestplate §6✪✪✪✪✪§c➍"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "modifier": "ancient",
+     "dungeon_item_level": 4,
+     "upgrade_level": 9,
+     "originTag": "WITHER_CHESTPLATE",
+     "enchantments": {
+      "strong_mana": 6,
+      "true_protection": 1,
+      "ultimate_legion": 5,
+      "rejuvenate": 5,
+      "growth": 6,
+      "protection": 6
+     },
+     "uuid": "9df5046c-363c-47bf-b54c-d874b8bd1005",
+     "dye_item": "DYE_CHOCOLATE",
+     "hot_potato_count": 15,
+     "gems": {
+      "DEFENSIVE_0": "PERFECT",
+      "DEFENSIVE_0_gem": "RUBY",
+      "COMBAT_0": "PERFECT",
+      "COMBAT_0_gem": "AMETHYST"
+     },
+     "id": "TANK_WITHER_CHESTPLATE",
+     "artOfPeaceApplied": 1,
+     "timestamp": [
+      379,
+      -1485272480
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "drillParts": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/titanium_drill_dr_x455",
+    "minecraft:tooltip_style": "hypixel_skyblock:legendary"
+   },
+   "id": 278,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 5,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§8Breaking Power 8",
+      "",
+      "§7Damage: §c+75",
+      "§7Mining Speed: §6+1,105 §9(+50) §d(+80)",
+      "§7Pristine: §5+0.5",
+      "§7Mining Fortune: §6+106 §9(+16)",
+      "§7Gemstone Fortune: §6+30",
+      "§7Mining Wisdom: §3+7",
+      "§7Gemstones: §6[§6§6]",
+      "",
+      "§9§d§lFlowstate III",
+      "§9Compact VII §898,205",
+      "§9Efficiency V",
+      "§9Experience IV",
+      "§9Fortune IV",
+      "§9Lapidary III",
+      "§9Paleontologist V",
+      "§9Prismatic I",
+      "§9Smelting Touch I",
+      "",
+      "§7§aMithril-Infused Fuel Tank",
+      "§7§7§210,000 Max Fuel Capacity",
+      "§7§7§a-2% Pickaxe Ability Cooldown",
+      "",
+      "§7§aMithril Drill Engine",
+      "§7§6+75 Mining Speed",
+      "§7§6+5 Mining Fortune",
+      "",
+      "§7§7Upgrade Module: §cNot Installed",
+      "§7§7Applies a passive upgrade with part",
+      "§7installed.",
+      "",
+      "§7§7Fuel: §28,635§8/10k",
+      "",
+      "§6Ability: Pickobulus  §e§lRIGHT CLICK",
+      "§7Throw your pickaxe to create an",
+      "§7explosion mining all ores in a §a3 §7block",
+      "§7radius.",
+      "§8Cooldown: §a49s",
+      "",
+      "§9Auspicious Bonus",
+      "§7Grants §6+0.8% §6 Mining Fortune§7.",
+      "",
+      "§6§l§ka§r §6§lLEGENDARY DRILL §6§l§ka"
+     ],
+     "Name": "§6Auspicious Titanium Drill DR-X455"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "drill_fuel": 8635,
+     "modifier": "auspicious",
+     "compact_blocks": 98205,
+     "enchantments": {
+      "efficiency": 5,
+      "lapidary": 3,
+      "smelting_touch": 1,
+      "fortune": 4,
+      "compact": 7,
+      "paleontologist": 5,
+      "pristine": 1,
+      "ultimate_flowstate": 3,
+      "experience": 4
+     },
+     "fuel_tank": {
+      "id": "MITHRIL_FUEL_TANK"
+     },
+     "uuid": "5652441f-3848-4dd1-85dd-cd95b4939da3",
+     "gems": {
+      "AMBER_0": {
+       "uuid": "f44d2f2f-834b-4342-b517-b3d222e9d86c",
+       "quality": "PERFECT"
+      }
+     },
+     "drill_part_engine": "mithril_drill_engine",
+     "engine": {
+      "id": "MITHRIL_DRILL_ENGINE"
+     },
+     "id": "TITANIUM_DRILL_2",
+     "drill_part_fuel_tank": "mithril_fuel_tank",
+     "timestamp": [
+      415,
+      -1777664602
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "rodParts": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/fishing/rod/rod_of_champions",
+    "minecraft:tooltip_style": "hypixel_skyblock:rare"
+   },
+   "id": 346,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+100",
+      "§7Strength: §c+125 §9(+25)",
+      "§7Crit Damage: §9+20% §9(+20%)",
+      "§7Attack Speed: §e+4% §9(+4%)",
+      "§7Fishing Speed: §b+65",
+      "§7Sea Creature Chance: §3+9%",
+      "§7Treasure Chance: §6+2.5%",
+      "§7Gemstones: §8[§8§8]",
+      "",
+      "§9Angler V, §9Blessing V, §9Caster V",
+      "§9Frail V, §9Impaling V, §9Looting III",
+      "§9Luck of the Sea V, §9Lure V, §9Magnet V",
+      "§9Piscary V, §9Pyroclasm V, §9Spiked Hook V",
+      "",
+      "§9ථ §9Common Hook",
+      "§7Increases the chance to catch",
+      "§7§F§LCOMMON §3Sea Creatures §7by §a25%§7.",
+      "",
+      "§9ꨃ §9Speedy Line",
+      "§7Grants §b+10 Fishing Speed§7.",
+      "",
+      "§9࿉ §9Junk Sinker",
+      "§7Grants §6+10 Treasure Chance §7while",
+      "§7in the §2Backwater Bayou §7but replaces",
+      "§7all §6Treasure §7catches with §2Junk§7!",
+      "",
+      "§9§lRARE FISHING ROD"
+     ],
+     "Name": "§9Epic Rod of Champions"
+    },
+    "ExtraAttributes": {
+     "hook": {
+      "part": "common_hook",
+      "uuid": "ad8b82a6-cc3f-425e-aa6b-29b1b06513f2"
+     },
+     "line": {
+      "part": "speedy_line",
+      "uuid": "1f9e8b2c-5023-41da-b6e3-254eaf6d1b51"
+     },
+     "modifier": "epic",
+     "sinker": {
+      "part": "junk_sinker",
+      "uuid": "85045237-69ae-493c-9b84-6f583cefad8f"
+     },
+     "id": "CHAMP_ROD",
+     "enchantments": {
+      "caster": 5,
+      "impaling": 5,
+      "piscary": 5,
+      "spiked_hook": 5,
+      "looting": 3,
+      "magmarizer": 5,
+      "frail": 5,
+      "angler": 5,
+      "luck_of_the_sea": 5,
+      "magnet": 5,
+      "lure": 5,
+      "blessing": 5
+     },
+     "uuid": "8ce98fc1-125f-4c28-afc6-ef3e75940e47",
+     "timestamp": [
+      415,
+      -1249453662
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "dyed": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 299,
+   "Count": 1,
+   "tag": {
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1470 §8(5000)",
+      "§7Health: §c+528 §e(+60) §c[+40] §9(+7) §d(+30) §8(+2,957.15)",
+      "§7Defense: §a+394.5 §e(+30) §9(+7) §d(+30) §8(+2,183.65)",
+      "§7True Defense: §f+5 §8(+7.5)",
+      "§7Strength: §c+35 §9(+35) §8(+208.25)",
+      "§7Crit Chance: §9+15% §9(+15%) §8(+22.5%)",
+      "§7Crit Damage: §9+46% §9(+46%) §8(+273.7%)",
+      "§7Intelligence: §b+47 §9(+25) §8(+267.75)",
+      "§7Health Regen: §c+5 §8(+5)",
+      "§7Gemstones: §6[§c☤§6] §6[§5⚔§6]",
+      "",
+      "§d§l§d§lLegion V, §9Growth VI, §9Protection VI",
+      "§9Rejuvenate V, §9Strong Vitality VI, §9True Protection I",
+      "",
+      "§7Reduces the damage you take from",
+      "§7withers by §c10%§7.",
+      "",
+      "§6Full Set Bonus: Witherborn §7(0/4)",
+      "§7Spawns a wither minion every §e30",
+      "§e§7seconds up to a maximum §a1 §7wither.",
+      "§7Your withers will travel to and",
+      "§7explode on nearby enemies.",
+      "",
+      "§9Ancient Bonus",
+      "§7Grants §a+1 §9 Crit Damage §7per",
+      "§7§cCatacombs §7level.",
+      "",
+      "§6✿ Chocolate Dyed",
+      "§d§l§ka§r §d§lMYTHIC DUNGEON CHESTPLATE §d§l§ka"
+     ],
+     "color": 8077056,
+     "Name": "§6✿ §dAncient Goldor's Chestplate §6✪✪✪✪✪§c➍"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "modifier": "ancient",
+     "dungeon_item_level": 4,
+     "upgrade_level": 9,
+     "originTag": "WITHER_CHESTPLATE",
+     "enchantments": {
+      "strong_mana": 6,
+      "true_protection": 1,
+      "ultimate_legion": 5,
+      "rejuvenate": 5,
+      "growth": 6,
+      "protection": 6
+     },
+     "uuid": "9df5046c-363c-47bf-b54c-d874b8bd1005",
+     "dye_item": "DYE_CHOCOLATE",
+     "hot_potato_count": 15,
+     "gems": {
+      "DEFENSIVE_0": "PERFECT",
+      "DEFENSIVE_0_gem": "RUBY",
+      "COMBAT_0": "PERFECT",
+      "COMBAT_0_gem": "AMETHYST"
+     },
+     "id": "TANK_WITHER_CHESTPLATE",
+     "artOfPeaceApplied": 1,
+     "timestamp": [
+      379,
+      -1485272480
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "runeCarrier": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "skinned": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:legendary"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "ef895bf5-86e3-33e9-bc43-aa739749869a",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "MSKJvLQfMAYsTWWFc4RTGZCMBj3/V7obfqLi79i7IniothUhRrPuWTEA9vE9sB5K+iphJ2L9rcZgASo6xI0zxrIZszrmF53NV9K5F8ukxHEycfByizzYbg99fKBe8njIDbanLc90MJHBSfCeor1LtZcA7PD1ER0w63gL6YzwRdG1tIa0bogjkVJ69dsAqozrDKfHc4SYgRKVtH6Qjx/psggFG6FyucHSHW1SwCx8VCckyf57U/bFZ9Ej6oBjfHXk9/ib+dZSRe9u/Zkx2Jit+n9YCZWxvBbSlOXg2RnH4MyCqgTywRMhWEeSEe/drElHJC53LUF5/Yl23jXf7MSxjoHQjVsfb3HDDSw+DN7NjnGmnBt6TKAkPaY9FLSL4PmV82cnG8JoKF02MN1EtxAeIRu6W9P/odaziz24wR71EmlZksDjDw0dd0w4ZnAfM2HWtSApNqkgJZ0RiDpIfWztiF9YO2JaYBZRQMLDtIk9SWphzsgagTPcXe4tPEfemOuoYJU9TNNJd7iyIYhY3JCj13Dj+qfOS7mzSaontD7gFDEYjlQmFgNqYto1sEY6IVhL/k7SHaPG97Lh1xq84VFwj3IlfPDhrm0YH1EOU4gqlfun0zE08Ftmbh9w9TiwymbOElq/trWI/pBlGe5RjAR56y2Ex/9IBnUvL1k+ozGq9rk=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTc2Mjc4ODYxNjM3MywKICAicHJvZmlsZUlkIiA6ICI3Mjc2ZThmYzVkNjE0ODNjYmMwN2IxYjIzNjI3MDA4ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJXYWJvV2ViaSIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS83NDU1ZWNiMDI3OWIzNzM2MjNjOWE2MGY1YzRjYTA1MjhkZGMwOGNjMTY2ZWNhOThiZjc0MWU3MDkxMDQ5NWFlIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7§8Nutcracker Knight Skin",
+      "",
+      "§7Health: §c+80",
+      "§7Defense: §a+48 §9(+13)",
+      "§7Fishing Speed: §b+6 §9(+3.5) §d(+2.5)",
+      "§7Sea Creature Chance: §3+1.5%",
+      "§7Gemstones: §8[§7⚔§8] §8[§8⚔§8] §9[§3§9]",
+      "",
+      "§6Full Set Bonus: Cold Thumb §7(0/4)",
+      "§7Allows the wearer to shoot unlimited",
+      "§7snowballs when using §9Frosty the",
+      "§9Snow Cannon§7.",
+      "",
+      "§6Full Set Bonus: Battalion §7(0/4)",
+      "§7Grants §b+1 Magic Find §7and §a+50",
+      "§aDefense §7to everyone within §a30",
+      "§a§7blocks. Stacks up to §c5 §7times.",
+      "",
+      "§7Each piece grants a §a7.5% §7bonus gift",
+      "§7chance for every present you earn",
+      "§7from the §cGift Attack §7minigame!",
+      "",
+      "§7All stats of this armor piece are",
+      "§7doubled while on §cJerry's Workshop§7!",
+      "",
+      "§9Calcified Bonus",
+      "§7Grants §a+25 Defense §7against §3Sea",
+      "§3Creatures§7.",
+      "",
+      "§6§lLEGENDARY HELMET"
+     ],
+     "Name": "§6Calcified Nutcracker Helmet §5✦"
+    },
+    "ExtraAttributes": {
+     "gems": {
+      "unlocked_slots": [
+       "AQUAMARINE_0"
+      ],
+      "AQUAMARINE_0": "FINE"
+     },
+     "modifier": "calcified",
+     "skin": "NUTCRACKER_KNIGHT",
+     "id": "NUTCRACKER_HELMET",
+     "uuid": "8e6eefd1-8a52-4294-9964-bf36fb5d77d8",
+     "timestamp": [
+      410,
+      -863619571
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "shiny": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "editioned": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 301,
+   "Count": 1,
+   "tag": {
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Fear: §5+5",
+      "",
+      "§6Full Set Bonus: Spooky §7(0/4)",
+      "§7Lets you §8§ospook §7other players while",
+      "§7worn by punching them with the §6Great",
+      "§6Spook Staff§7.",
+      "",
+      "§6Full Set Bonus: Fearsome §7(0/4)",
+      "§7Monsters at or below your total",
+      "§7§5Fear §7level will run away from you.",
+      "",
+      "§7§7Obtained during the §e2021 §5Alchemist",
+      "§5§7experiments!",
+      "",
+      "§8Edition #31085",
+      "",
+      "§7§8This item can be reforged!",
+      "§5§lEPIC BOOTS"
+     ],
+     "color": 10040217,
+     "Name": "§5Great Spook Boots"
+    },
+    "ExtraAttributes": {
+     "color": "153:51:153",
+     "edition": 31085,
+     "originTag": "UNKNOWN",
+     "id": "GREAT_SPOOK_BOOTS",
+     "uuid": "17e5937e-6c03-4851-abf2-193297a16cfa",
+     "timestamp": [
+      380,
+      -857179776
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "partyHatColour": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:special"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "0bcf2959-9014-3e7d-a40a-c4fd3f3318d5",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "p4Wk/EHFDTgjb4s6SMZzKBSE+ClW9Qe2qbDXpCAih1Hjk/MYnZVs2FqkI5fE5fsaZCu/F5L3U74m7djTaTS8FaUvpgkqTCYjxfEdOkTBMrYVdm44yY5Q/h41yt9fON7sjLSKg97amKxYsSGSj2em1iQ/6Fg1Ij5Kdz4JWvtO7fjyM5voexCO1/gRPLQzqYvWWE87li4mlisLNEx7/6CiCX88O3uxUCnl3w/n409XyC+PyjVMEazRZyM9rt9xRU3X5shUeFjmAAVjdJpng/DdwSHlE5eQx0G+TdBAePhxine2KZ7dgaviUiLnkkbJDvgSvWSLFe5xn+5uTLVceIUgUNAtknIzx/1ureDrW/EC+SDYilGhmjCMnLIVET9sbjjLYt9RFevaUecWy50OawGUU8C7sZWxa40pfidXz1gG9u8j8IeiQip6haihyisS9fti94j+KK1zPyCFJTKJF6Z4y3EODzMHVF9UXpSPmv638K4JW5sz39x+M/kpd3nJyA3bFNZ6wSlOqyrICrgktyBE1777L6qj3zfGKHgfHJP3s3zTUYbtQICXioU4SNvh6QPdbS/TNGkeg9AY97voS7EfEfS42W2dBqOy7+UyTOnYoNtKtyDtcDcNJv3G4WWskl3orSyFg9ymr4p0oCIkrWz8kXa6esSjw+sMqQx4ofVsr8U=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTcxNzQzNjMzMDY3OCwKICAicHJvZmlsZUlkIiA6ICJhZDVjODczNmVlMjE0YjRhYTcwNWQ0NDE2YjAxMGJjYiIsCiAgInByb2ZpbGVOYW1lIiA6ICJTdGl0Y2hfTXRsbCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS81NjdmOTM5NjNhZDdhYzNhYmRjNDlkMDJjOTg2MWZhMmQ0NWQwMGRhMWE3YjMxMTkzY2ViMjQ2MzEzZDM5YmM1IgogICAgfQogIH0KfQ=="
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7Magic Find: §b+1",
+      "§7Accessory Power: §6+3",
+      "",
+      "§7Show your pride for SkyBlock's §d5th",
+      "§dAnniversary §7with a balloon!",
+      "",
+      "§6Ability: Party Time! ",
+      "§7Gain §b+1 Intelligence §7while on your",
+      "§7head for each SkyBlock year you've",
+      "§7been playing.",
+      "",
+      "§7Obtained: §e2024",
+      "",
+      "§8Works while in Accessory Bag!",
+      "§c§lSPECIAL HATCESSORY"
+     ],
+     "Name": "§c§cRed 5th Anniversary Balloon Hat"
+    },
+    "ExtraAttributes": {
+     "party_hat_year": 2024,
+     "party_hat_color": "red",
+     "id": "BALLOON_HAT_2024",
+     "uuid": "5c82fd79-8afb-412e-b225-30dfc25c39ac",
+     "timestamp": [
+      400,
+      134995971
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "partyHatEmoji": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:special"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "d86b2195-695b-377b-905c-31870cb7ed94",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "TlxV1PzF4bIO1XPS/A4tMbC6aSnY/goMSWz4xfJncADujs7PAAzxLRwLj0bJGF6u1xPe8dSTysN+RxV3zSQaPaShSTnF2iLX++jPDKOw13VqXeEjint825Ay+HlehOwwEaeps1JqvVeGl5TgGGL6rFQxb26Gr3IG3C/3N6QtLQysNGxoBc5BlNYfHJDSIrhiE7q4OGZ7/s3Y3CiUp5GP75HwpN+xhmIqjaFjr1iY5q8+jPhUyYkswxFfBks6fq4Ln/LS8kdRYp9F4X86iBwbWcBpaOwiHSfiuwgn+RnNGPsN58kSciH2oM7zzccQO6HzmgeoGM5pzdRlEHQKPB1a7OLD+V9v7Qyj0MpLUbW9Y5K5RNdnAaTyXQeTQKJv6pstRBZ28p+g8iiCzWWHIJZtTnqMAhFPEqsspNrzxlTcVspfP5fKXGJ7YVToZqVW3XpVHTxZbJzBWFzJrvcbKhIqe+jxhMzORC9vlGrFV1SYQK8wsNZwSZEI1jrGpO+Voz7ksYaBDZMGkobfHQC+7GhQeSfO7tzsbZ+VovV/BcJu0y41pzEyuvaIEGsfXlIiUSays7tMGSnEjBLWXYZhySpS3YbCif/S22Li+Quc4ddsRde/ULMXQJUGKWIAqwIe108YEcYl+x0KaXlgxMdyYgcXh8cb9nZ2aJ+HzqEblIBRuWI=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTY4NTk3Nzc3MzEyMywKICAicHJvZmlsZUlkIiA6ICJhYzM2YmVkZGQxNGQ0YjVmYmQyYzc5OThlMWMwOTg3ZCIsCiAgInByb2ZpbGVOYW1lIiA6ICJtYWlzYWthIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzU4OWQxMGU2NWZkNjVmYmFjNWUyNTljZmNiMjRjOGMzNjcyYjM4NTU5N2VjZGM0NTZkMjUwNGIzOWQ1MmMwNTEiCiAgICB9CiAgfQp9"
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7Magic Find: §b+1",
+      "§7Accessory Power: §6+3",
+      "",
+      "§6Ability: Party Time! ",
+      "§7Gain §b+1 Intelligence §7while on your",
+      "§7head for each SkyBlock year you've",
+      "§7been playing.",
+      "",
+      "§7Obtained: §e2023",
+      "",
+      "§8Works while in Accessory Bag!",
+      "§c§lSPECIAL HATCESSORY"
+     ],
+     "Name": "§c§cTears Sloth Hat of Celebration"
+    },
+    "ExtraAttributes": {
+     "party_hat_emoji": "tears",
+     "party_hat_year": 2023,
+     "id": "PARTY_HAT_SLOTH",
+     "uuid": "f5fd2b45-4cf7-4b61-b353-d951b8b0fe23",
+     "timestamp": [
+      392,
+      -1316267328
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "newYearCake": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:special"
+   },
+   "id": 354,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Given to every player as a",
+      "§7celebration for the 169th SkyBlock",
+      "§7year!",
+      "",
+      "§c§lSPECIAL"
+     ],
+     "Name": "§cNew Year Cake (Year 169)"
+    },
+    "ExtraAttributes": {
+     "new_years_cake": 169,
+     "originTag": "REWARD_NEW_YEARS_CAKE_NPC",
+     "id": "NEW_YEAR_CAKE",
+     "uuid": "3ae77fd3-f215-46c5-b3ce-5767d7b7c81a",
+     "timestamp": [
+      380,
+      -710719776
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "cakeBag": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:uncommon"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "af6a7ef0-96cc-3256-bf88-94f4556f27ee",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "wxB+lrXC6jZ6b7+S5o82ybH1zh53A21NRqhUxT4tB8lDSDa3jHTFEEFYWd92s66eDdtUd5UyaJUmYaTKiOB2OmzQtN3MG28l86WmZtLrugPvzGBaIzcQB9OnCIKSjZyPDjwDZMzhhWnhum7YPWy2MY8IE0bRYEqaBFCDPmu6d//MUJq0nyurzDVw8gILjnDO/HUBoXdeHo7MpPzHEMt1EIKpqo+38SaKd1TGI4AmNQgve8jZ0bFfh9QvPTfTeFxz6rNle10B9Bmp8SiJ2KVr37stoAQ13jYaHnwnomBBOq3/d89G4PgqbUPi3W9/nf3HshRzOS6P7Yu6J4jTeEc7xWumgQBqVHWR4fNOMT1CXMHfj7S6SgjtYf/Oq2nVZJLkFn3sgaBg4X5juh+t59EtU9vYOoCpSSKqPLvrErfyKULzmPdmbqKJ5jBAwekxWYenCBs3+CMEBOMYYLDzT8PMqnCIwJ/+vaNEQ4hDldz3WtmGZNHuIaXlTfCM4si76NjtigSrU0NtuWbT0KdI5NGbKCFOX2tK9HWmjt/0FdrehhM+xdBVB5MG0QSQix1yU0rersAgIj7bd41xmSY5j1IAPXUgCe/pnhnlpEgoy785OX7TiyvGArbL4CsHIVF2cytJbk9L1YtlSuguTjBB6o4MactF1lBJI+HKpc2pNajpRLE=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTYyNjk0NzIyNzk0NSwKICAicHJvZmlsZUlkIiA6ICI0ZjU2ZTg2ODk2OGU0ZWEwYmNjM2M2NzRlNzQ3ODdjOCIsCiAgInByb2ZpbGVOYW1lIiA6ICJDVUNGTDE1IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2NkZTdjZGViOTcxM2E2ZjljZmVkYWFkZGNmZmIzNTU3MjE5MTFmNDlmMmZhMWNmMTE4OWI5NDllMmYwZDViMjgiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ=="
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7Accessory Power: §6+5",
+      "",
+      "§7Holds §cNew Year Cakes§7. Each unique",
+      "§7§cNew Year Cake §7within this bag grants",
+      "§7§c+1 Health§7.",
+      "§7",
+      "§7Current Bonus: §c+0 Health",
+      "§7",
+      "§7§eRight-click to open!",
+      "",
+      "§8Works while in Accessory Bag!",
+      "§a§lUNCOMMON ACCESSORY"
+     ],
+     "Name": "§aNew Year Cake Bag"
+    },
+    "ExtraAttributes": {
+     "new_year_cake_bag_data": [
+      31,
+      -117,
+      8,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      -1,
+      -29,
+      98,
+      96,
+      -32,
+      100,
+      96,
+      -52,
+      -28,
+      98,
+      96,
+      96,
+      48,
+      99,
+      32,
+      15,
+      0,
+      0,
+      -4,
+      5,
+      32,
+      57,
+      67,
+      0,
+      0,
+      0
+     ],
+     "soulbound": 0,
+     "modifier": "none",
+     "originTag": "SHOP_PURCHASE",
+     "id": "NEW_YEAR_CAKE_BAG",
+     "uuid": "8d14ad31-c7cd-4cae-8283-51d247e244be",
+     "timestamp": [
+      381,
+      -496807072
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "enrichment": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "9d3957af-7899-38f7-8585-446f2268b10b",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "Hhc+fbvL0rLBQ9e09b/+ixpHImFnIejr5dulq7PHjNjqr+wa0NPfzJZr/xGeNVfemETmtLA/H0mbjvG4GgwXe0AIgne72amZpjDAfO+3HbFIC53C9Ia3pe66iVtohWIqMiTOwPrM+Njne0xdQAhMDjoCjlG5T70wetXBH+NOFAV/aeCBzcTYWN10+J6YVL1Ze50QpgX4aHME61Dxk/hZRyNi1Gqn4wezs62QqqnOZJpMwcNL3NcY4R5eLm47lrrIXp4HmbjjMpRZZ36TF2kpmm2vzIIKVIZMI8vvtSU5ayYdDcup4BtGAaPW/vceFdqmgpneseDfm2ZpblWX+S5RsFatTYNkSgIJxKydEso3PHUTVDUY8FtA+Gf1Mto4nAq3O/neadOEJ6kvTWgDp364AQPLvCLvBB4LzmvN2zcuueVFMBaI/+n6k1xjtBqLungyx3RqnZlVOEbpervlo8BylkOl4YgZIDFPzRCP3gn+6cMQILzPrN8Gl3c2hwpZMsTlsFnfzlrQXNGqHvoDUgHCXVnfOX0DHPYwZnVTggaPhap5bUSYgT7nx4Jymbzj+Ha8/xHZ6rZSej5ZJ1guh/CeXcKrrxMCQTFH7nRYG8+yOGIyYrdmIgdxLHUX739jq9lrnpTe5xVd1Q9x8ST6uP5crD5Um30XL4xD9+cLRSXA//8=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTY0MTA5ODY0NTEyOCwKICAicHJvZmlsZUlkIiA6ICIwMGZiNTRiOWI4NDA0YTA0YTViMmJhMzBlYzBlYTAxMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJrbGxveWQ3MCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lNWViZjZmMTQzMDFkM2ViZDE0NTMzNTg3ZDJhMmQ0ODIzNDQzM2IxN2M5ZDJmMTM5MzRiN2NhYjQ1OGVlMjY3IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7§8Enriched with Magic Find",
+      "",
+      "§7Magic Find: §b+1.5",
+      "§7Accessory Power: §6+22",
+      "",
+      "§7Grants an additional §c4% §7charge when",
+      "§7filling empty thunder bottles.",
+      "",
+      "§7Charge up by combining a §eThunder in",
+      "§ea Bottle§7 (Full) with this item in an",
+      "§7anvil.",
+      "",
+      "§7Charge: §e5,000,000 Thunder",
+      "",
+      "§8Works while in Accessory Bag!",
+      "§d§l§ka§r §d§lMYTHIC ACCESSORY §d§l§ka"
+     ],
+     "Name": "§dPulse Ring"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "talisman_enrichment": "magic_find",
+     "thunder_charge": 5000000,
+     "id": "PULSE_RING",
+     "uuid": "7068779a-f547-41cb-81e7-53b8e41d83bd",
+     "timestamp": [
+      395,
+      1603538080
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "abilityScroll": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "etherwarp": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/slayer/enderman/aspect_of_the_void",
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 277,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+120",
+      "§7Strength: §c+132 §9(+32)",
+      "§7Attack Speed: §e+3% §9(+3%)",
+      "§7Intelligence: §b+90 §9(+80) §d(+10)",
+      "§7Gemstones: §9[§b§9]",
+      "",
+      "§9§d§lUltimate Wise V",
+      "§7Reduces the ability mana cost of this",
+      "§7item by §a50%§7.",
+      "",
+      "§6Ability: Instant Transmission  §e§lRIGHT CLICK",
+      "§7Teleport §a12 blocks§7 ahead of you and",
+      "§7gain §a+50 §f Speed§7 for §a3 seconds§7.",
+      "§8Mana Cost: §3§b18",
+      "",
+      "§6Ability: Ether Transmission  §e§lSNEAK RIGHT CLICK",
+      "§7Teleport to your targeted block up",
+      "§7to §a61 blocks §7away.",
+      "§7§8Soulflow Cost: §31",
+      "§8Mana Cost: §3§b73",
+      "",
+      "§5§lEPIC SWORD"
+     ],
+     "Name": "§5Heroic Aspect of the Void"
+    },
+    "ExtraAttributes": {
+     "ethermerge": 1,
+     "tuned_transmission": 4,
+     "gems": {
+      "SAPPHIRE_0": "FINE"
+     },
+     "modifier": "heroic",
+     "id": "ASPECT_OF_THE_VOID",
+     "enchantments": {
+      "ultimate_wise": 5
+     },
+     "uuid": "9775ea6d-3525-43e3-a5ef-e698a46612ab",
+     "timestamp": [
+      415,
+      -975086525
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "thunder": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "9d3957af-7899-38f7-8585-446f2268b10b",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "Hhc+fbvL0rLBQ9e09b/+ixpHImFnIejr5dulq7PHjNjqr+wa0NPfzJZr/xGeNVfemETmtLA/H0mbjvG4GgwXe0AIgne72amZpjDAfO+3HbFIC53C9Ia3pe66iVtohWIqMiTOwPrM+Njne0xdQAhMDjoCjlG5T70wetXBH+NOFAV/aeCBzcTYWN10+J6YVL1Ze50QpgX4aHME61Dxk/hZRyNi1Gqn4wezs62QqqnOZJpMwcNL3NcY4R5eLm47lrrIXp4HmbjjMpRZZ36TF2kpmm2vzIIKVIZMI8vvtSU5ayYdDcup4BtGAaPW/vceFdqmgpneseDfm2ZpblWX+S5RsFatTYNkSgIJxKydEso3PHUTVDUY8FtA+Gf1Mto4nAq3O/neadOEJ6kvTWgDp364AQPLvCLvBB4LzmvN2zcuueVFMBaI/+n6k1xjtBqLungyx3RqnZlVOEbpervlo8BylkOl4YgZIDFPzRCP3gn+6cMQILzPrN8Gl3c2hwpZMsTlsFnfzlrQXNGqHvoDUgHCXVnfOX0DHPYwZnVTggaPhap5bUSYgT7nx4Jymbzj+Ha8/xHZ6rZSej5ZJ1guh/CeXcKrrxMCQTFH7nRYG8+yOGIyYrdmIgdxLHUX739jq9lrnpTe5xVd1Q9x8ST6uP5crD5Um30XL4xD9+cLRSXA//8=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTY0MTA5ODY0NTEyOCwKICAicHJvZmlsZUlkIiA6ICIwMGZiNTRiOWI4NDA0YTA0YTViMmJhMzBlYzBlYTAxMiIsCiAgInByb2ZpbGVOYW1lIiA6ICJrbGxveWQ3MCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9lNWViZjZmMTQzMDFkM2ViZDE0NTMzNTg3ZDJhMmQ0ODIzNDQzM2IxN2M5ZDJmMTM5MzRiN2NhYjQ1OGVlMjY3IiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0="
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7§8Enriched with Magic Find",
+      "",
+      "§7Magic Find: §b+1.5",
+      "§7Accessory Power: §6+22",
+      "",
+      "§7Grants an additional §c4% §7charge when",
+      "§7filling empty thunder bottles.",
+      "",
+      "§7Charge up by combining a §eThunder in",
+      "§ea Bottle§7 (Full) with this item in an",
+      "§7anvil.",
+      "",
+      "§7Charge: §e5,000,000 Thunder",
+      "",
+      "§8Works while in Accessory Bag!",
+      "§d§l§ka§r §d§lMYTHIC ACCESSORY §d§l§ka"
+     ],
+     "Name": "§dPulse Ring"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "talisman_enrichment": "magic_find",
+     "thunder_charge": 5000000,
+     "id": "PULSE_RING",
+     "uuid": "7068779a-f547-41cb-81e7-53b8e41d83bd",
+     "timestamp": [
+      395,
+      1603538080
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "woodSingularity": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/island_relevant/foraging_2/axes/figstone_splitter",
+    "minecraft:tooltip_style": "hypixel_skyblock:legendary"
+   },
+   "id": 275,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 5,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+55",
+      "§7Strength: §c+16.5",
+      "§7Sweep: §2+36.4 §2(+10)",
+      "§7Foraging Fortune: §6+106.5 §6(+25) §9(+12) §2(+15)",
+      "§7Foraging Wisdom: §3+14 §9(+5) §2(+1)",
+      "§7Boosters: §2§2ꕮ§8/§2⎋§8/§2⸙",
+      "§7Gemstones: §8[§7§8] §8[§7§8]",
+      "",
+      "§9§d§lFirst Impression V",
+      "§7Grants §2+5 Sweep §7on melee Log",
+      "§7Breaks, and your first melee Log",
+      "§7Break on a tree grants you §2+10",
+      "§2Sweep§7.",
+      "§9Absorb VIII",
+      "§7Grants §3+8☯ Foraging Wisdom §7and",
+      "§7§6+16 Foraging Fortune§7.",
+      "§825M logs to tier up!",
+      "§9Efficiency V",
+      "§7Increases how quickly your tool",
+      "§7breaks blocks.",
+      "§9Smelting Touch I",
+      "§7Automatically smelts broken blocks",
+      "§7into their smelted form.",
+      "§9Woodsplitter V",
+      "§7Increases damage dealt to §2",
+      "§2Woodland§7 mobs by §a30%§7.",
+      "",
+      "§6Ability: Super Frenzy ",
+      "§7§7Gains §21 Sweep §7every §a10,000 Logs",
+      "§a§7cut on §2Galatea§7. §8(max 20)",
+      "§7Current Bonus: §2+20",
+      "§a§lMAXED OUT! NICE!",
+      "",
+      "§7Logs Cut: §b200,000",
+      "",
+      "§6Ability: Axe Toss  §e§lRIGHT CLICK",
+      "§7Throwing your Axe has no §2 Sweep",
+      "§2§7penalty for §a10s§7.",
+      "§8Cooldown: §a116s",
+      "",
+      "§6§l§ka§r §6§lLEGENDARY AXE §6§l§ka"
+     ],
+     "Name": "§6Moonglade Figstone Splitter §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "absorb_logs_chopped": 14214438,
+     "gems": {
+      "unlocked_slots": [
+       "CITRINE_0",
+       "CITRINE_1"
+      ]
+     },
+     "logs_cut": 200000,
+     "modifier": "moonglade",
+     "upgrade_level": 5,
+     "boosters": [
+      "foraging_wisdom",
+      "sweep",
+      "foraging_fortune"
+     ],
+     "wood_singularity_count": 1,
+     "id": "FIGSTONE_AXE",
+     "enchantments": {
+      "ultimate_first_impression": 5,
+      "efficiency": 5,
+      "smelting_touch": 1,
+      "absorb": 8,
+      "arcane": 5
+     },
+     "uuid": "ec15ad2c-aa8b-4f25-9733-9b7203994a52",
+     "timestamp": [
+      409,
+      2046993094
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "farmingForDummies": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/island_relevant/garden/tools/advanced_gardening_hoe",
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 292,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 5,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Farming Fortune: §6+128 §a(+5) §9(+13) §d(+6)",
+      "§7Wheat Fortune: §6+47",
+      "§7Carrot Fortune: §6+41",
+      "§7Potato Fortune: §6+43",
+      "§7Pumpkin Fortune: §6+45",
+      "§7Sugar Cane Fortune: §6+39",
+      "§7Melon Slice Fortune: §6+35",
+      "§7Cactus Fortune: §6+51",
+      "§7Cocoa Beans Fortune: §6+27",
+      "§7Mushroom Fortune: §6+33",
+      "§7Nether Wart Fortune: §6+15",
+      "§7Sunflower Fortune: §6+15",
+      "§7Moonflower Fortune: §6+15",
+      "§7Wild Rose Fortune: §6+15",
+      "§7Speed: §f+13 §9(+13)",
+      "§7Farming Wisdom: §3+11 §9(+4)",
+      "§7Gemstones: §6[§2§6]",
+      "",
+      "§d§l§d§lCrop Fever V, §9Cultivating VII, §9Dedication IV",
+      "§9Delicate V, §9Efficiency V, §9Feast I",
+      "§9Harvesting VI, §9Replenish I, §9Silk Touch I",
+      "§9Turbo-Cacti VII, §9Turbo-Cane VII, §9Turbo-Carrot VII",
+      "§9Turbo-Cocoa VII, §9Turbo-Melon VII, §9Turbo-Moonflower VII",
+      "§9Turbo-Mushrooms VII, §9Turbo-Potato VII, §9Turbo-Pumpkin VII",
+      "§9Turbo-Rose VII, §9Turbo-Sunflower VII, §9Turbo-Warts VII",
+      "§9Turbo-Wheat VII",
+      "",
+      "§c◆ Fiery Burst Rune III",
+      "",
+      "§9Blessed Bonus",
+      "§7Grants a §a0.19% §7chance to drop an",
+      "§7enchanted item when mining §6Crops§7.",
+      "",
+      "§5§l§ka§r §5§lEPIC FARMING TOOL §5§l§ka"
+     ],
+     "Name": "§5Blessed Advanced Gardening Hoe"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "farmed_cultivating": [
+      0,
+      1253394
+     ],
+     "gems": {
+      "PERIDOT_0": "PERFECT"
+     },
+     "runes": {
+      "FIERY_BURST": 3
+     },
+     "modifier": "blessed",
+     "id": "ADVANCED_GARDENING_HOE",
+     "enchantments": {
+      "turbo_rose": 7,
+      "delicate": 5,
+      "efficiency": 5,
+      "turbo_mushrooms": 7,
+      "ultimate_crop_fever": 5,
+      "turbo_potato": 7,
+      "cultivating": 7,
+      "dedication": 4,
+      "silk_touch": 1,
+      "turbo_wheat": 7,
+      "turbo_warts": 7,
+      "turbo_melon": 7,
+      "feast": 1,
+      "turbo_coco": 7,
+      "turbo_sunflower": 7,
+      "turbo_pumpkin": 7,
+      "harvesting": 6,
+      "turbo_moonflower": 7,
+      "turbo_cactus": 7,
+      "replenish": 1,
+      "turbo_carrot": 7,
+      "turbo_cane": 7
+     },
+     "farming_for_dummies_count": 5,
+     "uuid": "4058fb87-a4f4-422b-9281-64086d515634",
+     "timestamp": [
+      413,
+      -33226634
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "polarvoid": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/titanium_drill_dr_x655",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 278,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 10,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§8Breaking Power 9",
+      "",
+      "§7Damage: §c+75",
+      "§7Mining Speed: §6+2,249 §6[+500] §9[+50] §9(+75) §d(+24)",
+      "§7Pristine: §5+2.9 §d(+0.4)",
+      "§7Mining Fortune: §6+202 §9[+5] §9(+20) §d(+12)",
+      "§7Gemstone Fortune: §6+50",
+      "§7Mining Wisdom: §3+9",
+      "§7Gemstones: §f[§6§f] §f[§a§f] §f[§e✦§f]",
+      "",
+      "§9§d§lFlowstate III",
+      "§9Compact IX §8962,213",
+      "§9Efficiency X",
+      "§9Experience IV",
+      "§9Fortune IV",
+      "§9Lapidary V",
+      "§9Paleontologist V",
+      "§9Prismatic V",
+      "§9Smelting Touch I",
+      "",
+      "§7§7Fuel Tank: §cNot Installed",
+      "§7§7Increases fuel capacity with part",
+      "§7installed.",
+      "",
+      "§7§7Drill Engine: §cNot Installed",
+      "§7§7Increases §6 Mining Speed §7with part",
+      "§7installed.",
+      "",
+      "§7§7Upgrade Module: §cNot Installed",
+      "§7§7Applies a passive upgrade with part",
+      "§7installed.",
+      "",
+      "§7Apply Drill Parts to this Drill by",
+      "§7talking to a §2Drill Mechanic§7!",
+      "",
+      "§7§7Fuel: §23,000§8/3k",
+      "",
+      "§6§l⦾ §6Ability: Pickobulus  §e§lRIGHT CLICK",
+      "§7Throw your pickaxe to create an",
+      "§7explosion mining all ores in a §a3 §7block",
+      "§7radius.",
+      "§8Cooldown: §a50s",
+      "",
+      "§9Auspicious Bonus",
+      "§7Grants §6+0.9% §6 Mining Fortune§7.",
+      "",
+      "§d§l§ka§r §d§lMYTHIC DRILL §d§l§ka"
+     ],
+     "Name": "§dAuspicious Titanium Drill DR-X655"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "gems": {
+      "JADE_0": "ROUGH",
+      "MINING_0": "ROUGH",
+      "unlocked_slots": [
+       "JADE_0",
+       "MINING_0"
+      ],
+      "AMBER_0": "ROUGH",
+      "MINING_0_gem": "TOPAZ"
+     },
+     "polarvoid": 5,
+     "drill_fuel": 67856,
+     "modifier": "auspicious",
+     "compact_blocks": 962213,
+     "power_ability_scroll": "AMBER_POWER_SCROLL",
+     "id": "TITANIUM_DRILL_4",
+     "enchantments": {
+      "efficiency": 10,
+      "lapidary": 5,
+      "fortune": 4,
+      "smelting_touch": 1,
+      "compact": 9,
+      "paleontologist": 5,
+      "pristine": 5,
+      "ultimate_flowstate": 3,
+      "experience": 4
+     },
+     "uuid": "1c433193-0540-45a1-b982-629b4e1e4490",
+     "divan_powder_coating": 1,
+     "timestamp": [
+      406,
+      1280507043
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "divanCoating": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/titanium_drill_dr_x655",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 278,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 10,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§8Breaking Power 9",
+      "",
+      "§7Damage: §c+75",
+      "§7Mining Speed: §6+2,249 §6[+500] §9[+50] §9(+75) §d(+24)",
+      "§7Pristine: §5+2.9 §d(+0.4)",
+      "§7Mining Fortune: §6+202 §9[+5] §9(+20) §d(+12)",
+      "§7Gemstone Fortune: §6+50",
+      "§7Mining Wisdom: §3+9",
+      "§7Gemstones: §f[§6§f] §f[§a§f] §f[§e✦§f]",
+      "",
+      "§9§d§lFlowstate III",
+      "§9Compact IX §8962,213",
+      "§9Efficiency X",
+      "§9Experience IV",
+      "§9Fortune IV",
+      "§9Lapidary V",
+      "§9Paleontologist V",
+      "§9Prismatic V",
+      "§9Smelting Touch I",
+      "",
+      "§7§7Fuel Tank: §cNot Installed",
+      "§7§7Increases fuel capacity with part",
+      "§7installed.",
+      "",
+      "§7§7Drill Engine: §cNot Installed",
+      "§7§7Increases §6 Mining Speed §7with part",
+      "§7installed.",
+      "",
+      "§7§7Upgrade Module: §cNot Installed",
+      "§7§7Applies a passive upgrade with part",
+      "§7installed.",
+      "",
+      "§7Apply Drill Parts to this Drill by",
+      "§7talking to a §2Drill Mechanic§7!",
+      "",
+      "§7§7Fuel: §23,000§8/3k",
+      "",
+      "§6§l⦾ §6Ability: Pickobulus  §e§lRIGHT CLICK",
+      "§7Throw your pickaxe to create an",
+      "§7explosion mining all ores in a §a3 §7block",
+      "§7radius.",
+      "§8Cooldown: §a50s",
+      "",
+      "§9Auspicious Bonus",
+      "§7Grants §6+0.9% §6 Mining Fortune§7.",
+      "",
+      "§d§l§ka§r §d§lMYTHIC DRILL §d§l§ka"
+     ],
+     "Name": "§dAuspicious Titanium Drill DR-X655"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "gems": {
+      "JADE_0": "ROUGH",
+      "MINING_0": "ROUGH",
+      "unlocked_slots": [
+       "JADE_0",
+       "MINING_0"
+      ],
+      "AMBER_0": "ROUGH",
+      "MINING_0_gem": "TOPAZ"
+     },
+     "polarvoid": 5,
+     "drill_fuel": 67856,
+     "modifier": "auspicious",
+     "compact_blocks": 962213,
+     "power_ability_scroll": "AMBER_POWER_SCROLL",
+     "id": "TITANIUM_DRILL_4",
+     "enchantments": {
+      "efficiency": 10,
+      "lapidary": 5,
+      "fortune": 4,
+      "smelting_touch": 1,
+      "compact": 9,
+      "paleontologist": 5,
+      "pristine": 5,
+      "ultimate_flowstate": 3,
+      "experience": 4
+     },
+     "uuid": "1c433193-0540-45a1-b982-629b4e1e4490",
+     "divan_powder_coating": 1,
+     "timestamp": [
+      406,
+      1280507043
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "transmissionTuner": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/slayer/enderman/aspect_of_the_void",
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 277,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+120",
+      "§7Strength: §c+132 §9(+32)",
+      "§7Attack Speed: §e+3% §9(+3%)",
+      "§7Intelligence: §b+90 §9(+80) §d(+10)",
+      "§7Gemstones: §9[§b§9]",
+      "",
+      "§9§d§lUltimate Wise V",
+      "§7Reduces the ability mana cost of this",
+      "§7item by §a50%§7.",
+      "",
+      "§6Ability: Instant Transmission  §e§lRIGHT CLICK",
+      "§7Teleport §a12 blocks§7 ahead of you and",
+      "§7gain §a+50 §f Speed§7 for §a3 seconds§7.",
+      "§8Mana Cost: §3§b18",
+      "",
+      "§6Ability: Ether Transmission  §e§lSNEAK RIGHT CLICK",
+      "§7Teleport to your targeted block up",
+      "§7to §a61 blocks §7away.",
+      "§7§8Soulflow Cost: §31",
+      "§8Mana Cost: §3§b73",
+      "",
+      "§5§lEPIC SWORD"
+     ],
+     "Name": "§5Heroic Aspect of the Void"
+    },
+    "ExtraAttributes": {
+     "ethermerge": 1,
+     "tuned_transmission": 4,
+     "gems": {
+      "SAPPHIRE_0": "FINE"
+     },
+     "modifier": "heroic",
+     "id": "ASPECT_OF_THE_VOID",
+     "enchantments": {
+      "ultimate_wise": 5
+     },
+     "uuid": "9775ea6d-3525-43e3-a5ef-e698a46612ab",
+     "timestamp": [
+      415,
+      -975086525
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "manaDisintegrator": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/slayer/enderman/support_items/gyrokinetic_wand",
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 369,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§9§d§lUltimate Wise V",
+      "§7Reduces the ability mana cost of this",
+      "§7item by §a50%§7.",
+      "",
+      "§6Ability: Gravity Storm  §e§lLEFT CLICK",
+      "§7Create a large §5rift §7at the aimed",
+      "§7location, pulling all mobs together.",
+      "§7§8Regen mana 10x slower for 3s after",
+      "§8cast.",
+      "§7§8Soulflow Cost: §310",
+      "§8Mana Cost: §3§b1,200§8 (§910§9ᛃ§8)",
+      "§8Cooldown: §a30s",
+      "",
+      "§6Ability: Cells Alignment  §e§lRIGHT CLICK",
+      "§7Apply §aAligned §7to yourself for §a6s§7,",
+      "§7plus 4 nearby players on grouped",
+      "§7islands. §8(Catacombs, etc.)",
+      "§7",
+      "§7§a||| Aligned",
+      "§7Splits incoming damage and applies it",
+      "§7over §a3s§7.",
+      "§7§8Soulflow Cost: §32",
+      "§8Mana Cost: §3§b220§8 (§910§9ᛃ§8)",
+      "§8Cooldown: §a10s",
+      "",
+      "§5§lEPIC WAND"
+     ],
+     "Name": "§5Gyrokinetic Wand"
+    },
+    "ExtraAttributes": {
+     "id": "GYROKINETIC_WAND",
+     "enchantments": {
+      "ultimate_wise": 5
+     },
+     "mana_disintegrator_count": 10,
+     "uuid": "9fba85de-4296-4d80-842d-8accb455b354",
+     "timestamp": [
+      408,
+      389898628
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "powerScroll": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "midasBid": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:legendary"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "c5c088a3-9d08-3249-80e7-ba810e18b7f9",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "QIkxLTUy6Vyuwk/MIKWCkjVyDGXo8ToS+62LiMSwZLAEFnXK9V0ZFEPJ20HBqR/UhB652Uh22OybRiXbY8jMjVvMbypjPiizePSS7+inI1wDZxUm1LbbaRa0MeDTNkDwjt4KkMjrMYTRE0hN2ep0SYUZh0wdoSs2bqd2CrZ/YXx+wLXmbQw8eyPACzrH4nbwDQELez4Wl//wubq6WgbwB7/gp9z1i5CBlqZWvEboXilwtyWkO4hXTYtLtGA/acWqFX9XCLSTrfm/O9g1Xu/8L6xttPpXlTq1facTneuCROQxUvUtoz3FtxMIMYkGp7mF0blvNhd+Kc+2eNj+wfAGCbn0hj2dsSxhsvsP08EtOpgXNObl5mu08WKjCEgXGYh8kWqlJiUYB5PeFlknjUbyTvivd2PGBU78F00Jh00cJSq1m+TP94YBEF/Ni5WtsCQ4FPPCv+E1Tx7mtbPmvJkE6Fbn4UUm0pCspLHpVXPjQHR8bHIWn3g0/GX9oKG6U07+/tLVIfUMccHnr4VIdfIawSNx2mqdbDnM4F+TgK3WC07vemMXeQF0XCDppbNIllLqQ4AW9zahu316G4z0r8TsqgfXQh+U+OYIhmRh6mqJgp39Etln6+OSqGkV5kSEwZuQm/EJY2r2VUaqhXECXI9V7yPufGWW+Ws02YGb7ej115k=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTYyODY5NjY3NDM4NiwKICAicHJvZmlsZUlkIiA6ICJmZDQ3Y2I4YjgzNjQ0YmY3YWIyYmUxODZkYjI1ZmMwZCIsCiAgInByb2ZpbGVOYW1lIiA6ICJDVUNGTDEyIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzMxMzM4NGEyOTNjZmJiYTM0ODliNDgzZWJjMWRlNzU4NGNhMjcyNmQ3ZjVjM2E2MjA1MTM0NzQ5MjVlODdiOTciCiAgICB9CiAgfQp9"
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§7Accessory Power: §6+32",
+      "",
+      "§7Counts for twice the §6Accessory",
+      "§6Power §7in your §aAccessory Bag§7.",
+      "",
+      "§8Works while in Accessory Bag!",
+      "§6§lLEGENDARY ACCESSORY"
+     ],
+     "Name": "§6Hegemony Artifact"
+    },
+    "ExtraAttributes": {
+     "id": "HEGEMONY_ARTIFACT",
+     "winning_bid": 465600000,
+     "uuid": "de631c60-24d7-4d14-a61c-a6b97b4c3aa7",
+     "timestamp": [
+      415,
+      -975660284
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "boosters": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/island_relevant/foraging_2/axes/figstone_splitter",
+    "minecraft:tooltip_style": "hypixel_skyblock:legendary"
+   },
+   "id": 275,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 5,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Damage: §c+55",
+      "§7Strength: §c+16.5",
+      "§7Sweep: §2+36.4 §2(+10)",
+      "§7Foraging Fortune: §6+106.5 §6(+25) §9(+12) §2(+15)",
+      "§7Foraging Wisdom: §3+14 §9(+5) §2(+1)",
+      "§7Boosters: §2§2ꕮ§8/§2⎋§8/§2⸙",
+      "§7Gemstones: §8[§7§8] §8[§7§8]",
+      "",
+      "§9§d§lFirst Impression V",
+      "§7Grants §2+5 Sweep §7on melee Log",
+      "§7Breaks, and your first melee Log",
+      "§7Break on a tree grants you §2+10",
+      "§2Sweep§7.",
+      "§9Absorb VIII",
+      "§7Grants §3+8☯ Foraging Wisdom §7and",
+      "§7§6+16 Foraging Fortune§7.",
+      "§825M logs to tier up!",
+      "§9Efficiency V",
+      "§7Increases how quickly your tool",
+      "§7breaks blocks.",
+      "§9Smelting Touch I",
+      "§7Automatically smelts broken blocks",
+      "§7into their smelted form.",
+      "§9Woodsplitter V",
+      "§7Increases damage dealt to §2",
+      "§2Woodland§7 mobs by §a30%§7.",
+      "",
+      "§6Ability: Super Frenzy ",
+      "§7§7Gains §21 Sweep §7every §a10,000 Logs",
+      "§a§7cut on §2Galatea§7. §8(max 20)",
+      "§7Current Bonus: §2+20",
+      "§a§lMAXED OUT! NICE!",
+      "",
+      "§7Logs Cut: §b200,000",
+      "",
+      "§6Ability: Axe Toss  §e§lRIGHT CLICK",
+      "§7Throwing your Axe has no §2 Sweep",
+      "§2§7penalty for §a10s§7.",
+      "§8Cooldown: §a116s",
+      "",
+      "§6§l§ka§r §6§lLEGENDARY AXE §6§l§ka"
+     ],
+     "Name": "§6Moonglade Figstone Splitter §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "absorb_logs_chopped": 14214438,
+     "gems": {
+      "unlocked_slots": [
+       "CITRINE_0",
+       "CITRINE_1"
+      ]
+     },
+     "logs_cut": 200000,
+     "modifier": "moonglade",
+     "upgrade_level": 5,
+     "boosters": [
+      "foraging_wisdom",
+      "sweep",
+      "foraging_fortune"
+     ],
+     "wood_singularity_count": 1,
+     "id": "FIGSTONE_AXE",
+     "enchantments": {
+      "ultimate_first_impression": 5,
+      "efficiency": 5,
+      "smelting_touch": 1,
+      "absorb": 8,
+      "arcane": 5
+     },
+     "uuid": "ec15ad2c-aa8b-4f25-9733-9b7203994a52",
+     "timestamp": [
+      409,
+      2046993094
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "petItem": {
+   "components": {
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "1ac09db8-8b05-3c15-a4cb-33df9d98a7eb",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "E4bRWLWW5+uowu6cA7PnzsWENW0V7FPTlo8Y3V+ZgVXnekmsiv2bPk5EzoIhJGK9EGqfKt1H87PdwJIrdc5p3ojqAKVlta/FbVcRZet+/d5K3Fz8pK20/5B6O+YYBHL5D9GVyo9kN+AjGjGcUBfxmlDI56EjnL6QHHPNSmfQy7goOadGYtmaKH/kjjIX0HQ+LOk5QN3bmGt/pO0uW2i+5poMe0wSQY80D01nt/AJUOYax3+KC/FnNsCRPYgqJgIkDG7XokmkpjDc+a8WR0XH1HGIrbWCjU3xkQyHS0CiSyHVDHNlsR47yc5pnU+muh9eAZyK2HR1Az/DgFR9u3FZ90jezTXYHUgd81nCKtD16QN34Kej9S3CXGQWa6WcNWVCblQjafUXuu8EJpDRdA7cuW6GZOI3WeeIM1h4lZCmZbHJmOl2sqq3UzHd6AAT0UW0dHE2YFzjqd5B7WgU2lKEbxBKC8PgbE/zluRBYoPYevAoGq7ibHWA30jlVNF5ToyjLnGs3OOjXF8bIn5wajYhxnmB/w99n0yFeQ8KmsSv0oRc6NxrVmp1cYoanrG6AiGicuU9mQlD+CARxKbBHja6ihxkxfNyyutw0Bm6vyvTi9rxEnRtzLHChA0El0TN822DyrYP08lkC5fx8eev2pUOJ93qABJ5jAnFFis2/hV/s60=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTYyMDIzNzEyOTQxOCwKICAicHJvZmlsZUlkIiA6ICJmNGMyY2FkNzBhY2U0Y2U2ODY3ODY5ZDBiNjUzYTk4YiIsCiAgInByb2ZpbGVOYW1lIiA6ICJHdWFyZGlhbiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS8yMjEwMjU0MzQwNDViZGE3MDI1YjNlNTE0YjMxNmE0Yjc3MGM2ZmFhNGJhOWFkYjRiZTM4MDk1MjZkYjc3ZjlkIgogICAgfQogIH0KfQ=="
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§8Enchanting Pet",
+      "",
+      "§7Defense: §a+0.5",
+      "§7Intelligence: §b+1",
+      "",
+      "§6Laserbeam",
+      "§7§7Zaps your enemies for §b0.2x §7your §b",
+      "§bIntelligence §7every §a3s§7.",
+      "",
+      "§6Enchanting Wisdom Boost",
+      "§7§7§7Grants §3+0.3☯ Enchanting Wisdom§7.",
+      "",
+      "§7Progress to Level 2: §e0%",
+      "§f§l§m                         §r §e0§6/§e440",
+      "",
+      "§eRight-click to add this pet to your pet menu!",
+      "",
+      "§7§8Can be upgraded at Kat in The Hub!",
+      "§5§lEPIC"
+     ],
+     "Name": "§7[Lvl 1] §5Guardian"
+    },
+    "ExtraAttributes": {
+     "petInfo": "{\"type\":\"GUARDIAN\",\"active\":false,\"exp\":0.0,\"tier\":\"EPIC\",\"hideInfo\":false,\"candyUsed\":0,\"hideRightClick\":false,\"noMove\":false,\"petSoulbound\":false}",
+     "id": "PET",
+     "uuid": "c85f2d89-ed88-4986-9c68-19621fc7aae0",
+     "timestamp": [
+      415,
+      -974930855
+     ]
+    }
+   },
+   "Damage": 3
+  },
+  "starredFragged": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/island_relevant/dungeons/spirit_sceptre_fragged",
+    "minecraft:tooltip_style": "hypixel_skyblock:legendary"
+   },
+   "id": 339,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d808 §8(1381)",
+      "§7Damage: §c+229 §e(+20) §8(+451.5)",
+      "§7Strength: §c+60 §e(+20) §9(+40) §8(+129)",
+      "§7Crit Damage: §9+50% §8(+107.5%)",
+      "§7Attack Speed: §e+5% §9(+5%) §8(+7.5%)",
+      "§7Intelligence: §b+463 §9(+100) §8(+924.5)",
+      "§7Gemstones: §8[§8§8]",
+      "",
+      "§7§lUltimate Wise V, §9Bane of Arthropods V, §9Cleave V",
+      "§9Critical V, §9Cubism V, §9Ender Slayer V",
+      "§7Execute V, §9Experience III, §9Fire Aspect II",
+      "§9First Strike IV, §9Giant Killer V, §7Gravity V",
+      "§9Impaling V, §9Knockback II, §7Lethality V",
+      "§9Life Steal III, §9Looting III, §9Luck V",
+      "§9Pyroclasm V, §9Scavenger III, §9Sharpness V",
+      "§9Smite V, §7Thunderlord V, §7Vampirism V",
+      "§7Venomous V",
+      "",
+      "§7§cSome of your enchantments require",
+      "§ca higher Enchanting level!",
+      "",
+      "§6Ability: Guided Bat  §e§lRIGHT CLICK",
+      "§7Shoots a guided spirit bat, following your aim",
+      "§7and exploding for §c3,279 §7damage.",
+      "§8Mana Cost: §3§b200",
+      "",
+      "§7§4❣ §cRequires §cThe Catacombs Floor IV Completion§c.",
+      "§6§lLEGENDARY DUNGEON SWORD"
+     ],
+     "Name": "§6 Heroic Spirit Sceptre §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "hot_potato_count": 10,
+     "modifier": "heroic",
+     "upgrade_level": 5,
+     "id": "STARRED_BAT_WAND",
+     "enchantments": {
+      "impaling": 5,
+      "luck": 5,
+      "critical": 5,
+      "smite": 5,
+      "knockback": 2,
+      "scavenger": 3,
+      "ender_slayer": 5,
+      "fire_aspect": 2,
+      "experience": 3,
+      "life_steal": 3,
+      "giant_killer": 5,
+      "dragon_hunter": 5,
+      "venomous": 5,
+      "magmarizer": 5,
+      "thunderlord": 5,
+      "sharpness": 5,
+      "cubism": 5,
+      "lethality": 5,
+      "bane_of_arthropods": 5,
+      "cleave": 5,
+      "looting": 3,
+      "vampirism": 5,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5
+     },
+     "uuid": "ba3eee8b-8eb3-4fdd-9005-cbd0d945d66d",
+     "timestamp": [
+      415,
+      1539679428
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "midasWeapon": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/midas_sword_fragged",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 283,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1374 §8(5000)",
+      "§7Damage: §c+557.5 §e(+30) §9(+90) §8(+3,315.2)",
+      "§7Strength: §c+366 §e(+30) §6[+5] §9(+90) §d(+16) §8(+2,342.4)",
+      "§7Crit Damage: §9+112% §d(+12%) §8(+716.8%)",
+      "§7Ferocity: §c+5 §8(+7.75)",
+      "§7Intelligence: §b+100 §8(+640)",
+      "§7Ability Damage: §c+30% §9(+10%) §8(+46.5%)",
+      "§7Magic Find: §b+6 §8(+9.3)",
+      "§7Gemstones: §6[§d§6] §6[§8⚔§6]",
+      "",
+      "§d§l§d§lChimera V, §9Bane of Arthropods VII, §9Champion X",
+      "§9Cleave VI, §9Critical VII, §9Cubism VI",
+      "§9Divine Gift III, §9Drain V, §9Ender Slayer VII",
+      "§9Execute VI, §9Experience V, §9Fire Aspect III",
+      "§9First Strike V, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting V",
+      "§9Luck VII, §9Pyroclasm VI, §9Scavenger VI",
+      "§9Sharpness VII, §9Smite VII, §9Smoldering V",
+      "§9Tabasco III, §9Thunderlord VII, §9Titan Killer VII",
+      "§9Vampirism VI, §9Venomous VII, §9Vicious V",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§6Ability: Greed ",
+      "§7The strength and damage bonus of",
+      "§7this item is dependent on the price",
+      "§7paid for it at the §5Dark Auction§7!",
+      "§7The maximum bonus of this item is §c225",
+      "§c§7if the bid was §6250,000,000 Coins §7or",
+      "§7higher!",
+      "",
+      "§7Price paid: §6312,980,000 Coins",
+      "§7Strength Bonus: §c225",
+      "§7Damage Bonus: §c225",
+      "",
+      "§9Byron's Compassion §8(Gilded)",
+      "§7Upon killing an enemy, you have a",
+      "§7rare chance to grant coins to a",
+      "§7player around you.",
+      "§7Gifted coins: §6239.3k",
+      "",
+      "§d§l§ka§r §d§lMYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§d Gilded Midas' Sword §6✪✪✪✪✪§c➎"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "gilded",
+     "art_of_war_count": 1,
+     "upgrade_level": 10,
+     "gilded_gifted_coins": 239251,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 7,
+      "smite": 7,
+      "scavenger": 6,
+      "ender_slayer": 7,
+      "knockback": 2,
+      "fire_aspect": 3,
+      "experience": 5,
+      "divine_gift": 3,
+      "dragon_hunter": 6,
+      "venomous": 7,
+      "tabasco": 3,
+      "magmarizer": 6,
+      "thunderlord": 7,
+      "sharpness": 7,
+      "cubism": 6,
+      "titan_killer": 7,
+      "lethality": 6,
+      "bane_of_arthropods": 7,
+      "vicious": 5,
+      "cleave": 6,
+      "smoldering": 5,
+      "syphon": 5,
+      "looting": 5,
+      "ultimate_chimera": 5,
+      "vampirism": 6,
+      "execute": 6,
+      "first_strike": 5,
+      "champion": 10
+     },
+     "uuid": "53a5cc39-1d0d-4673-852c-be6e34291c5e",
+     "hot_potato_count": 15,
+     "gems": {
+      "JASPER_0": "PERFECT",
+      "COMBAT_0": "PERFECT",
+      "unlocked_slots": [
+       "JASPER_0",
+       "COMBAT_0"
+      ],
+      "COMBAT_0_gem": "ONYX"
+     },
+     "dungeon_item": 1,
+     "champion_combat_xp": 27418925.102562983,
+     "id": "STARRED_MIDAS_SWORD",
+     "winning_bid": 312980000,
+     "timestamp": [
+      406,
+      -698045288
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "silex": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/titanium_drill_dr_x655",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 278,
+   "Count": 1,
+   "tag": {
+    "ench": [
+     {
+      "lvl": 10,
+      "id": 32
+     }
+    ],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§8Breaking Power 9",
+      "",
+      "§7Damage: §c+75",
+      "§7Mining Speed: §6+2,249 §6[+500] §9[+50] §9(+75) §d(+24)",
+      "§7Pristine: §5+2.9 §d(+0.4)",
+      "§7Mining Fortune: §6+202 §9[+5] §9(+20) §d(+12)",
+      "§7Gemstone Fortune: §6+50",
+      "§7Mining Wisdom: §3+9",
+      "§7Gemstones: §f[§6§f] §f[§a§f] §f[§e✦§f]",
+      "",
+      "§9§d§lFlowstate III",
+      "§9Compact IX §8962,213",
+      "§9Efficiency X",
+      "§9Experience IV",
+      "§9Fortune IV",
+      "§9Lapidary V",
+      "§9Paleontologist V",
+      "§9Prismatic V",
+      "§9Smelting Touch I",
+      "",
+      "§7§7Fuel Tank: §cNot Installed",
+      "§7§7Increases fuel capacity with part",
+      "§7installed.",
+      "",
+      "§7§7Drill Engine: §cNot Installed",
+      "§7§7Increases §6 Mining Speed §7with part",
+      "§7installed.",
+      "",
+      "§7§7Upgrade Module: §cNot Installed",
+      "§7§7Applies a passive upgrade with part",
+      "§7installed.",
+      "",
+      "§7Apply Drill Parts to this Drill by",
+      "§7talking to a §2Drill Mechanic§7!",
+      "",
+      "§7§7Fuel: §23,000§8/3k",
+      "",
+      "§6§l⦾ §6Ability: Pickobulus  §e§lRIGHT CLICK",
+      "§7Throw your pickaxe to create an",
+      "§7explosion mining all ores in a §a3 §7block",
+      "§7radius.",
+      "§8Cooldown: §a50s",
+      "",
+      "§9Auspicious Bonus",
+      "§7Grants §6+0.9% §6 Mining Fortune§7.",
+      "",
+      "§d§l§ka§r §d§lMYTHIC DRILL §d§l§ka"
+     ],
+     "Name": "§dAuspicious Titanium Drill DR-X655"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "gems": {
+      "JADE_0": "ROUGH",
+      "MINING_0": "ROUGH",
+      "unlocked_slots": [
+       "JADE_0",
+       "MINING_0"
+      ],
+      "AMBER_0": "ROUGH",
+      "MINING_0_gem": "TOPAZ"
+     },
+     "polarvoid": 5,
+     "drill_fuel": 67856,
+     "modifier": "auspicious",
+     "compact_blocks": 962213,
+     "power_ability_scroll": "AMBER_POWER_SCROLL",
+     "id": "TITANIUM_DRILL_4",
+     "enchantments": {
+      "efficiency": 10,
+      "lapidary": 5,
+      "fortune": 4,
+      "smelting_touch": 1,
+      "compact": 9,
+      "paleontologist": 5,
+      "pristine": 5,
+      "ultimate_flowstate": 3,
+      "experience": 4
+     },
+     "uuid": "1c433193-0540-45a1-b982-629b4e1e4490",
+     "divan_powder_coating": 1,
+     "timestamp": [
+      406,
+      1280507043
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "stackingEnchant": {
+   "components": {
+    "minecraft:item_model": "hypixel_skyblock:item/uncategorized/hyperion",
+    "minecraft:tooltip_style": "hypixel_skyblock:mythic"
+   },
+   "id": 267,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "Unbreakable": 1,
+    "HideFlags": 254,
+    "display": {
+     "Lore": [
+      "§7Gear Score: §d1222 §8(5000)",
+      "§7Damage: §c+356 §e(+30) §8(+1,778.7)",
+      "§7Strength: §c+282 §e(+30) §6[+5] §9(+75) §d(+7) §8(+1,439.13)",
+      "§7Crit Damage: §9+120% §9(+50%) §8(+646.8%)",
+      "§7Ferocity: §c+33 §8(+46.2)",
+      "§7Intelligence: §b+477 §d(+12) §8(+2,382.38)",
+      "§7Gemstones: §9[§b§9] §9[§d⚔§9]",
+      "",
+      "§d§l§d§lUltimate Wise V, §9Bane of Arthropods VI, §9Champion V",
+      "§9Cleave V, §9Critical VI, §9Cubism V",
+      "§9Drain IV, §9Ender Slayer VI, §9Execute V",
+      "§9Experience IV, §9Fire Aspect III, §9First Strike IV",
+      "§9Giant Killer VI, §9Gravity VI, §9Impaling V",
+      "§9Knockback II, §9Lethality VI, §9Looting IV",
+      "§9Luck VII, §9Pyroclasm V, §9Scavenger V",
+      "§9Sharpness VI, §9Thunderlord VI, §9Vampirism VI",
+      "§9Venomous VI",
+      "",
+      "§b◆ Music Rune III",
+      "",
+      "§7Deals §c+50% §7damage to §8 Wither §7mobs.",
+      "§7Grants §c+1 §c Damage §7and §a+2 §b",
+      "§bIntelligence §7per §cCatacombs §7level.",
+      "",
+      "§aScroll Abilities:",
+      "§d§l⦾ §6Ability: Wither Impact  §e§lRIGHT CLICK",
+      "§7Teleport §a10 blocks§7 ahead of you",
+      "§7dealing §c42,437.2 §7damage to nearby",
+      "§7enemies. Also reduces your damage",
+      "§7taken and grants an absorption",
+      "§7shield for §e5 seconds§7.",
+      "§8Mana Cost: §3§b135",
+      "",
+      "§fKills: §65,351",
+      "",
+      "§9Fabled Bonus",
+      "§7Critical hits have a chance to deal",
+      "§7up to §a15% §7extra damage.",
+      "",
+      "§d§l§ka§r §d§lSHINY MYTHIC DUNGEON SWORD §d§l§ka"
+     ],
+     "Name": "§dShiny Fabled Hyperion §6✪✪✪✪✪"
+    },
+    "ExtraAttributes": {
+     "rarity_upgrades": 1,
+     "stats_book": 5351,
+     "is_shiny": 1,
+     "runes": {
+      "MUSIC": 3
+     },
+     "modifier": "fabled",
+     "art_of_war_count": 1,
+     "power_ability_scroll": "JASPER_POWER_SCROLL",
+     "upgrade_level": 5,
+     "enchantments": {
+      "impaling": 5,
+      "luck": 7,
+      "critical": 6,
+      "knockback": 2,
+      "scavenger": 5,
+      "ender_slayer": 6,
+      "fire_aspect": 3,
+      "experience": 4,
+      "giant_killer": 6,
+      "dragon_hunter": 6,
+      "venomous": 6,
+      "magmarizer": 5,
+      "thunderlord": 6,
+      "sharpness": 6,
+      "cubism": 5,
+      "lethality": 6,
+      "bane_of_arthropods": 6,
+      "cleave": 5,
+      "looting": 4,
+      "syphon": 4,
+      "vampirism": 6,
+      "execute": 5,
+      "first_strike": 4,
+      "ultimate_wise": 5,
+      "champion": 5
+     },
+     "uuid": "5b1f3ecc-5169-49ea-be63-2864fbfea90a",
+     "ability_scroll": [
+      "IMPLOSION_SCROLL",
+      "WITHER_SHIELD_SCROLL",
+      "SHADOW_WARP_SCROLL"
+     ],
+     "hot_potato_count": 15,
+     "gems": {
+      "COMBAT_0": "FINE",
+      "unlocked_slots": [
+       "COMBAT_0",
+       "SAPPHIRE_0"
+      ],
+      "COMBAT_0_gem": "JASPER",
+      "SAPPHIRE_0": "FINE"
+     },
+     "champion_combat_xp": 715210.8661200153,
+     "id": "HYPERION",
+     "timestamp": [
+      415,
+      1711804355
+     ]
+    }
+   },
+   "Damage": 0
+  },
+  "plain": {
+   "components": {
+    "minecraft:item_model": "minecraft:scaffolding",
+    "minecraft:tooltip_style": "hypixel_skyblock:epic"
+   },
+   "id": 397,
+   "Count": 1,
+   "tag": {
+    "ench": [],
+    "HideFlags": 254,
+    "SkullOwner": {
+     "Id": "de943c67-1b43-30be-aa50-60d8e64f9d19",
+     "hypixelPopulated": 1,
+     "Properties": {
+      "textures": [
+       {
+        "Signature": "N743H+9H1a0iCITzId/2jcnGNpmkLSAFMThVRI8lujnz6SxdEnMSSsx/P+F8U/4wx1qXUVKnn5BUP1nZhUsZu8nSGcAkvNQiDXCYmaeHw7PWnkXZ9kYoYHB0vSTS1WI8lZxjEs6uoTXfai0t8d/U1tUPPJzqJVnEwgH8Vi9gvdxQcqdE1HfZAnjJZ4DzhK1Vj3JHd14dKhXN4UF+5ZfaXzIzD6iD09zgglSYxZ7oHbuPFCMfhyXS5a9uYPn/FTfQzx4+ivAGZiY09KpiVPCFp2fC4MuSzjUq+uooQDZzPRGnWym6EkkV5Lli6HpLlBGOL0x4mvBlvgTRFAvkYOeLBpDzmp2IoR1vpMJqL+w5oox2wGCC4ZR9b9KL/2b9qdXEA3Sn0cU1iLw9nq+1Bqt2KyB8olrcrtAaxdoXIH3IASwsD9pk7SP87pMtbFQlgjtE9PWm7KiTErmnTCWx6twfKBaLiI9JtNf9PZNLq3URrQi8TUCuUA7UcByd0E3tuSAB3RPG8Wa8Ta2U8tVWfB1H/GQ/aezG+g97xP4sqYYnQdJTYsz2ufdKLttVV3rCjpoYxlYDrAQSbT+zg2nZdONwdyzpY34e8/iscPlWAz1ywwAO4IMCkhqExfRaOSoLRTuXCVSxUlUMhB9xaipL4PLsKtniSDzY7/tSLmCUFMWbmlI=",
+        "Value": "ewogICJ0aW1lc3RhbXAiIDogMTcxODkwMzg2NDQ1MiwKICAicHJvZmlsZUlkIiA6ICIyMmNiM2U0ZDdmOTY0ZmNjYjE1MDIyNWIwN2YzMTEyMCIsCiAgInByb2ZpbGVOYW1lIiA6ICJ0dWxleW1hbkIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWIyNGNiYzk3NTUxNzEzOWJlZmJkZmYxZWFiYWUyYTgwNzBlMmExZTg2YzljYzA3NDUwMjEwODg2MjYxMjAwYyIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9"
+       }
+      ]
+     }
+    },
+    "display": {
+     "Lore": [
+      "§6Ability: Climb!  §e§lRIGHT CLICK",
+      "§7Each click allows you to climb §a4§7 blocks, up to",
+      "§7§a16§7.",
+      "§7",
+      "§7§7Jumping out will delete the scaffolding.",
+      "",
+      "§5§lEPIC"
+     ],
+     "Name": "§5Large Scaffolding"
+    },
+    "ExtraAttributes": {
+     "id": "LARGE_SCAFFOLDING"
+    }
+   },
+   "Damage": 3
+  }
+ }
+}

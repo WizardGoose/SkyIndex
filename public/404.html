@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#07080a" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Deliberately not the site name. index.html carries the only two hand
+         written copies of SITE_NAME ("MANUAL RENAME SPOT 1 of 2" and "2 of 2");
+         a third copy here would put that count out of date the next time the
+         site is renamed, and this page is on screen for one redirect. -->
+    <title>Redirecting</title>
+
+    <!-- Same obsidian ground index.html paints, so the hop through this page is
+         not a white flash between two dark screens. -->
+    <style>
+      html {
+        background-color: #07080a;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      /*
+       * The write half of the GitHub Pages deep-link workaround. Pages is a
+       * static host with no rewrite rule, so a visitor who opens
+       * /Skydex/greenhouse/planner directly asks for a file that does not
+       * exist and gets this page instead - with the address they asked for
+       * still in the address bar. That address is the only copy of their
+       * intent, so it is stashed and then restored once the real app is up.
+       *
+       * The read half is src/components/AppWithRedirect.tsx, and the two only
+       * work as a pair. The contract between them, exactly:
+       *
+       *   key    sessionStorage["pathToRedirect"]
+       *   value  window.location.pathname + search + hash, verbatim
+       *
+       * Verbatim matters in both directions. The value is not encoded, not
+       * trimmed, and keeps the "/Skydex/" base on the front, because the
+       * reader compares it against that same expression to decide whether
+       * there is anything to restore and then hands it straight to
+       * history.replaceState. Anything encoded here would be restored still
+       * encoded; anything with the base stripped would be compared against a
+       * path that still has it and would restore to the wrong address.
+       */
+      (function () {
+        // Spelled out rather than derived, and it has to spell the repo name
+        // exactly, for the same reason vite.config.ts's `base` does: this is
+        // one decision in two files and they have to travel together. It
+        // cannot be read off the location, because Pages serves this file
+        // under the address the visitor asked for rather than its own.
+        var BASE = "/Skydex/";
+
+        var requested = window.location.pathname + window.location.search + window.location.hash;
+
+        // Served from the domain root instead of a project path - a static
+        // server pointed at dist, or the repo under another name - so the
+        // app's entry is the root and the stashed path needs no base.
+        var entry = window.location.pathname.indexOf(BASE) === 0 ? BASE : "/";
+
+        // Nothing to hand over when the entry is what was asked for. Pages
+        // will not serve this file for that address anyway, since index.html
+        // matches it; the guard is here so a stale key cannot be written on
+        // the one path the reader deliberately ignores.
+        if (requested !== entry) {
+          try {
+            sessionStorage.setItem("pathToRedirect", requested);
+          } catch (e) {
+            // Private modes and blocked storage both throw. Losing the deep
+            // link is a worse landing than losing the visitor, so the
+            // redirect still happens and they arrive at the home page.
+          }
+        }
+
+        // replace, not assign: the 404 must not sit in history, or Back from
+        // the restored page lands here and bounces forward again.
+        window.location.replace(entry);
+      })();
+    </script>
+    <noscript>
+      <div style="text-align: center; padding: 2rem; font-family: system-ui, sans-serif; color: #d8d2e2">
+        <p>This page needs JavaScript to restore the address you asked for.</p>
+        <p>Open the site root and navigate from there.</p>
+      </div>
+    </noscript>
+  </body>
+</html>

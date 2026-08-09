@@ -613,6 +613,23 @@ its [.cats container](https://github.com/meowdding/cats-file-format) (MIT).
 Understanding of the format was taken from those repositories' documentation
 and readers, with thanks; no code was copied from either.
 
+## Community inspiration
+
+**SkyCrypt** and **SkyOcean** are important product and interface references:
+
+  https://cupcake.shiiyu.moe
+  https://github.com/meowdding/SkyOcean
+
+SkyCrypt informed the clear presentation of dense profile data. SkyOcean, by
+meowdding and its contributors, informed the companion mod's chest-tracking
+and sack-handling design, as well as the idea that a wide collection of
+SkyBlock utilities can feel like one cohesive, in-game-first toolkit.
+
+The Skydex implementation was rewritten for its standalone Java/Fabric
+transport and data model. No SkyOcean source files or non-code assets are
+copied or redistributed here. SkyOcean's code is MIT licensed and its non-code
+material is all rights reserved; neither category is included in Skydex.
+
 ## Original work
 
 Everything under `src/greenhouse/planner/`, `src/items/`, `src/profile/`,
