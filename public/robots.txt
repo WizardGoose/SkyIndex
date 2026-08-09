@@ -1,0 +1,14 @@
+# Everything here is crawlable, which is not the same as wanting to be indexed.
+# Every page carries <meta name="robots" content="noindex, nofollow">, and a
+# crawler has to be allowed to fetch a page before it can read that tag.
+# Disallowing here would do the opposite of the intent: the address stays
+# indexable from any link pointing at it, and the instruction never gets read.
+#
+# On a project Pages site this file is served at /Skydex/robots.txt. Crawlers
+# only fetch robots.txt from the domain root, so the meta tag is what actually
+# governs; this exists so the path answers honestly instead of 404ing.
+#
+# No Sitemap line, because there is no sitemap.
+
+User-agent: *
+Allow: /

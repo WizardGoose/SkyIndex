@@ -1,0 +1,1603 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   Theme tokens
+   =========================================================================
+
+   This project has no tailwind.config. Tailwind 4 reads its theme from this
+   @theme block, which means redefining a stock ramp here retints every
+   existing utility across the whole codebase at once - including the upstream
+   shards-suite files nobody is allowed to rewrite. That is the entire reason
+   the palette lives here rather than in a set of new class names.
+
+   Two families of chrome, and only two:
+
+     ink        replaces `slate`. A cold near-black with a violet undertone.
+                Never pure black, never a warm grey. Carries every surface,
+                border and neutral text step on the site.
+     index      replaces `emerald` AND `orange`, and now also `purple`,
+                `violet`, `fuchsia`, `indigo` and `sky`. A cold library blue,
+                after the site's name: an index is a thing you look records
+                up in, which is what these tools are for. Kept on the
+                `emerald-*` token names on purpose: that is the whole
+                mechanism, because retinting the token repalettes every
+                `emerald-*` utility at once, including the upstream shard
+                files nobody is allowed to rewrite. Renaming it to `index-*`
+                would mean touching all of those call sites instead.
+
+   There is no third accent. An earlier pass kept the shard suite's inherited
+   purple as an "arcane violet" family on the theory that violet could be the
+   accent those pages had grown up with. That was rejected: one site, one
+   accent. `purple` / `violet` / `fuchsia` / `indigo` / `sky` are now all
+   Index blue, separated only by lightness where a layout deliberately pairs
+   two of them. `arcane-*` survives as a named surface family and is never an
+   interactive colour. Its only consumers were the ambient wash and grain, both
+   removed with the background pick, so it currently has NO call sites
+   anywhere. It is left in place rather than deleted because the neutral ramp
+   letter is still open and a surface violet may yet have a job; if the letter
+   lands and nothing has claimed it, it should go.
+
+   Game-data colours are a hard exception and they override everything above.
+   A colour that encodes a game concept is DATA, not theme: rarity tiers, and
+   the per-stat colours SkyBlock gives Attack Speed, Intelligence, Fortune and
+   the rest. Those live on their own `--color-rarity-*` and `--color-stat-*`
+   token names precisely so that no future chrome remap can reach them. The
+   green/blue/amber/red/yellow steps the upstream files use for the same
+   purpose are pinned to match. Every one of them keeps its Minecraft hue and
+   is only renotched for legibility on violet-black. See the game-data block.
+
+   Contrast: every step used for text was checked against the real panel
+   ground #0e1014, which is exactly 0.55 * #13161d over #07080a, i.e. what
+   bg-slate-900/55 resolves to over the page. The site's smallest type is
+   10px, so 4.5:1 is the bar, not 3:1.
+     ink-400   #93a3b8  7.4:1
+     ink-500   #76859c  5.1:1   (Tailwind's original slate-500 scored 4.0:1
+                                 here, so this step was lifted deliberately)
+     ink-600   #48546a  2.5:1   structural only: borders and dividers. It is
+                                not a text colour and must not become one.
+                                The ~50 `text-slate-600` call sites that were
+                                sub-AA have all been moved to ink-500, so the
+                                count is now zero; keep it there. Raising this
+                                step to rescue a text usage would drag every
+                                `border-slate-600` up with it, which is why
+                                the fix belongs at the call site instead.
+
+   The accent ramp was measured against the same ground. Every step from 100
+   to 600 clears 4.5:1, so all the text-bearing steps pass AA at 10-11px:
+     index-100 #cbeeff 16.3:1   index-500 #00b3f0  8.2:1   <- Index blue
+     index-200 #a5e2ff 14.1:1   index-600 #0090c4  5.5:1   lowest text step
+     index-300 #6fd0fb 11.4:1   index-700 #086f96  3.5:1   UI / large only
+     index-400 #38bdf2  9.2:1   index-800 #0d566f  2.4:1   structural only
+   700 and below are fills, borders and rings, which is how they are used.
+
+   These figures are measured on a flat panel ground, and since the
+   background pick that is exactly what a panel sits on: flat solid, no wash,
+   no backdrop image, no grain. They used to be an assumption held true by a
+   budget on the layers underneath. They are now simply the result. See the
+   Ground block below.
+   ========================================================================= */
+
+@theme {
+  --font-sans: "Space Grotesk", "Minecraft", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Minecraft", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* The mark's face, and nothing else's. ADLaM Display is used at one size in
+     one place: the "W.W" on the landing page. It is deliberately not offered
+     as a heading font, because a display face with letterforms this heavy
+     stops being a mark the moment it appears twice. See the @font-face below
+     for the licence, and NOTICE.md for the full record. */
+  --font-mark: "ADLaM Display", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  /* The chrome face, from the glass re-vamp: Montserrat
+     ExtraBold carries the wordmark, the masthead tabs and page display
+     headings, and deliberately nothing else: a display weight stops reading
+     as chrome the moment body copy is set in it. */
+  --font-chrome: "Montserrat", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+
+  /* --- Obsidian ink (replaces slate) ------------------------------------ */
+  --color-slate-50: #f5f7fa;
+  --color-slate-100: #e8edf3;
+  --color-slate-200: #d3dbe5;
+  --color-slate-300: #b2bfce;
+  --color-slate-400: #93a3b8;
+  --color-slate-500: #76859c;
+  --color-slate-600: #48546a;
+  --color-slate-700: #2b3340;
+  --color-slate-800: #1e232c;
+  --color-slate-900: #13161d;
+  --color-slate-950: #07080a;
+
+  /* --- Index blue accent (replaces emerald) ----------------------------- */
+  --color-emerald-50: #eefaff;
+  --color-emerald-100: #cbeeff;
+  --color-emerald-200: #a5e2ff;
+  --color-emerald-300: #6fd0fb;
+  --color-emerald-400: #38bdf2;
+  --color-emerald-500: #00b3f0;
+  --color-emerald-600: #0090c4;
+  --color-emerald-700: #086f96;
+  --color-emerald-800: #0d566f;
+  --color-emerald-900: #0c3f52;
+  --color-emerald-950: #072a37;
+
+  /* Orange folds into the accent. It was a third accent on the calculator
+     inputs and Kuudra controls, all of it interactive chrome, which is
+     exactly what the accent is for. Same steps, so the two stay in lockstep
+     and a future retint only has to happen once. */
+  --color-orange-100: #cbeeff;
+  --color-orange-200: #a5e2ff;
+  --color-orange-300: #6fd0fb;
+  --color-orange-400: #38bdf2;
+  --color-orange-500: #00b3f0;
+  --color-orange-600: #0090c4;
+  --color-orange-700: #086f96;
+
+  /* purple was the inherited accent of the shard tools: roughly 230 usages of
+     interactive chrome, fills, borders, focus rings and text, spread across
+     src/components and the five shard pages. It is now Index blue, step for
+     step, byte for byte. Not "a blue near the accent" - the same values, so a
+     future retint of the accent moves purple with it and the two can never
+     drift apart. This is the token that makes /fusion, /recipes, /shards,
+     /fusion-lines and /guide stop looking violet. */
+  --color-purple-50: #eefaff;
+  --color-purple-100: #cbeeff;
+  --color-purple-200: #a5e2ff;
+  --color-purple-300: #6fd0fb;
+  --color-purple-400: #38bdf2;
+  --color-purple-500: #00b3f0;
+  --color-purple-600: #0090c4;
+  --color-purple-700: #086f96;
+  --color-purple-800: #0d566f;
+  --color-purple-900: #0c3f52;
+  --color-purple-950: #072a37;
+
+  /* violet was a near-duplicate of purple in the source, and its only surviving
+     call site is the "All Rarities" option in the four rarity dropdowns. "All"
+     is not a rarity, it is the neutral choice, so it should read as accent
+     chrome sitting next to the five real rarity colours rather than as a sixth
+     rarity. Exact duplicate of purple: the suite stops having two accents that
+     differ by accident. */
+  --color-violet-200: #a5e2ff;
+  --color-violet-300: #6fd0fb;
+  --color-violet-400: #38bdf2;
+  --color-violet-500: #00b3f0;
+  --color-violet-600: #0090c4;
+  --color-violet-700: #086f96;
+  --color-violet-900: #0c3f52;
+
+  /* Two-tone separation.
+     ---------------------------------------------------------------------
+     Some layouts pair two of these families on purpose to tell two things
+     apart - an input against an output, one shard against another. Collapsing
+     all four to identical values would have thrown that distinction away, so
+     fuchsia and indigo stay in the accent's hue band and separate by lightness
+     instead. The whole band spans 195deg to 207deg, which is one blue; what
+     the eye reads is the brightness ladder.
+
+       step 400 (the text step):  fuchsia L70  >  purple L58  >  indigo L54
+       step 500 (the fill step):  fuchsia L62  >  purple L47  >  indigo L38
+
+     fuchsia is the brighter of the pair. It marks the thing being singled out:
+     the Hunter Fortune field inside the calculator's iron-man block, the
+     "Output Shard" label on /recipes, the Forest Essence cost badge, the "Fuse"
+     type chip. Every one of those sits beside a purple or sky sibling, so it
+     has to be visibly brighter rather than merely different.
+       fuchsia-200 #c4e9fd 15.5:1   fuchsia-500 #42bafa  9.1:1
+       fuchsia-300 #9ddafb 13.1:1   fuchsia-600 #059ef0  6.8:1
+       fuchsia-400 #6cc8f9 10.6:1   fuchsia-700 #0775b0  4.0:1  structural */
+  --color-fuchsia-200: #c4e9fd;
+  --color-fuchsia-300: #9ddafb;
+  --color-fuchsia-400: #6cc8f9;
+  --color-fuchsia-500: #42bafa;
+  --color-fuchsia-600: #059ef0;
+  --color-fuchsia-700: #0775b0;
+
+  /* indigo goes the other way: deeper, and leaned to 207deg so it reads as a
+     denser azure next to purple's 197deg. Its only call site is the sort button
+     that sits directly beside a purple-ringed search field on /shards, twice,
+     so "deeper sibling of the accent" is exactly the job.
+
+     indigo-400 is the one text step, and it is measured on the ground it
+     actually sits on rather than on the flat panel: the button carries
+     bg-indigo-500/20, rising to /30 on hover, which lifts the ground under its
+     own label.
+       indigo-400 #2c93e8   6.08:1 flat   5.26:1 on the chip   4.72:1 on hover
+     All three clear 4.5:1. The earlier candidate at L46 measured 4.73:1 flat
+     and looked safe, but fell to 3.67:1 once the hover fill was composited in,
+     which is the whole reason this step is documented against the chip.
+       indigo-300 #5aabed  8.0:1
+       indigo-500 #1369ae  3.5:1  fill and border only, never text
+       indigo-600 #0f538a  2.5:1  structural only */
+  --color-indigo-300: #5aabed;
+  --color-indigo-400: #2c93e8;
+  --color-indigo-500: #1369ae;
+  --color-indigo-600: #0f538a;
+
+  /* sky was never part of the violet family, but stock sky-400 is #38bdf8 and
+     the accent is #38bdf2 - a six-value difference nobody can see. It was
+     already the accent by accident on the result badges and the info toast.
+     Pinned to the real thing so there is one accent rather than one accent and
+     a lookalike, and so a future retint only has to happen once. Its former
+     game-data call site, Fishing Speed, has moved to --color-stat-aqua. */
+  --color-sky-300: #6fd0fb;
+  --color-sky-400: #38bdf2;
+  --color-sky-500: #00b3f0;
+
+  /* --- White ------------------------------------------------------------ */
+  /* 143 `text-white` usages rendered pure #ffffff, which is harsh on obsidian
+     and is the single most obvious default-palette tell. Remapping the token
+     softens all of them and gives `bg-white/5` a violet-tinted glass instead
+     of a grey one. `black` is left alone: it is the modal scrim and should
+     stay a true black. */
+  --color-white: #e8edf3;
+
+  /* =======================================================================
+     GAME DATA - do not fold into the accent, ever
+     =======================================================================
+
+     Everything from here down encodes a SkyBlock concept. It is data wearing a
+     colour, not theme, and the principle behind it is that the game already
+     taught the player what these colours mean: gold is fortune, red is
+     strength, aqua is intelligence. Repainting them to match the site would be
+     throwing away information the player already has.
+
+     That is not hypothetical. Folding `orange` into the accent silently turned
+     Attack Speed blue, because the upstream stat map spelled it
+     `text-orange-400`. The fix is structural rather than a one-off correction:
+     every game colour now lives on a `--color-rarity-*` or `--color-stat-*`
+     name that no chrome family will ever be remapped onto. A future retint
+     cannot reach them by accident, because there is no generic ramp left in
+     the path.
+
+     Source of truth is the game's own colour codes, taken from the Hypixel
+     SkyBlock wiki's data modules, which are vendored in this repo under
+     data/wiki/modules - Module_Rarity_Data.lua for the tiers and
+     Module_Stat_Data.lua for the stats. Both record a Minecraft colour name
+     per entry, e.g. attack speed = yellow, intelligence = aqua,
+     mining fortune = gold. Nothing here was guessed from memory.
+
+     Renotching. Vanilla Minecraft chat colours were chosen for a grey-blue
+     inventory background and several of them are unreadable on violet-black:
+     dark_purple #aa00aa lands at 3.1:1 and blue #5555ff at 3.9:1, both under
+     AA at the 10px this site sets rarity in. So each keeps its hue identity
+     and moves in lightness only, with two deliberate hue exceptions, both
+     forced by the accent:
+       blue  240deg -> 226deg   at 240 vs the accent's 195 a rare item name
+                                read as interactive chrome
+       aqua  180deg -> 172deg   same problem, 15deg from the accent; pushed to
+                                the green side to open it to 25deg
+     Those are the only two, and both are the smallest move that fixed the
+     collision.
+     ======================================================================= */
+
+  /* --- Rarity tiers ----------------------------------------------------- */
+  /* Module_Rarity_Data.lua, colour code in brackets. Rarity is often set at
+     10px so these hold a >= 7:1 comfort margin rather than the 4.5:1 AA floor,
+     with one stated exception at the bottom.
+
+       common       white         #b0a8c0   8.7:1
+       uncommon     green         #63d97d  11.1:1
+       rare         blue          #6b8cf7   6.3:1
+       epic         dark_purple   #cf7ff0   7.5:1
+       legendary    gold          #ffb545  11.3:1
+       mythic       light_purple  #fa80d5   8.6:1
+       divine       aqua          #5ef3df  14.5:1
+       special      red           #ff6b6b   7.1:1
+       very special red           #ff6b6b   7.1:1
+       supreme      dark_red      #df495a   4.9:1
+
+     Hue spacing, so no two tiers read as each other: special 0, legendary 36,
+     uncommon 133, divine 172, rare 226, epic 282, mythic 318. The tightest gap
+     is 36deg and the tightest gap to the accent is divine's 25deg.
+
+     Three honest notes.
+     - special and very special are the SAME value because the game gives both
+       &c red. They are distinguished by their labels, exactly as in game.
+     - supreme is the one tier under the 7:1 comfort margin. It is dark_red
+       (&4), and on this ground a red that clears 7:1 has to be LIGHTER than
+       special's red, which would inverte the relationship the game sets up.
+       It clears the 4.5:1 AA floor at 4.94:1 and separates from special by
+       1.44x in luminance plus a 7deg lean to crimson. Legibility is met; the
+       comfort margin was traded for keeping dark red dark.
+     - rare stays at #6b8cf7 rather than moving with the new tiers. That value
+       was placed deliberately to hold ~30deg off the cyan accent and nothing
+       here has a reason to disturb it.
+
+     Re-measured on the flat ground. Values are UNCHANGED; these are
+     colours the game sets and they are not on the table. Every tier clears its
+     bar on the shipped panel ground #0e1014, and by slightly more than before,
+     because the wash and backdrop that used to sit under the panel are gone:
+
+       common 8.70  uncommon 11.10  rare 6.35  epic 7.51  legendary 11.29
+       mythic 8.61  divine 14.51  special 7.15  supreme 4.95
+
+     supreme remains the stated exception, above the 4.5 AA floor and below the
+     7:1 comfort margin, for the reason given above.
+
+     One collision to keep in view, and it belongs to the NEUTRAL RAMP decision
+     rather than to rarity. In OKLCH, `common` #b0a8c0 sits 2deg off the current
+     ramp's own hue at a comparable chroma. It is legible at 8.70:1, so this is
+     not a contrast fault; it is that a Common item name is not reading as a
+     colour at all, it is reading as the chrome at a different lightness. epic
+     is the next tightest at 17deg, rare at 29deg.
+
+     Removing the ambient wash made this easier to see rather than worse: the
+     wash was the only other tinted thing in the room, so the ramp's hue is now
+     the only hue present that is not an accent or a rarity. Nothing here should
+     be changed to fix it. The fix, if it is wanted, is the ramp letter: a
+     chroma-zero neutral removes the collision outright because there is no
+     neutral hue left for a rarity to collide with. Measured on the candidates
+     page, per ramp.
+
+     Note the hue figures in the paragraph above this one are in the sRGB hue
+     convention the original notes used, and these are OKLCH. They are different
+     measures of the same colours, not a disagreement. */
+  --color-rarity-common: #b0a8c0;
+  --color-rarity-uncommon: #63d97d;
+  --color-rarity-rare: #6b8cf7;
+  --color-rarity-epic: #cf7ff0;
+  --color-rarity-legendary: #ffb545;
+  --color-rarity-mythic: #fa80d5;
+  --color-rarity-divine: #5ef3df;
+  --color-rarity-special: #ff6b6b;
+  --color-rarity-very-special: #ff6b6b;
+  --color-rarity-supreme: #df495a;
+
+  /* --- Stat colours ----------------------------------------------------- */
+  /* The Minecraft chat palette, renotched for this ground. Named after the
+     colour code rather than after any one stat, because the game reuses each
+     code across many stats - gold covers every Fortune, aqua covers
+     Intelligence and Magic Find and Fishing Speed - and a per-stat token set
+     would have needed forty names to say twelve things.
+
+     src/utilities/utilityFunctions.ts maps each stat symbol onto one of these.
+     All twelve clear 4.5:1 on the panel ground at the site's 10px minimum.
+
+       stat-white         &f  #e8edf3  16.4:1   Speed, True Defense
+       stat-red           &c  #ff6b6b   7.1:1   Health, Strength, Health Regen
+       stat-dark-red      &4  #df495a   4.9:1   Vitality
+       stat-green         &a  #63d97d  11.1:1   Defense, Mending
+       stat-dark-green    &2  #2f9a49   5.5:1   Sweep, Mythological
+       stat-blue          &9  #6b8cf7   6.3:1   Crit Damage, Double Hook
+       stat-aqua          &b  #5ef3df  14.5:1   Intelligence, Magic Find
+       stat-dark-aqua     &3  #1ba799   6.6:1   Wisdom, Sea Creature Chance
+       stat-gold          &6  #ffb545  11.3:1   every Fortune, Mining Speed
+       stat-yellow        &e  #fff352  17.2:1   Attack Speed, Overbloom
+       stat-light-purple  &d  #fa80d5   8.6:1   Pet Luck, Tracking
+       stat-dark-purple   &5  #cf7ff0   7.5:1   Pristine
+
+     gold and yellow are 20deg apart on purpose. Stock yellow-400 sat at 46deg,
+     only 10deg off gold, which made Mining Fortune and Attack Speed the same
+     colour when the game deliberately splits them.
+
+     Where a stat colour and a rarity colour are the same Minecraft code they
+     hold the same value, because in game they are the same colour: stat-green
+     is rarity-uncommon, stat-blue is rarity-rare, stat-gold is
+     rarity-legendary, stat-dark-purple is rarity-epic, stat-aqua is
+     rarity-divine, stat-red is rarity-special. Duplicated as literals rather
+     than aliased with var() so neither set can be edited into disagreeing with
+     the other without someone noticing they are touching two lines. */
+  --color-stat-white: #e8edf3;
+  --color-stat-red: #ff6b6b;
+  --color-stat-dark-red: #df495a;
+  --color-stat-green: #63d97d;
+  --color-stat-dark-green: #2f9a49;
+  --color-stat-blue: #6b8cf7;
+  --color-stat-aqua: #5ef3df;
+  --color-stat-dark-aqua: #1ba799;
+  --color-stat-gold: #ffb545;
+  --color-stat-yellow: #fff352;
+  --color-stat-light-purple: #fa80d5;
+  --color-stat-dark-purple: #cf7ff0;
+
+  /* The upstream files colour the same information with raw green/blue/amber
+     utilities, so those steps are pinned to the rarity values above. Same
+     data, same colour, without touching those files. */
+  --color-green-300: #8ee69f;
+  --color-green-400: #63d97d;
+  --color-green-500: #3fbf5c;
+  --color-green-600: #2f9a49;
+  --color-blue-200: #c3cdfd;
+  --color-blue-300: #9aabfa;
+  --color-blue-400: #6b8cf7;
+  --color-blue-500: #4a6fee;
+  --color-blue-600: #3654cc;
+  --color-amber-100: #ffeccb;
+  --color-amber-200: #ffe0a8;
+  --color-amber-300: #ffca70;
+  --color-amber-400: #ffb545;
+  --color-amber-500: #f0a326;
+  --color-amber-700: #a86a12;
+  --color-amber-900: #4a2d08;
+  --color-yellow-300: #ffe27a;
+  --color-yellow-400: #ffd54a;
+  --color-yellow-500: #f5c518;
+
+  /* Destructive and error. Unmistakably red and pushed slightly warm so it can
+     never be mistaken for the accent. red-400 is the same value as stat-red
+     and rarity-special, which is correct rather than a collision: in game a
+     SPECIAL item, a Strength roll and a destructive control are all &c red. */
+  --color-red-300: #ffa3a3;
+  --color-red-400: #ff6b6b;
+  --color-red-500: #f04747;
+  --color-red-600: #d13333;
+}
+
+/* --- Arcane violet -----------------------------------------------------
+   The four named surface tokens. These live in their own `@theme static`
+   block on purpose: Tailwind tree-shakes theme variables that no utility
+   references, and these are meant to be reachable as raw custom properties
+   from inline styles and hand-written CSS, not only as `bg-arcane-900`. A
+   plain @theme block would have silently dropped them until someone happened
+   to use a matching utility.
+
+   Surface material only, wherever it is used at all: it is currently used
+   nowhere, because the wash and the grain that were its only consumers were
+   removed with the background pick. Never an interactive colour,
+   never a state colour, never text. It is the one violet
+   left in the system and it is deliberately the one that carries no meaning -
+   it is the room the tools sit in, not anything you can click. Every
+   interactive violet the shard suite inherited is now Index blue; if this
+   block ever starts appearing on a control, that is a bug. */
+@theme static {
+  --color-arcane-300: #c4a9f5;
+  --color-arcane-500: #8257d4;
+  --color-arcane-700: #4a2d80;
+  --color-arcane-900: #1d1030;
+}
+
+/* --- Type scale --------------------------------------------------------
+   =========================================================================
+
+   One ladder for the whole site, derived from the Shards/Fusion panel because
+   that is the reference surface for sizing: comfortable, readable type,
+   against everything else being too small.
+
+   Reading it off produced a better answer than a compromise between the two.
+   The Fusion panel is not using a bespoke scale. It is using Tailwind's own
+   default steps and never stepping off them. Counted rather than estimated,
+   over every `text-*` in the shipped shards suite against every one in the
+   kit and the pages built on it:
+
+     surface                     sized elements   hard-coded px   share
+     shards suite, as shipped               372               9    2.4%
+     kit and the newer pages                138             123   89.1%
+
+   The reference sets 86% of its type on two steps, 12px and 14px. The newer
+   surfaces set 75% of theirs at 10px and 11px, which are not steps on any
+   scale; they were picked one call site at a time and drifted down together.
+   So unifying toward the reference panel is a RETURN to the default ladder,
+   not a new system laid over it. That is also why these are the stock values
+   to the byte: `--text-meta` is Tailwind's `xs`, `body` is `sm`, `figure` is
+   `base`, `head` is `lg`, `title` is `xl`.
+
+   Named by role rather than by size on purpose. `text-[10px]` at 38 call
+   sites is what let the scale rot in the first place, because no call site
+   could tell whether it was agreeing with the others or just happened to
+   match. A role name is checkable: a micro-label is `text-meta` or it is
+   wrong.
+
+     meta     12px   mono micro-labels, tags, chips, field hints
+     body     14px   control rows, buttons, inputs, body copy
+     figure   16px   stat values and emphasis figures
+     head     18px   panel and section headings
+     title    20px   page titles
+
+   Contrast. Adding a step to the ladder does not move the contrast bar, which
+   is worth stating because the intuition points the other way. WCAG large text
+   starts at 24px, or at 18.66px when bold, so every step here except `title` is
+   still normal text on the 4.5:1 bar. The binding case moves from 10px to 12px
+   and stays exactly where it was, so nothing in the ladder at the top of this
+   file is loosened by this block.
+
+   Re-measured against the flat ground this site now ships rather than the
+   washed one it was first checked on, the two changes compound in the same
+   direction without either paying for the other. The binding step reads
+   `slate-500` at 4.82:1 instead of 4.48:1, and it reads it at 12px instead of
+   10px. That is a failing worst case turned into a 0.32 margin, and the same
+   margin then read on twice the ink. Neither gain is bankable against anything:
+   there is no wash left to spend it on, and if one is ever added back its
+   ceiling is recorded in the Ground block on its own terms.
+
+   `@theme static` for the same reason `--color-arcane-*` above uses it:
+   Tailwind drops theme variables no utility references, and nothing
+   references these yet. Adding them changes NOTHING on screen. They become
+   live only when `src/ui/kit.tsx` is edited to use `text-meta`, `text-body`
+   and the rest in place of its hard-coded pixel values, which is a separate
+   change to a file this pass does not own.
+   ========================================================================= */
+@theme static {
+  --text-meta: 0.75rem;
+  --text-meta--line-height: calc(1 / 0.75);
+  --text-body: 0.875rem;
+  --text-body--line-height: calc(1.25 / 0.875);
+  --text-figure: 1rem;
+  --text-figure--line-height: calc(1.5 / 1);
+  --text-head: 1.125rem;
+  --text-head--line-height: calc(1.75 / 1.125);
+  --text-title: 1.25rem;
+  --text-title--line-height: calc(1.75 / 1.25);
+}
+
+/* The three text faces, self-hosted.
+   =========================================================================
+
+   Space Grotesk carries body and headings, JetBrains Mono the figures and
+   micro-labels, Montserrat the wordmark and masthead. All three are Google
+   fonts under the SIL Open Font License, which permits bundling and
+   self-hosting; NOTICE.md records the copyright and licence for each.
+
+   These arrived as an `@import url("https://fonts.googleapis.com/...")` on the
+   first line of this file, and the reason that had to go is the same reason
+   ADLaM Display was self-hosted below: it put a third party in the critical
+   path and handed them the visitor's IP on every page load. The @import form
+   made it worse than a <link> would have. An @import inside a bundled
+   stylesheet is invisible to the browser's preload scanner, so the 150 KB
+   stylesheet had to be fetched and parsed before the browser even learned that
+   a request to Google existed - a serialised round trip in front of first
+   paint, on a file that also had to arrive before anything could be styled.
+
+   Each family is a VARIABLE font, so one file per subset covers every weight
+   the site uses and `font-weight` is declared as a range rather than a fixed
+   number. Requesting the weights individually returns the same file under
+   eleven names; there are six files here because there are six real ones.
+
+   latin and latin-ext only. Cyrillic, Greek and Vietnamese are not bundled:
+   the interface is English, and the `unicode-range` on each face means a
+   player name in another script simply falls through to the system font rather
+   than triggering a download. `swap` throughout, so text paints immediately in
+   the fallback and re-lays itself out when the woff2 lands.
+
+   These rules are Google's own, with the URLs pointed at `public/fonts`; the
+   unicode-ranges are theirs verbatim so subsetting behaviour is unchanged. */
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/space-grotesk-latin-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/fonts/space-grotesk-latin-ext-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-latin-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono-latin-ext-var.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/montserrat-latin-var.woff2") format("woff2");
+  font-weight: 600 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("/fonts/montserrat-latin-ext-var.woff2") format("woff2");
+  font-weight: 600 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* GNU Unifont, as a glyph fallback only.
+   =========================================================================
+
+   This face exists for one job: the in-game symbols that appear inside perk
+   and description text - the SkyBlock stat icons (U+2741 flower, U+272A star,
+   U+2694 crossed swords and friends), the Minecraft private-use glyphs, and
+   the box-drawing used by the fusion-line diagrams. Space Grotesk and JetBrains
+   Mono have none of those, which is why it sits second in `--font-sans` and
+   `--font-mono`.
+
+   The `unicode-range` is not an optimisation, it is what makes the face
+   affordable. The file is 5.3 MB, and without a range the browser treats it as
+   a candidate for ANY character the primary face has not painted yet. During
+   the swap period on a cold visit that is all of them, so a landing page of
+   plain Latin text pulled 5.3 MB to render words Space Grotesk was already
+   fetching. Bounded to the symbol blocks, a page with no in-game glyphs never
+   requests it at all.
+
+   The ranges below are the blocks the rendered data actually uses; Latin-1 is
+   deliberately absent even though the data is full of it, because the section
+   sign in Minecraft colour codes is stripped before render and the rest is
+   covered by the primary faces. CJK is absent for the same reason in reverse:
+   a player with a CJK name is better served by the system font than by a
+   5.3 MB download.
+
+   Worth doing later: subsetting this to the ~80 codepoints actually used would
+   turn 5.3 MB into single-digit KB and retire the range entirely. That needs
+   font tooling this repo does not carry, so it is a separate job. */
+@font-face {
+  font-family: "Minecraft";
+  src: url("/fonts/unifont-17.0.03.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+2190-21FF,
+    U+2200-22FF,
+    U+2300-23FF,
+    U+2500-257F,
+    U+25A0-25FF,
+    U+2600-26FF,
+    U+2700-27BF,
+    U+2980-29FF,
+    U+2E00-2E7F,
+    U+E000-F8FF;
+}
+
+/* ADLaM Display, self-hosted.
+   =========================================================================
+
+   Copyright (c) 2022 by Microsoft, licensed under the SIL Open Font License
+   1.1. The OFL is what makes this one different from the rest of the
+   third-party material this project is careful about: it explicitly permits
+   bundling, self-hosting and redistribution of the font file, provided the
+   copyright and licence notice travel with it. They do, in NOTICE.md, along
+   with the source URL and the date it was retrieved.
+
+   There is no Reserved Font Name on this family, so the only obligation left
+   is not to rename it. It is declared here under its real name and referenced
+   under its real name.
+
+   Self-hosted rather than linked. A Google Fonts <link> or @import would put a
+   third party in the critical path of the site's own mark, hand them the
+   visitor's IP on every page load, and cost a second connection before the one
+   piece of typography that matters can paint. The latin subset is 24 KB and it
+   is the only subset fetched, because the mark is two Latin letters and a
+   full stop.
+
+   `swap`, so the mark is readable in the fallback face while the woff2 lands
+   and then re-lays itself out. The mark is a fixed two-character string, so
+   that reflow cannot move anything else on the page. */
+@font-face {
+  font-family: "ADLaM Display";
+  src: url("/fonts/adlam-display-latin-v1.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F,
+    U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* The page ground lives on html, not body. It was put there so the fixed
+   atmosphere layers had something to sit on top of; those are gone, but it
+   stays on html because that is what paints the overscroll area and the region
+   beyond a short body, and moving it to body would leave both unpainted. */
+html {
+  background-color: var(--color-slate-950);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: transparent;
+  color: var(--color-slate-200);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Space Grotesk has real character at large sizes and gets muddy if you let
+   it letterspace loose at small ones. Headings pull tight, mono micro-labels
+   push wide, and nothing in between drifts. */
+h1,
+h2,
+h3 {
+  letter-spacing: -0.015em;
+}
+
+/* Tabular figures everywhere numbers are read in columns. */
+.tabular-nums,
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================================
+   Shell width
+   =========================================================================
+
+   `max-w-screen-2xl` is this project's page-shell token. It is used in exactly
+   three places, all of them the shell: the main container and the footer in
+   Layout.tsx, and the bar in Navigation.tsx. The `2xl:` variant is used
+   nowhere in the codebase, so rebinding the utility here moves the shell and
+   touches nothing else.
+
+   Rebinding it from CSS rather than swapping the class in Layout.tsx is the
+   point, not a shortcut. Navigation.tsx is owned by someone else and uses the
+   same utility; if only the main container grew, the wordmark would stop
+   lining up with the left edge of the content it sits above. One token, one
+   rule, three call sites that cannot drift apart.
+
+   This works because Tailwind 4 emits utilities inside `@layer utilities` and
+   everything in this file is unlayered, and unlayered styles beat layered ones
+   regardless of source order. Same mechanism the `html` rule below already
+   relies on to beat preflight.
+
+   Why these numbers. Content width is min(viewport - 32, cap), because <main>
+   carries px-4 outside the capped div. Nav puts its padding inside the cap
+   instead, so nav content sits 16px narrower on each side; that inset is
+   pre-existing and is preserved by moving both together.
+
+     viewport   cap      content   gutter   fill    was       delta
+     1536       96rem    1504      16       98%     1504      padding-bound
+     1920       1680     1680      120      87.5%   1536      +144  (+9%)
+     2240       1840     1840      200      82.1%   1536      +304  (+20%)
+     2560       2000     2000      280      78.1%   1536      +464  (+30%)
+     3440       2160     2160      640      62.8%   1536      +624  (+41%)
+
+   1536 and below is untouched, because that is the width the layout was
+   reviewed and approved at. 2560 is the case that actually needed fixing: it
+   was showing 1536px of tool inside 2560px of screen, 60% fill and roughly
+   500px of dead margin a side, which is the "content island in a void" the
+   brief describes. 1920 was already at 80% fill and only needed a nudge.
+
+   3200 is a hard ceiling, deliberately. Past about 2160px the ledger rows on
+   the dense pages put a name at one end of the line and its number at the
+   other far enough apart that scanning across costs a head-turn, so ultrawide
+   and 4K get large gutters on purpose rather than an unreadable table.
+
+   What the columns resolve to, since more width is supposed to mean more data
+   and not more padding:
+
+                                        at 1680        at 2000
+     Items      280px rail + rest       rail + 1390    rail + 1710
+     Planner    260px rail + rest       rail + 1410    rail + 1730
+     Greenhouse 300 / 1fr / 420         middle 912     middle 1232
+     Fusion     7-col, 2 cfg / 5 result 469 / 1201     560 / 1424
+
+   Nothing here adds or removes a column. The dense grids top out at `lg:` or
+   `xl:`, so above those breakpoints they stretch rather than reflow, and the
+   grids that would most benefit from a fifth or sixth column cannot be fixed
+   from this file: a viewport media query cannot tell whether the grid it is
+   about to restyle sits in the 2000px shell or inside IslandPage's 896px
+   `max-w-4xl`, and forcing six columns into 896px would be worse than the
+   stretching. Those need per-page breakpoints and are reported, not bodged
+   from here.
+   ========================================================================= */
+
+:root {
+  /* 96rem is byte-for-byte Tailwind's own --breakpoint-2xl, so the base case
+     stays exactly what it was. The steps are px because they answer a question
+     about the viewport, not about type size, and the media queries below are
+     in px for the same reason. */
+  --ws-shell: 96rem;
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --ws-shell: 1680px;
+  }
+}
+
+@media (min-width: 2240px) {
+  :root {
+    --ws-shell: 1840px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --ws-shell: 2000px;
+  }
+}
+
+@media (min-width: 3200px) {
+  :root {
+    --ws-shell: 2160px;
+  }
+}
+
+.max-w-screen-2xl {
+  max-width: var(--ws-shell);
+}
+
+/* =========================================================================
+   Ad slot grid
+   ========================================================================= */
+
+.pn-leaderboard {
+  width: 100%;
+  min-height: 100px;
+  margin: 0 auto 12px;
+}
+
+.pn-sidebar {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .pn-page {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr) 300px;
+    column-gap: 16px;
+    align-items: start;
+  }
+
+  .pn-left {
+    grid-column: 1;
+  }
+
+  .pn-content {
+    grid-column: 2;
+    min-width: 0;
+  }
+
+  .pn-sidebar {
+    grid-column: 3;
+    display: block;
+    width: 300px;
+    min-height: 600px;
+    position: sticky;
+    top: 16px;
+    align-self: start;
+  }
+}
+
+/* =========================================================================
+   Ground
+   =========================================================================
+
+   Flat solid, and nothing else. The page ground is `slate-950`, panels sit one
+   fill step lighter at `bg-slate-900/55`, and every separation on the site is
+   done by that step plus a hairline border. There is no ambient wash, no
+   backdrop image and no grain overlay.
+
+   This replaced a three layer atmosphere (a violet radial wash on
+   `html::before`, a graded NASA backdrop photograph on `body::after`, and a
+   fixed grain tile on `body::before`) after the background candidates
+   comparison, where flat solid was shown against flat-plus-one-functional-gradient
+   and against a subtle authored grain, and was picked outright.
+
+   It is also where the design intel pointed. Three of the four reference sites
+   commit to a flat solid ground and do their elevation with borders rather
+   than shadow or glow: SkyShards on #0f172a, Sky Mutations on #121212, Elite
+   Skyblock on #09090b. The fourth commits fully the other way, to a blurred
+   photographic wash. The intel is explicit that nothing in that sample does a
+   half measure, and the stack this replaced was a half measure.
+
+   What this bought, which is the part worth protecting
+   ---------------------------------------------------------------------
+
+   The contrast ladder at the top of this file was written against a flat panel
+   ground of #0e1014, with a note that those figures ASSUME flatness and that
+   the layers below were therefore held to a budget to keep them roughly true.
+   They no longer assume anything. With nothing between the page ground and the
+   panel, #0e1014 is simply what a panel IS, and every figure up there is exact.
+
+   Measured on the shipped result, de-purpled cool-neutral ramp, panel ground
+   #0e1014:
+
+     neutral 300  #b2bfce  10.19:1
+     neutral 400  #93a3b8   7.41:1
+     neutral 500  #76859c   5.08:1   smallest body text, the binding case
+     neutral 600  #48546a   2.50:1   structural only, still not a text colour
+     accent  300  #6fd0fb  11.42:1
+     accent  400  #38bdf2   9.19:1
+     accent  500  #00b3f0   8.22:1
+     accent  600  #0090c4   5.47:1   lowest text bearing accent step
+     accent  700  #086f96   3.52:1   fills and borders only
+
+   The old stack put that binding case at 4.48:1 with the wash at its on screen
+   peak and the backdrop at its brightest block together, which is UNDER WCAG AA
+   by 0.02. Flat on the violet ramp put it at 4.82:1; the de-purple pass then
+   lifted the 500 step with the ramp swap and it now clears the bar at 5.08:1,
+   with nothing traded for either move.
+
+   The budget is now unspent rather than gone. If ambient light is ever wanted
+   back, the ceiling that keeps `slate-500` at 4.5:1 with no backdrop image
+   underneath it is a 0.185 peak stop on ramp A, measured the same way as the
+   old ladder was. That is an allowance on record, not an invitation: the
+   comparison that produced this ground rejected the wash on looks, not on
+   contrast.
+
+   Ramp independence
+   ---------------------------------------------------------------------
+
+   Every value here is a ramp token, so swapping the neutral ramp retints this
+   ground without re-deriving any of it. SETTLED: the indigo/purple hue
+   comes out entirely, keeping BG1's flat type and darkness, with the panel
+   boxes reading as a LIGHTER gray than before. The shipped ramp is a cool
+   neutral between the old candidates B and C: every step holds B >= G >= R
+   with a modest spread, so it leans faintly toward Index blue and cannot
+   read as violet. The panel step was also lifted (panel:ground separation
+   1.11:1, was 1.03:1) so the row boxes visibly sit above the ground, and the
+   500 text step was raised in compensation to hold AA on the lighter panel.
+
+   The candidates that were measured, for the record:
+
+     ramp                     page      panel     neutral 500
+     A  violet (retired)      #07060b   #0a0910   4.82:1
+     B  blue leaning slate    #000616   #010a1a   4.91:1
+     C  pure neutral          #070707   #0a0a0a   4.87:1
+     -> shipped cool neutral  #07080a   #0e1014   5.08:1
+
+   All clear 4.5:1, so no pick could break this ground, and the pick was a
+   values change in @theme and the handful of literal echoes, exactly as this
+   block promised it would be.
+
+   One consequence that belongs to the letter decision rather than to this
+   block: the wash was the only thing tinting the field, so the neutral ramp's
+   own hue is now the only hue in the room that is not an accent or a rarity.
+   That does not create a problem, it exposes one that was already there. See
+   the rarity note in the game-data block above.
+
+   Performance and motion. There are no fixed full viewport layers left at all,
+   so the three composite layers the old atmosphere cost are gone, and there is
+   nothing in this block for prefers-reduced-motion to switch off. The bundled
+   backdrop image went with them; its NOTICE.md entry is retired in place rather
+   than deleted, the same way the image it had itself replaced was.
+   ========================================================================= */
+
+/* `#root` keeps its stacking context. It no longer has fixed layers to sit
+   above, but it is a positioned z-index root that portalled overlays and the
+   dropdown portals elsewhere in the app are already stacked against, so
+   removing it would be a behaviour change dressed as a cleanup. */
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+/* Page content settles in. Short, once, no stagger cascade. */
+@keyframes ws-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+main > * {
+  animation: ws-rise 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* =========================================================================
+   Glass ground (the glass re-vamp)
+   =========================================================================
+
+   This SUPERSEDES the flat Ground block above as the shipped look. The flat
+   ground's record stays because its measurements and reasoning are still the
+   fallback truth: no backdrop-filter support, or prefers-reduced-transparency,
+   and the page IS that flat ground again.
+
+   The architecture is ported as built and proven on the design bench
+   (Skydex/gui-redesign: its README is the spec, pixel-measured):
+
+     backdrop      the site's hub render. SHARP, full strength, cover, no zoom
+     .sd-curtain   ONE sheet of frosted glass, floor to ceiling, from
+                   --sd-split to the right margin. #13161D tint, blur 34px
+     .sd-bar       the masthead. #07080A 60% -> 40%, blur 20px, 2px stroke
+
+   There is one sheet and content sits ON it. Nothing nests a second
+   backdrop-filter inside the curtain: the backdrop such a card would sample is
+   the curtain's own already-blurred output, so it pays for a full-screen
+   filter pass and returns something indistinguishable from a flat tint.
+   .sd-panel is tint only, for content that needs to lift off the glass.
+
+   THE TINT IS 55% -> 45%: the measured
+   minimum where small slate-300 text clears WCAG AA on the curtain's worst
+   pixel (4.56:1 against the moon bloom; the drawing's own 20% -> 10% measured
+   2.54:1 there and stays recorded in the bench as the look it trades away).
+
+   The split is 0 by default, because most pages are all curtain. A page
+   that owns a sharp channel (Profile: the player stands in it) gets
+   `.sd-channel` on the shell from Layout.tsx, which opens the split to the
+   masthead column (--sd-col, see the geometry tokens below for how that width
+   is negotiated; the bench's drawing measured it at 28.2% of an 809px canvas,
+   which is where the column started).
+   Below 900px the channel collapses back to 0: the player is hidden there, so
+   an empty gutter would just be lost width, and the curtain goes full bleed.
+   ========================================================================= */
+
+:root {
+  /* The two glass recipes, as tokens so a variant is one number. */
+  --sd-bar-top: 0.6;
+  --sd-bar-bottom: 0.4;
+  --sd-bar-blur: 20px;
+  --sd-bar-stroke: rgb(232 237 243 / 0.16);
+
+  /* The measured AA minimum (see block comment). The bench spec's look is 0.2 / 0.1. */
+  --sd-panel-top: 0.5;
+  --sd-panel-bottom: 0.4;
+  --sd-curtain-blur: 34px;
+
+  /* Nearly nothing. The render shows at full strength; legibility is the
+     CURTAIN's job, and it only has to work where text actually sits. */
+  --sd-scrim: 0.12;
+
+  --sd-bar-h: 68px;
+
+  /* The second strip, carrying the current section's tools. Held as a token
+     because two different things have to agree on it: the strip draws itself
+     this tall, and anything pinning below the masthead has to clear it. */
+  --sd-tools-h: 36px;
+
+  /* How much sticky chrome a page has above it. The masthead alone on most
+     sections, the masthead plus the tools strip on Greenhouse and Shards.
+
+     Anything sticky in the page (SplitPage's rail) must pin below THIS and not
+     below --sd-bar-h, or it pins into the strip's own space: measured on
+     /shards, a rail offset by the bar alone put its first control 36px up
+     behind the strip, so the top of the control column was covered exactly
+     where somebody scrolling would go looking for it. */
+  --sd-chrome-h: var(--sd-bar-h);
+
+  /* All curtain until a page opens the channel. */
+  --sd-split: 0px;
+
+  /* What a rail of form controls actually needs, which is a BOUNDED amount and
+     not a fixed share of the screen. This is the part of the column that grows
+     with the viewport, and it grows SUBLINEARLY on purpose: a search field, a
+     row of filter chips and a list of names want roughly 240px of usable width
+     on a small laptop and roughly 300px on a large monitor, not double.
+
+     The old measure was a flat 28.2% at every width, which is why a 1920px
+     screen handed this column 541px: it was sized for the Profile page's
+     player (below), and every tool page paid for a portrait it does not draw.
+     Anchored so 1024 lands where the flat share already put it (288px, so
+     nothing gets tighter than it is today) and 1920 lands at 375px instead of
+     541px. The cap stops an ultrawide from reopening the same hole. */
+  --sd-rail: clamp(272px, 189px + 9.7vw, 392px);
+
+  /* What stands in the Profile page's sharp channel is the player, and he is
+     sized off viewport HEIGHT: `h-[68vh]` at aspect 360/612, which is exactly
+     40vh wide. A column measured only in viewport WIDTH therefore cannot hold
+     him at every window shape, and measurement says the old one did not: at
+     1024x768 he overhung the channel by 18px and at 2560x1440 by 16px, while
+     at 1920x1080 the channel was 109px wider than he is. Naming his measure
+     lets the column ask for it directly instead of approximating it. */
+  --sd-player: 40vh;
+
+  /* The masthead's left column, CONSTANT across every page: the wordmark's
+     cell is always this wide, so the section tabs sit at the same x on every
+     page instead of jumping between the logo's elbow and the seam as the
+     channel opens and closes. The channel below derives from this rather than
+     repeating a formula, so the two cannot drift apart.
+
+     Read the clamp as the negotiation it is: at least what the controls need,
+     ideally what the player needs, and never more than 40% of the page. The
+     last term only binds on a portrait or very tall window, where honouring
+     40vh outright would hand a side column most of the screen. */
+  --sd-col: clamp(var(--sd-rail), var(--sd-player), 40vw);
+
+  /* One inset, shared by the tabs and by page content on the columned pages,
+     so a page's first line of text starts exactly under the tab above it. It
+     is fluid for the same reason the column is, and tightly bounded because
+     both consumers read from this one token and therefore cannot disagree:
+     ~24px where width is scarce, ~31px at 1536 (within a pixel of the 2rem the
+     layout was reviewed at), ~35px on a large monitor. */
+  --sd-inset: clamp(1.5rem, 1rem + 1vw, 2.25rem);
+
+  /* The page's left gutter: where the wordmark sits. Tighter than the
+     mock's 8.4vw, which parked the logo a third of the way into the column
+     on a wide monitor; the brand belongs near the page's edge. */
+  --sd-gutter: clamp(1.25rem, 3.2vw, 3.75rem);
+}
+
+/* The sharp channel, opted into by the page that has something to stand in it.
+   It IS the masthead column, by reference rather than by a repeated formula:
+   the tabs sit at the column's edge, so deriving the seam from the same token
+   is what keeps the first tab exactly above it at every window shape. */
+.sd-channel {
+  --sd-split: var(--sd-col);
+}
+
+/* The sections that carry a tools strip say so by rendering `.sd-tools`, and
+   the page's sticky offset grows to clear it. Written as `:has()` rather than
+   a flag the shell has to set because the strip's presence is already the
+   fact: Navigation decides it per section, and duplicating that decision into
+   a second place is how the two drift apart.
+
+   Gated to the width where the strip is actually laid out. Below it the strip
+   is `hidden`, so it occupies no space and the masthead alone is the chrome. */
+@media (min-width: 768px) {
+  :root:has(.sd-tools) {
+    --sd-chrome-h: calc(var(--sd-bar-h) + var(--sd-tools-h));
+  }
+}
+
+/* One breakpoint, not two.
+   The split stacks here (SplitPage, and the rail-collapse toggle that nine
+   pages key to the same 900px), so this is also where a reserved left column
+   stops meaning anything: there is nothing below it to align to, and the
+   masthead is logo + tabs + cog competing for a narrow bar.
+
+   This used to collapse at 767px, which left 768-899 holding a 250px column
+   that no page underneath used. Measured, that band put the first tab at
+   x=282 above content that started at x=24, and gave the tools strip a 282px
+   left padding on a 768px screen. Collapsing on the same line the layout
+   stacks on removes the phantom column and the misalignment with it.
+
+   --sd-split follows because it is var(--sd-col): the curtain goes full bleed
+   the moment the channel closes, with no half-open sliver in between. */
+@media (max-width: 899px) {
+  :root {
+    --sd-col: 0px;
+  }
+}
+
+.sd-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Sharp. On purpose. The curtain does the blurring; the photo never does. */
+.sd-backdrop__img {
+  position: absolute;
+  inset: 0;
+  /* The var is the customization seam: Settings can point it at a
+     player-supplied image (a blob URL from IndexedDB) and everything else
+     about the ground stays exactly as designed. */
+  background-image: var(--sd-bg, url("/bg/hub.jpg"));
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.sd-backdrop__scrim {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(7 8 10 / var(--sd-scrim));
+}
+
+.sd-bar {
+  background-image: linear-gradient(
+    180deg,
+    rgb(7 8 10 / var(--sd-bar-top)) 0%,
+    rgb(7 8 10 / var(--sd-bar-bottom)) 100%
+  );
+  backdrop-filter: blur(var(--sd-bar-blur)) saturate(125%);
+  -webkit-backdrop-filter: blur(var(--sd-bar-blur)) saturate(125%);
+  border-bottom: 2px solid var(--sd-bar-stroke);
+}
+
+/* Fixed rather than scrolling: it is the page's ground, so it stays put and
+   the content moves over it. Also exactly one backdrop-filter pass for the
+   whole page instead of one per card. */
+.sd-curtain {
+  position: fixed;
+  top: var(--sd-bar-h);
+  right: 0;
+  bottom: 0;
+  left: var(--sd-split);
+  z-index: 1;
+  pointer-events: none;
+  background-image: linear-gradient(
+    180deg,
+    rgb(19 22 29 / var(--sd-panel-top)) 0%,
+    rgb(19 22 29 / var(--sd-panel-bottom)) 100%
+  );
+  backdrop-filter: blur(var(--sd-curtain-blur)) saturate(115%);
+  -webkit-backdrop-filter: blur(var(--sd-curtain-blur)) saturate(115%);
+  /* The edge is hard in the mock, so it is hard here. One hairline of light
+     down the seam is the only concession: without it the boundary between
+     sharp and blurred reads as a rendering artefact rather than as an edge
+     somebody drew. Painted only when the channel is open: at split 0 the
+     seam sits on the viewport's own left edge and a stray hairline there
+     reads as a rendering bug. */
+  border-left: 0 solid rgb(232 237 243 / 0.08);
+}
+
+.sd-channel .sd-curtain {
+  border-left-width: 1px;
+}
+
+/* The frosted pane for CURTAINLESS pages (the dashboard): the photo stays
+   sharp and the information carries the glass. Real backdrop-filter, which is
+   exactly what .sd-panel must never do, and the difference is the ground:
+   this pane samples the sharp photo directly, a panel on a curtained page
+   would be re-blurring the curtain's own output. Deliberately DENSER than
+   the curtain: this pane sits over the sharpest, busiest part of the photo
+   and carries small text, so it needs more material than the curtain, whose
+   whole width of softening already does most of its work. */
+.sd-glass {
+  background-image: linear-gradient(
+    180deg,
+    rgb(19 22 29 / var(--sd-glass-top, 0.62)) 0%,
+    rgb(19 22 29 / var(--sd-glass-bottom, 0.52)) 100%
+  );
+  backdrop-filter: blur(26px) saturate(115%);
+  -webkit-backdrop-filter: blur(26px) saturate(115%);
+  border: 1px solid rgb(232 237 243 / 0.12);
+}
+
+/* Content that genuinely needs to lift OFF the curtain. Tint only: see the
+   block comment for why it must never blur. */
+.sd-panel {
+  background-image: linear-gradient(
+    180deg,
+    rgb(19 22 29 / 0.38) 0%,
+    rgb(19 22 29 / 0.24) 100%
+  );
+  border: 1px solid rgb(232 237 243 / 0.1);
+}
+
+/* The top edge a piece of glass catches the light on. Without it glass reads
+   as a dark rectangle. */
+.sd-lip {
+  position: relative;
+}
+.sd-lip::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(232 237 243 / 0.18) 18%,
+    rgb(232 237 243 / 0.18) 82%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Fallbacks. Two of them, and they are not the same case.
+
+   No backdrop-filter at all: the glass has to become paint, because
+   translucent-over-photo with no blur is unreadable at any opacity that
+   still looks like glass.
+
+   prefers-reduced-transparency: the user has asked the OS for opaque
+   surfaces. Honour it the same way, and drop the photo too, which lands
+   back on the flat Ground block's record above. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .sd-bar {
+    background-image: none;
+    background-color: rgb(7 8 10 / 0.94);
+  }
+  .sd-curtain {
+    background-image: none;
+    background-color: rgb(14 16 20 / 0.92);
+  }
+  .sd-panel,
+  .sd-glass {
+    background-image: none;
+    background-color: rgb(19 22 29 / 0.9);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sd-backdrop__img {
+    display: none;
+  }
+  .sd-backdrop__scrim {
+    background-image: none;
+    background-color: var(--color-slate-950);
+  }
+  .sd-bar,
+  .sd-curtain,
+  .sd-panel,
+  .sd-glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-image: none;
+  }
+  .sd-bar {
+    background-color: var(--color-slate-950);
+  }
+  .sd-curtain,
+  .sd-panel,
+  .sd-glass {
+    background-color: var(--color-slate-900);
+  }
+}
+
+/*
+ * The focus ring for raw CSS, carrying the kit FOCUS constant's own values:
+ * `ring-2 ring-emerald-500/60 ring-offset-1 ring-offset-slate-950`, which
+ * Tailwind compiles to a 1px slate-950 gap inside a 2px emerald-500/60 ring.
+ * Held as a token so the rules that need it cannot drift from each other, and
+ * so a retint reaches all of them at once.
+ *
+ * Tailwind paints that ring with `box-shadow`, inside `@layer utilities`. An
+ * unlayered declaration beats every layered one whatever its specificity, so
+ * an element whose resting `box-shadow` is set in this file never receives the
+ * utility ring, and an unlayered `outline` alongside the utility ring renders
+ * as two concentric rings rather than one. Both cases are why the ring is
+ * reproduced here rather than left to the kit: the rules below need to paint
+ * it themselves, and they must be the only thing painting it.
+ *
+ * The native checkboxes and ranges skinned elsewhere in this file therefore
+ * ride this rule instead of carrying FOCUS at their call sites.
+ */
+:root {
+  --sd-ring: 0 0 0 1px var(--color-slate-950),
+    0 0 0 3px color-mix(in srgb, var(--color-emerald-500) 60%, transparent);
+}
+
+input[type="checkbox"]:focus-visible,
+input[type="range"]:focus-visible {
+  outline: none;
+  box-shadow: var(--sd-ring);
+}
+
+/* =========================================================================
+   Kit materials
+   The two treatments the design kit needs that are cheaper and clearer as
+   real CSS than as a wall of arbitrary Tailwind values.
+   ========================================================================= */
+
+/* Panel material. A hairline of light caught on the top edge is what makes a
+   surface read as cut stone rather than as a div with a background: the eye
+   reads the 1px inset highlight as a bevel catching light from above.
+
+   It earns its keep MORE on the flat ground than it did on the old washed one,
+   not less. With the wash gone there is no gradient doing separation, so the
+   panel is carried entirely by the one step fill change, the hairline border
+   and this highlight, which is exactly the elevation model all three flat
+   reference sites use. The drop shadow is kept deliberately weak for the same
+   reason: the intel is consistent that these sites separate with borders and
+   fill steps and essentially never with shadow or glow. */
+.ws-panel {
+  box-shadow: inset 0 1px 0 0 rgb(232 237 243 / 0.055), 0 1px 2px 0 rgb(2 3 5 / 0.5);
+}
+
+/* One icon family, one stroke weight. lucide defaults to 2, which is heavy
+   at 16px next to Space Grotesk. Set here rather than passed as a prop so it
+   cannot drift per call site. */
+.ws-glyph > svg {
+  stroke-width: 1.75;
+}
+
+/* Rows lift very slightly under the cursor so the ledger feels responsive. */
+.ws-row {
+  transition: background-color 0.14s ease, transform 0.14s ease;
+}
+.ws-row:hover {
+  transform: translateX(1px);
+}
+
+/* Finished bars get a faint bloom. It is the one reward signal in the UI. */
+.ws-bar-done {
+  box-shadow: 0 0 8px color-mix(in srgb, var(--color-emerald-500) 60%, transparent);
+}
+
+/* Acknowledge a tick without yanking the layout around. */
+@keyframes ws-tick {
+  50% {
+    transform: scale(1.18);
+  }
+}
+.ws-tick:active {
+  animation: ws-tick 0.18s ease;
+}
+
+/* =========================================================================
+   The mark
+   =========================================================================
+
+   The "W.W" on the landing page. It is typography rather than an
+   illustration, and as of the kaomoji rewrite it is typography twice over:
+   the expressions are glyph swaps, so the typeface itself is the animation.
+   The two W's are the eyes and the full stop is the mouth.
+
+   Everything else about it lives in `pages/LandingPage.tsx` and `mark/face.ts`,
+   because the states are driven by React and by a table of per-glyph metrics
+   measured out of this font. There is nothing left for CSS to hold except the
+   family, and a rule here that only some states used would be a rule that
+   silently fought the ones that did not.
+   ========================================================================= */
+
+.ws-mark {
+  font-family: var(--font-mark);
+}
+
+/* The search pill. Round is the standing exception in this project's radius
+   scale and a pill input is the case it was written for. */
+.ws-search-pill {
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  box-shadow: inset 0 1px 0 0 rgb(232 237 243 / 0.05), 0 1px 2px 0 rgb(2 3 5 / 0.5);
+}
+
+/* The pill's resting `box-shadow` above is unlayered, so it beats the utility
+   ring the call site asks for and the focused state has to paint that ring
+   itself. Hence `--sd-ring` last in the list: the material the pill lifts to,
+   then the site's one focus ring on the outside of it. */
+.ws-search-pill:focus-visible {
+  outline: none;
+  box-shadow: inset 0 1px 0 0 rgb(232 237 243 / 0.07), 0 2px 10px 0 rgb(2 3 5 / 0.55), var(--sd-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-search-pill {
+    transition: none;
+  }
+}
+
+/* =========================================================================
+   Native control skinning
+   Checkboxes, range sliders and scrollbars were rendering as bright default
+   browser chrome against a dark tool UI. Skinned globally so nothing has to
+   remember to opt in.
+   ========================================================================= */
+
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid #48546a;
+  background: #07080a;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+input[type="checkbox"]:hover {
+  border-color: color-mix(in srgb, var(--color-emerald-500) 75%, transparent);
+}
+input[type="checkbox"]:checked {
+  background: color-mix(in srgb, var(--color-emerald-500) 24%, transparent);
+  border-color: var(--color-emerald-500);
+}
+input[type="checkbox"]:checked::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  clip-path: polygon(14% 46%, 0 60%, 40% 100%, 100% 22%, 86% 8%, 38% 72%);
+  background: var(--color-emerald-300);
+}
+
+/*
+ * The track is painted with a gradient background, so the visible rail is drawn
+ * rather than sized. `height` here is the HIT TARGET, not the rail.
+ *
+ * It used to be 3px, which looked right and behaved badly: a 3px pointer target
+ * is far below any reasonable minimum and made every slider on the site
+ * fiddly to grab. Worse, this is a bare element selector sitting outside any
+ * cascade layer, so it beat every Tailwind utility: a component asking for
+ * `h-4` on a range input silently lost to this rule and had no way to win
+ * except `!important`. That is why the kit's RANGE primitive carries one.
+ *
+ * Sized generously here so the utility is unnecessary, and the rail's apparent
+ * thinness now comes from the painted gradient instead of from a hit target
+ * nobody can hit.
+ */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 1.25rem;
+  background: transparent;
+  background-image: linear-gradient(#2b3340, #2b3340);
+  background-size: 100% 3px;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 999px;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--color-emerald-500);
+  border: 2px solid #07080a;
+  cursor: grab;
+  transition: transform 0.12s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--color-emerald-500);
+  border: 2px solid #07080a;
+  cursor: grab;
+}
+input[type="range"]::-moz-range-track {
+  height: 3px;
+  background: #2b3340;
+  border-radius: 999px;
+}
+
+/* Strip the spinner from number inputs. The steppers next to them do the job
+   and the native arrows crowd a narrow field. */
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Scrollbars everywhere, not just where .scrollbar-dark was remembered.
+   .scrollbar-dark is kept because the greenhouse module names it explicitly,
+   but it now resolves to the same values rather than a second scheme. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #48546a transparent;
+}
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #48546a;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6a5d85;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: #48546a transparent;
+}
+
+/* =========================================================================
+   Reduced motion
+   Everything decorative stops. The page settle, the tick and the row lift all
+   collapse to their resting state.
+
+   The ground is not listed here and that is deliberate, not an oversight: it
+   is a flat fill with no layers, no image and no animation, so there is
+   genuinely nothing in it to switch off.
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  main > *,
+  .ws-tick:active {
+    animation: none;
+  }
+  .ws-row,
+  .ws-row:hover {
+    transition: none;
+    transform: none;
+  }
+  input[type="range"]::-webkit-slider-thumb,
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transition: none;
+    transform: none;
+  }
+}

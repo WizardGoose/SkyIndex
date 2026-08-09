@@ -1,0 +1,139 @@
+{
+ "note": "Raw base64 gzip NBT container blobs (auction item_bytes) with the item list prismarine-nbt decodes them to. The decoder under test must agree with that recorded output.",
+ "capturedAt": "2026-08-03T04:32:41.884Z",
+ "source": "https://api.hypixel.net/v2/skyblock/auctions (pages 0-7) and /auctions_ended, keyless; item documents verbatim",
+ "blobs": [
+  {
+   "note": "auction item_bytes, one item",
+   "base64": "H4sIAAAAAAAA/2VUzW4bNxAeRUoiKUbTIglc9BCwQAJYUOx4JUsr+WbLsiPEtYNufoBcBO7uSEuIS25Ibm3l1BfoM/To9zCQ1+kjFJ1dWUng6rLkzMePH2fmUxOgARXRBIBKE5qRTjOtUDlbh8epUBgZPnP7wmE6TXWMEvxkmYlLlFO7WIZSR4sy+TJXEXc410Z8xvjlZ52GAqcLJeaJm9oLbeI6bH7jc1pLJ7KpdUuJ8OR/lJiJCO7AHRFXHlTg7kjnypG8quPzBtRQRQkUvwo8eKdCg3zBQ4mVKjReiRiPJZ9byv7bhPuxsJnkSzp0qg3WKfojPL2+8k+QGxZEFNtn11dxZ9ihz2CrP+i3yvwRT/m8zEVtz+uXyXa3190ZtGCL8oEzqOYuWSF6u/QZbrW9QWuF9HqdnV4L2oQcGeHYKOEqKumGba/z/Abdeb6G0wq21+Bvdw/bnTW48xXc93c8grcIfuAcjxYsyBDjAo9t/wbur9G0KGVMlEMpxRxvdIQk9pbo3t7OsEUV6lF4fJmhEQWYTSaTFwXyWBjrGD1cLCj4voydau2EmheYQtDwNCc5q1QQ8T+oRGjW+4SbTKG17D3d8ev1Vf84l5IF6NihVrndZx/LoWGvy6FhZT1OuFC2LHF3958//2LfVZ5dJKhYbjFmF8Il8AvlXIK3WA5Mqg3d9/P1FT1Ljt9MRuzo3dnJ+PyMBR/Ofz+qQ+2MpwhE3TtFKk/MzfIWSVDMLzTh4fjSGU5FNyLMHZJFfopzeqJWNLlCyqnBT7AxOnh7MDr/7TDY9/aqsBlyi4Hj7lBr696gichc1F7S9EMd6uQpMRNooCHXl9eLsYdHH4liMp6+PpucvHo7LbU2YaMYfa5cWji0CjVJ9Samu1XYmBXtIUMV7aFQrQr35ao7tKuSNey6AasDDbtu0GrfxK8tLw4AFSbPScgz3+tHXZ/3tnE28Lf3OK142PW2Y9/3w1noozeYEV35F+HEiq4GDSdStI6nGdn07y/dQwFk6Hur2S68+x9za27EeQQAAA==",
+   "decoded": [
+    {
+     "components": {
+      "minecraft:item_model": "hypixel_skyblock:item/uncategorized/zombie_knight_sword",
+      "minecraft:tooltip_style": "hypixel_skyblock:epic"
+     },
+     "id": 267,
+     "Count": 1,
+     "tag": {
+      "ench": [],
+      "Unbreakable": 1,
+      "HideFlags": 254,
+      "display": {
+       "Lore": [
+        "§7Gear Score: §d292 §8(686)",
+        "§7Damage: §c+116 §8(+353.8)",
+        "§7Strength: §c+50 §9(+18) §8(+152.5)",
+        "§7Crit Chance: §9+12% §9(+12%) §8(+12%)",
+        "§7Crit Damage: §9+22% §9(+22%) §8(+67.1%)",
+        "§7Attack Speed: §e+7% §9(+7%) §8(+7%)",
+        "§7Intelligence: §b+18 §9(+18) §8(+54.9)",
+        "",
+        "§9Experience III, §9First Strike IV, §9Looting III",
+        "§9Luck V, §9Scavenger V, §9Sharpness V",
+        "",
+        "§6Full Set Bonus: Zombie Knight ",
+        "§7Gains §c+30 §7Strength when used with",
+        "§7the Zombie Knight Armor",
+        "",
+        "§5§lEPIC DUNGEON SWORD"
+       ],
+       "Name": "§5Legendary Zombie Knight Sword"
+      },
+      "ExtraAttributes": {
+       "dungeon_skill_req": "CATACOMBS:14",
+       "baseStatBoostPercentage": 14,
+       "modifier": "legendary",
+       "id": "ZOMBIE_KNIGHT_SWORD",
+       "enchantments": {
+        "luck": 5,
+        "first_strike": 4,
+        "looting": 3,
+        "sharpness": 5,
+        "scavenger": 5,
+        "experience": 3
+       },
+       "uuid": "716c37a5-ef87-4aa5-ab31-d777bfb7e18f",
+       "item_tier": 5,
+       "timestamp": [
+        415,
+        -986496407
+       ]
+      }
+     },
+     "Damage": 0
+    }
+   ]
+  },
+  {
+   "note": "auction item_bytes, one item",
+   "base64": "H4sIAAAAAAAA/41UzW4jRRAur71Z21nBIoECB1AjEVjLsRP/bTy5ObZ3bSkkK082e7TaM2VPyz3TprsniXkXxIFDXgPlOThx5R0Q1TPJggQH5jLdVV99XVX9dVUBKlAQVQAoVKEaqHijEkysKcOnsUgw0HxpT4TFeB6rECUcRtuNuEU5N+vtQqpgnTkP0yTgFldKix8xPESubTQ3EddhGfb+5rFKSSs2c2O3EuGzf1HhRgTwBJ6IsPCiAE+HKk0spVW0fFWBEiZBBO4rwO67ZKGRr/lCYqEIlYkI8bXkK0PeP6vwLBRmI/mWgs6UxjJZv4Cv7u+O31BmzA/IdsLu78Juu0e//svuq1YNviT/CJeYmMzJ6/3cWfc6zV4tCx/xmK8yb1Bvtdu5u9XpNts1+I78vtWYrGyUIzoO4L2kfy1HdnoOWCPgwFoerJm/QQwdGOud/Qfw/iN4P4dOE4tSihVVn528qPePcmj/6AHa79eowh4Zx7cb1MJB2XQ6PSD38WuhjWWUmViT8crZvDOlrEhWDuPO8M5SSiZ3+QG/phpQP+7pEjcJGsOu4COiu+LxRmhhYtpDVjSV6qsYmVqyrUo1c9fEExs7FTGNP6RCo2tuwFkkVhExj3OEy0DiNcqviWmfmC4jYVimGsZTq2JuRcCl3DIe8g2RWZXBBC1TQzwiMXTvbJRSvioxB4zA6oZoMxglQxGMGrJUOs5zCySnSvhCSGG3zQw2wzANkMgjZAHpM1Q3iavF1Y5UJylyj9bvqS2unYut00bb0LJJaR9kDcAZFWYbgRTURzqTsvuP81yZhxm++/tPvziJzPLuGLcecpKEiheG+WshJWt5ZGzC5H8HeM54EwmJ1Bh2SeV8QGRMn9/fkUTk+O10yEbvzt+ML86Z//5iNipD6ZzH6MrsTVArEbCxe8CYsFPJQ4QqfDy+tZqTarVYpBZpOnwS5l2nx0uHz+meYXc4uBwML74/9U+8IuwtuEHfcnuqlLFvUQckCHo91ISdMpRpmoilQA07UXZk2b162B0PZpeTuT8ZzEZVeP5PKRWhJEmmFP60CM+XTtU0R5yqyVQqwjOZi5p2RZoI5lG3eUDFPOo631fxw0t5CLh+FLYDAPUkTSmhbxA77aNey2v0Ofca3TD0Gt5Rp9Poeq96rWM89rx2QNHZhLQioy+VoGJFjMYSJU2rn3/99rc/gObaTj4/3Aj7C0GPiap4BQAA",
+   "decoded": [
+    {
+     "components": {
+      "minecraft:item_model": "hypixel_skyblock:item/uncategorized/earth_shard",
+      "minecraft:tooltip_style": "hypixel_skyblock:epic"
+     },
+     "id": 272,
+     "Count": 1,
+     "tag": {
+      "ench": [],
+      "Unbreakable": 1,
+      "HideFlags": 254,
+      "display": {
+       "Lore": [
+        "§7Gear Score: §d425 §8(461)",
+        "§7Defense: §a+85 §8(+93.5)",
+        "§7Damage: §c+122 §8(+134.2)",
+        "§7Strength: §c+32 §9(+32) §8(+35.2)",
+        "§7Attack Speed: §e+3% §9(+3%) §8(+3%)",
+        "§7Intelligence: §b+80 §9(+80) §8(+88)",
+        "",
+        "§9Experience III, §7First Strike IV, §9Looting III",
+        "§9Luck V, §9Scavenger V, §9Sharpness V",
+        "§7Vampirism V",
+        "",
+        "§7§cSome of your enchantments require",
+        "§ca higher Enchanting level!",
+        "",
+        "§7This shard automatically adapts to",
+        "§7its user inside Dungeons, allowing",
+        "§7you to perform your class ability.",
+        "§7Reduces the cooldown of §9Seismic",
+        "§9Wave §7by §a2s§7.",
+        "",
+        "§7§eRight-click to use your class ability!",
+        "",
+        "§7§4❣ §cRequires §cCatacombs Skill 19§c.",
+        "§7§4❣ §cRequires §cCatacombs Skill 9 §cwhile in The Catacombs§c.",
+        "§5§lEPIC DUNGEON SWORD"
+       ],
+       "Name": "§5Heroic Earthen Blade"
+      },
+      "ExtraAttributes": {
+       "dungeon_skill_req": "CATACOMBS:9",
+       "baseStatBoostPercentage": 6,
+       "modifier": "heroic",
+       "id": "EARTH_SHARD",
+       "enchantments": {
+        "luck": 5,
+        "first_strike": 4,
+        "looting": 3,
+        "sharpness": 5,
+        "scavenger": 5,
+        "experience": 3,
+        "vampirism": 5
+       },
+       "uuid": "ee320519-8aa9-4dd9-9033-496517e7992c",
+       "item_tier": 4,
+       "timestamp": [
+        415,
+        -1071194901
+       ]
+      }
+     },
+     "Damage": 0
+    }
+   ]
+  }
+ ]
+}

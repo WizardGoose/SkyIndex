@@ -1,0 +1,71 @@
+import { describe, expect, it } from "vitest";
+import { isNpcPage, parseInfoboxIngredients } from "../useTargetCatalogue";
+
+/**
+ * The Ludleth mechanism: Ludleth is an NPC, not an item; he merely sells
+ * the Rose Dragon.
+ *
+ * A vendor's article carries the same `{{RD|...}}` price rows as the item it
+ * sells, so the ingredient gate alone offered a person as a grind target. The
+ * fix reads the article's own classification, the infobox template family,
+ * rather than a list of names to exclude, and these tests pin exactly that:
+ * character-family infoboxes are rejected, item-family ones pass, and a page
+ * the wiki does not classify is left for the ingredient gate to judge.
+ *
+ * Fixtures are minimal synthetic wikitext shaped like the real articles. Wiki
+ * content is CC BY-NC-SA and runtime-loaded, so nothing real is bundled here.
+ */
+
+const NPC_PAGE = `{{Infobox/Character
+|shop = Yes
+|location=[[Somewhere]]
+}}
+'''Testman''' is an [[NPC]] that sells the {{ID|Test Pet}} for {{Coins|1m}}, {{RD|5 Testleaf}}, and {{RD|1 Teststalk}}.`;
+
+const PET_PAGE = `{{Infobox/Pet
+|type = [[Farming]] [[Pets|Pet]]
+|rarity = L
+}}
+{{Infobox/Item
+|title = Test Egg
+|buy= *{{c|1m}}
+*{{RD|5 Testleaf}}
+*{{RD|1 Teststalk}}
+}}
+A '''Test Pet''' is bought with {{RD|5 Testleaf}} and {{RD|1 Teststalk}}.`;
+
+const BARE_PAGE = `A page with no infobox at all, listing {{RD|3 Testleaf}}.`;
+
+describe("isNpcPage", () => {
+  it("rejects a character-infobox article, whatever its price rows say", () => {
+    expect(isNpcPage(NPC_PAGE)).toBe(true);
+  });
+
+  it("passes an item-family article", () => {
+    expect(isNpcPage(PET_PAGE)).toBe(false);
+  });
+
+  it("does not treat an unclassified page as a person", () => {
+    // Absence of an infobox says "could not classify", not "NPC". The
+    // mutation-ingredient gate in the fetch still stands behind this.
+    expect(isNpcPage(BARE_PAGE)).toBe(false);
+  });
+
+  it("tolerates whitespace and case in the template name", () => {
+    expect(isNpcPage("{{ Infobox/character\n|shop=Yes\n}}")).toBe(true);
+    expect(isNpcPage("{{Infobox/NPC|x=1}}")).toBe(true);
+  });
+});
+
+describe("parseInfoboxIngredients", () => {
+  it("reads RD rows and merges duplicates by the larger quantity", () => {
+    const rows = parseInfoboxIngredients(PET_PAGE);
+    expect(rows).toContainEqual({ name: "Testleaf", qty: 5 });
+    expect(rows).toContainEqual({ name: "Teststalk", qty: 1 });
+    expect(rows).toHaveLength(2);
+  });
+
+  it("reads thousands separators as one number", () => {
+    expect(parseInfoboxIngredients("{{RD|1,024 Testleaf}}")).toEqual([{ name: "Testleaf", qty: 1024 }]);
+  });
+});

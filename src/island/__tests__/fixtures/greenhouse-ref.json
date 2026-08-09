@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "exportedAt": 1785638074957,
+  "player": { "uuid": "00000000-0000-4000-8000-000000000000", "name": "Steve" },
+  "profile": { "name": "Blueberry", "gameMode": "ironman" },
+  "sacks": { "PUMPKIN": 4096 },
+  "chests": [
+    {
+      "pos": [34, 100, 70],
+      "name": "Chest",
+      "lastSeen": 1785637690662,
+      "items": [{ "id": "PUMPKIN", "count": 64 }]
+    }
+  ],
+  "greenhouse": {
+    "observedAt": 1785638070000,
+    "size": [10, 10],
+    "cells": [
+      { "x": 0, "y": 3, "crop": "PUMPKIN" },
+      { "x": 1, "y": 3, "crop": "PUMPKIN" },
+      { "x": 2, "y": 3, "crop": "PUMPKIN", "nextStageAt": 1785644070000 },
+      { "x": 0, "y": 4, "crop": "COCOA_BEANS", "ground": "farmland" },
+      { "x": 1, "y": 4, "crop": "COCOA_BEANS" },
+      { "x": 4, "y": 6, "mutation": "CHOCONUT", "nextStageAt": 1785648070000 },
+      { "x": 5, "y": 6, "mutation": "CHOCONUT" },
+      { "x": 4, "y": 7, "mutation": "CHOCONUT" },
+      { "x": 5, "y": 7, "mutation": "CHOCONUT" },
+      { "x": 9, "y": 9, "crop": "MELON" }
+    ],
+    "skin": "GLASS"
+  }
+}
