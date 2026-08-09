@@ -1,0 +1,19 @@
+pluginManagement {
+	repositories {
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		mavenCentral()
+		gradlePluginPortal()
+	}
+}
+
+plugins {
+	// Minecraft 26.1.2 requires a Java 25 runtime (Mojang version manifest:
+	// javaVersion.majorVersion = 25). Most machines still default to an older
+	// JDK, so let Gradle fetch a matching toolchain instead of failing.
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+rootProject.name = 'skyindex'

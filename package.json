@@ -7,6 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:site": "pnpm run build",
+    "build:mod": "node tools/build-mod.mjs",
+    "build:all": "pnpm run build:site && pnpm run build:mod",
     "serve": "vite preview --port 4180 --host",
     "start": "pnpm run build && pnpm run serve",
     "build:pages": "cross-env GITHUB_PAGES=true pnpm run build",

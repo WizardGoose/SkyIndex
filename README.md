@@ -46,6 +46,10 @@ The companion mod is the other route for island data. Run `/skyindex copy` in
 game, then paste the code into the Island page. Skydex imports it locally in
 your browser, so the code does not go anywhere else.
 
+Want the mod without compiling anything? Grab its ready-made JAR from the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest),
+then follow the short install notes below.
+
 <div align="center">
 
 <img src="docs/assets/site.png" alt="The Skydex Crafting page, showing the full crafting tree for a Hyperion alongside a list of what to buy or gather" width="900">
@@ -146,7 +150,40 @@ site works without it. When it is running, the site talks to it over plain HTTP
 at `http://127.0.0.1:27916` on your own machine: it checks whether the mod is
 up, listens for live updates, and sends a greenhouse layout across when you
 press the button to do so. That traffic never leaves your computer and none of
-it is reachable from the network. The mod is MIT, in its own repository.
+it is reachable from the network.
+
+### Install it (no compiling needed)
+
+Most people should simply download `skyindex-<version>.jar` from the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest).
+Put that JAR and [Fabric API](https://modrinth.com/mod/fabric-api) in the
+`mods` folder of a Fabric Minecraft 26.1.2 instance running Java 25. Close
+Minecraft before replacing the JAR; Java keeps the old archive open and a live
+swap can make it crash later in a very confusing way.
+
+### Build it yourself
+
+The full Fabric source lives in [`mod/`](mod/), right beside the website. A
+clone can build either half without installing the other toolchain:
+
+```sh
+# Website only: needs Node 20.19+ (or 22.12+) and pnpm; no Java or Gradle.
+pnpm install
+pnpm run build:site
+
+# Mod only: needs Java 25 or lets Gradle fetch it; no Node install required.
+cd mod
+./gradlew build             # macOS / Linux
+# .\gradlew.bat build       # Windows PowerShell
+
+# Both, from the repository root: needs pnpm and uses the mod's Gradle wrapper.
+pnpm run build:all
+```
+
+`pnpm run build:mod` is also the cross-platform root command when Node/pnpm is
+already installed. Mod builds write the JAR to `mod/build/libs/`; that output is
+ignored on purpose. Releases carry the player download instead of checking
+binaries into Git.
 
 (so yes, it is your computer talking to itself. Weird? A bit. Local? Entirely.)
 
