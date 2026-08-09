@@ -23,7 +23,7 @@ Design notes and specs that already live in this folder. These are working
 documents: dated, specific, and honest about what is verified versus assumed.
 
 - **[island-data-spec.md](island-data-spec.md)**. The contract between the
-  companion mod and the site: the `SKYINDEX1.` code format, the local server
+  companion mod and the site: the current `SKYDEX2-`/`SKYDEX-` code formats and legacy readers, the local server
   endpoints, and every field of the island snapshot. Both sides implement
   this exactly.
 - **[greenhouse-time-research.md](greenhouse-time-research.md)**. The sourced

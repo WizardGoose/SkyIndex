@@ -12,6 +12,7 @@ Skydex is a Hypixel SkyBlock toolkit that runs entirely in your browser.
 <a href="#quick-start"><img src="docs/assets/badge-browser.svg" alt="runs in your browser" height="20"></a>
 <a href="#privacy"><img src="docs/assets/badge-no-tracking.svg" alt="no ads, no tracking" height="20"></a>
 <a href="#privacy"><img src="docs/assets/badge-api-key.svg" alt="API key: Hypixel only" height="20"></a>
+<a href="https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml"><img src="https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml/badge.svg" alt="companion mod build status" height="20"></a>
 
 </div>
 
@@ -42,9 +43,13 @@ The quickest, easiest way to start is
 [Skydex on GitHub Pages](https://wizardgoose.github.io/Skydex/): open it in a
 browser and use Skydex. No install, no account and no local server.
 
-The companion mod is the other route for island data. Run `/skyindex copy` in
+The companion mod is the other route for island data. Run `/skydex copy` in
 game, then paste the code into the Island page. Skydex imports it locally in
 your browser, so the code does not go anywhere else.
+
+Want the mod without compiling anything? Grab its ready-made JAR from the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest),
+then follow the short install notes below.
 
 <div align="center">
 
@@ -146,7 +151,50 @@ site works without it. When it is running, the site talks to it over plain HTTP
 at `http://127.0.0.1:27916` on your own machine: it checks whether the mod is
 up, listens for live updates, and sends a greenhouse layout across when you
 press the button to do so. That traffic never leaves your computer and none of
-it is reachable from the network. The mod is MIT, in its own repository.
+it is reachable from the network.
+
+### Install it (no compiling needed)
+
+Most people should download the JAR whose filename ends with their Minecraft
+version from the [latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest):
+`skydex-1.0+26.1.2.jar` for Minecraft 26.1.2 or
+`skydex-1.0+26.2.jar` for Minecraft 26.2. Put that JAR and the matching
+[Fabric API](https://modrinth.com/mod/fabric-api) in the instance's `mods`
+folder. Both versions use Java 25. Close Minecraft before replacing the JAR;
+Java keeps the old archive open and a live swap can make it crash later in a
+very confusing way.
+
+### Build it yourself
+
+The full Fabric source lives in [`mod/`](mod/), right beside the website. A
+clone can build either half without installing the other toolchain:
+
+```sh
+# Website only: needs Node 20.19+ (or 22.12+) and pnpm; no Java or Gradle.
+pnpm install
+pnpm run build:site
+
+# Mod only: defaults to Minecraft 26.1.2; no Node install required.
+cd mod
+./gradlew build             # macOS / Linux
+# .\gradlew.bat build       # Windows PowerShell
+
+# Minecraft 26.2:
+./gradlew build -Pminecraft_version=26.2 -Pfabric_api_version=0.156.0+26.2
+
+# Both, from the repository root: needs pnpm and uses the mod's Gradle wrapper.
+pnpm run build:all
+```
+
+`pnpm run build:mod` is also the cross-platform root command when Node/pnpm is
+already installed. Mod builds write the JAR to `mod/build/libs/`; that output is
+ignored on purpose. Every mod change is also tested by
+[GitHub Actions](https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml),
+where its logs and short-lived, GitHub-built JARs are available as build
+evidence and previews. Publishing a tagged GitHub Release runs the same matrix
+and attaches both versioned JARs only after both builds pass. Use the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest)
+for stable downloads.
 
 (so yes, it is your computer talking to itself. Weird? A bit. Local? Entirely.)
 
@@ -194,12 +242,15 @@ not the site name, and it survives renames on purpose: renaming it would orphan
 every saved planner, target list, profile and island snapshot. Nobody is losing
 their planner over a tidy string.
 
-The repo's directory name is the same kind of namespace. The companion mod,
-which shipped under the earlier SkyIndex name, keeps its `/skyindex` commands
-(a command is muscle memory, not branding), and as of this release both the mod
-and the site write island codes with the `SKYDEX-` prefix. Both still read
-`SKYDEX-`, `SKYDEX1.` and the older `SKYINDEX1.` alike, so every code already
-in circulation still pastes. See the comment in `src/ui/brand.ts`.
+The repo's directory name is the same kind of namespace. The companion mod now
+uses the Skydex id, filename, chat tag and primary `/skydex` command; `/skyindex`
+remains only as a compatibility alias. New installs store data under
+`config/skydex`, while upgrades can keep reading their existing
+`config/skyindex` data.
+
+Clipboard exports choose the shorter of two lossless formats for each island:
+`SKYDEX2-` binary or `SKYDEX-` compressed JSON. The site reads both, plus the
+older `SKYDEX1.` and `SKYINDEX1.` JSON forms, so existing codes still paste.
 
 ## License
 

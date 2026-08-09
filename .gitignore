@@ -58,3 +58,12 @@ tools/build-planner-targets.mjs
 tools/dump-datasets.mjs
 tools/wiki-dump.mjs
 
+
+# Fabric mod build output and local Minecraft development directories. The
+# downloadable JAR belongs to the GitHub Release, never the repository.
+mod/.gradle/
+mod/build/
+mod/run/
+mod/runs/
+mod/logs/
+mod/*.log

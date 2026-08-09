@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "skydex",
+  "version": "${version}",
+  "name": "Skydex",
+  "description": "Passively captures your Hypixel SkyBlock island chests, sacks, ender chest, storage and inventory, and hands them to the Skydex website over a localhost HTTP endpoint or a clipboard export code. Reads only what your client already displays.",
+  "authors": [
+    "WizardGoose"
+  ],
+  "contact": {
+    "sources": "https://github.com/WizardGoose/Skydex/tree/master/mod"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.skyindex.SkyIndexMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "${minecraft_dependency}",
+    "java": ">=25",
+    "fabric-api": ">=0.145.4"
+  }
+}
