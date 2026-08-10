@@ -188,4 +188,16 @@ describe("readProfileFacts", () => {
     expect(facts.tuning.slot_0).toEqual({ strength: 107, health: 0 });
     expect(facts.tuning.highest_unlocked_slot).toBeUndefined();
   });
+
+  it("reads only explicitly named Heart of the Mountain and Forest trees", () => {
+    const facts = readProfileFacts({ skill_tree: {
+      mining: { custom_name: "Heart of the Mountain 1" },
+      foraging: { custom_name: "Heart of the Forest 3" },
+    } });
+    expect(facts.hotmName).toBe("Heart of the Mountain 1");
+    expect(facts.hotfName).toBe("Heart of the Forest 3");
+    const absent = readProfileFacts({ skill_tree: { mining: {}, foraging: { custom_name: 4 } } });
+    expect(absent.hotmName).toBeNull();
+    expect(absent.hotfName).toBeNull();
+  });
 });

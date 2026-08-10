@@ -249,6 +249,8 @@ export interface MemberLoadouts {
   equipmentSets: GearSet[];
   /** The worn equipment, positional, from `inventory.equipment_contents`. */
   wornEquipment: [RawItem | null, RawItem | null, RawItem | null, RawItem | null];
+  /** `loadout.equipment.equipped_set`, or null when the payload omits it. */
+  equippedEquipmentSetId: number | null;
   /** The named loadouts, sorted by id. Empty when the payload states none. */
   loadouts: LoadoutStatement[];
 }
@@ -316,6 +318,11 @@ export const parseMemberLoadouts = async (member: unknown, signal?: AbortSignal)
   // position is by list order of what survives; with all four worn (the
   // common case) the positions are exact.
   const wornEquipment: MemberLoadouts["wornEquipment"] = [worn[0] ?? null, worn[1] ?? null, worn[2] ?? null, worn[3] ?? null];
+  const equipmentMap = asRecord(loadout?.equipment);
+  const equippedEquipmentSetId =
+    equipmentMap && typeof equipmentMap.equipped_set === "number" && Number.isInteger(equipmentMap.equipped_set)
+      ? equipmentMap.equipped_set
+      : null;
 
   const loadouts: LoadoutStatement[] = [];
   const stated = asRecord(loadout?.loadouts);
@@ -337,7 +344,7 @@ export const parseMemberLoadouts = async (member: unknown, signal?: AbortSignal)
     }
   }
 
-  return { armorSets, equipmentSets, wornEquipment, loadouts };
+  return { armorSets, equipmentSets, wornEquipment, equippedEquipmentSetId, loadouts };
 };
 
 /** Every category the API can fill, in the order the UI lists them. */

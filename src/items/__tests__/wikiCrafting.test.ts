@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildItemIndex, parseCraftingLua, slug, type HypixelItem, type ParsedRecipe } from "../wikiCrafting";
+import { buildItemIndex, hasKnownCraftingRecipe, parseCraftingLua, slug, type HypixelItem, type ParsedRecipe } from "../wikiCrafting";
 import type { CollectionUnlock } from "../useItemData";
 
 /**
@@ -85,6 +85,25 @@ describe("buildItemIndex", () => {
     // Diamond is neither crafted here nor a mutation, so it stays out. Only
     // the categories we name are rescued, not the whole 5,500 item resource.
     expect(index.diamond).toBeUndefined();
+  });
+
+  it("keeps fishing nets when the wiki crafting module omits their output", () => {
+    const index = buildItemIndex(recipes(), noUnlocks, [
+      ...hypixel,
+      { id: "GIGANTIC_FISHING_NET", name: "Gigantic Fishing Net", category: "FISHING_NET", tier: "LEGENDARY" },
+    ]);
+
+    const net = index.gigantic_fishing_net;
+    expect(net).toBeDefined();
+    expect(net.hypixelId).toBe("GIGANTIC_FISHING_NET");
+    expect(net.category).toBe("FISHING_NET");
+    expect(net.recipe).toBeNull();
+    expect(hasKnownCraftingRecipe(net)).toBe(true);
+  });
+
+  it("does not call an arbitrary recipe-less resource item craftable", () => {
+    const index = buildItemIndex(recipes(), noUnlocks, hypixel);
+    expect(hasKnownCraftingRecipe(index.ashwreath)).toBe(false);
   });
 
   it("invents nothing when Hypixel has never heard of an item", () => {

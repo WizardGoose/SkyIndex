@@ -262,5 +262,4 @@ are loaded at runtime under their own terms and are not part of this grant.
 
 ---
 
-if you're a fellow ironman mole person like me, wait in line to get your
-cheese :3
+if you're a fellow ironman mole person like me, COME GET YOUR CHEESE!!! :3

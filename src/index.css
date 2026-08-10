@@ -46,13 +46,13 @@
    purpose are pinned to match. Every one of them keeps its Minecraft hue and
    is only renotched for legibility on violet-black. See the game-data block.
 
-   Contrast: every step used for text was checked against the real panel
-   ground #0e1014, which is exactly 0.55 * #13161d over #07080a, i.e. what
-   bg-slate-900/55 resolves to over the page. The site's smallest type is
-   10px, so 4.5:1 is the bar, not 3:1.
+   Contrast: every step used for text is checked against #23262d, the
+   brightest measured glass ground over the backdrop. The old flat-panel
+   ground was darker and let ink-500 pass on paper while it faded over the
+   photograph. The site's smallest type is 10px, so 4.5:1 is the bar, not 3:1.
      ink-400   #93a3b8  7.4:1
-     ink-500   #76859c  5.1:1   (Tailwind's original slate-500 scored 4.0:1
-                                 here, so this step was lifted deliberately)
+     ink-500   #8797ad  5.1:1   (the former #76859c scored 4.0:1 on the
+                                 brightest glass, so this step was lifted)
      ink-600   #48546a  2.5:1   structural only: borders and dividers. It is
                                 not a text colour and must not become one.
                                 The ~50 `text-slate-600` call sites that were
@@ -100,7 +100,7 @@
   --color-slate-200: #d3dbe5;
   --color-slate-300: #b2bfce;
   --color-slate-400: #93a3b8;
-  --color-slate-500: #76859c;
+  --color-slate-500: #8797ad;
   --color-slate-600: #48546a;
   --color-slate-700: #2b3340;
   --color-slate-800: #1e232c;
@@ -696,15 +696,67 @@
    stays on html because that is what paints the overscroll area and the region
    beyond a short body, and moving it to body would leave both unpainted. */
 html {
-  background-color: var(--color-slate-950);
+  background-color: var(--sd-ground, var(--color-slate-950));
 }
 
 body {
   font-family: var(--font-sans);
+  /*
+   * Profile established the site's readable weight ladder: interface copy
+   * starts at the real 500 cut, then headings and values step up to 600-800.
+   * The other routes inherited the browser's 400 default instead, which made
+   * their slate-400/500 copy dissolve into the glass even though the colour
+   * tokens themselves clear the contrast floor. Set the shared floor here so
+   * every page, modal and legacy shard control uses the same ladder. Explicit
+   * `font-normal` remains available for the few intentional mixed-weight
+   * figures, such as Profile's current / total XP treatment.
+   */
+  font-weight: 500;
   background-color: transparent;
   color: var(--color-slate-200);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/*
+ * ZOOM-OUT TYPE COMPENSATION
+ *
+ * Browser zoom makes the CSS viewport wider while shrinking every CSS pixel.
+ * Those are exactly the conditions under which 9-11px metadata turns back
+ * into texture. The two wide-viewport steps restore roughly one physical
+ * pixel at common 80% and 67% zoom levels. This is deliberately global:
+ * Crafting, Forge, every Greenhouse tab, Shards, Settings, Profile and the
+ * home page all use the same small-text utilities.
+ */
+@media (min-width: 1800px) {
+  .text-\[9px\] {
+    font-size: 10px;
+  }
+
+  .text-\[10px\],
+  .text-\[10\.5px\] {
+    font-size: 11px;
+  }
+
+  .text-\[11px\] {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 2400px) {
+  .text-\[9px\] {
+    font-size: 11px;
+  }
+
+  .text-\[10px\],
+  .text-\[10\.5px\] {
+    font-size: 12px;
+  }
+
+  .text-\[11px\],
+  .text-\[12px\] {
+    font-size: 13px;
+  }
 }
 
 /* Space Grotesk has real character at large sizes and gets muddy if you let
@@ -998,8 +1050,9 @@ main > * {
 
      backdrop      the site's hub render. SHARP, full strength, cover, no zoom
      .sd-curtain   ONE sheet of frosted glass, floor to ceiling, from
-                   --sd-split to the right margin. #13161D tint, blur 34px
-     .sd-bar       the masthead. #07080A 60% -> 40%, blur 20px, 2px stroke
+                   --sd-split to the right margin. #13161D tint over a true
+                   filtered background copy
+     .sd-bar       the masthead. shared ground 58% -> 46%, 2px stroke
 
    There is one sheet and content sits ON it. Nothing nests a second
    backdrop-filter inside the curtain: the backdrop such a card would sample is
@@ -1024,20 +1077,9 @@ main > * {
 
 :root {
   /* The two glass recipes, as tokens so a variant is one number. */
-  --sd-bar-top: 0.6;
-  --sd-bar-bottom: 0.4;
-  --sd-bar-blur: 20px;
-  --sd-bar-stroke: rgb(232 237 243 / 0.16);
-
-  /* The measured AA minimum (see block comment). The bench spec's look is 0.2 / 0.1. */
-  --sd-panel-top: 0.5;
-  --sd-panel-bottom: 0.4;
-  --sd-curtain-blur: 34px;
-
-  /* Nearly nothing. The render shows at full strength; legibility is the
-     CURTAIN's job, and it only has to work where text actually sits. */
-  --sd-scrim: 0.12;
-
+  /* A deliberate, modest lift from the bench values: the art remains part of
+     the page, while sticky chrome and text-bearing glass hold their hierarchy
+     over its brightest details. */
   --sd-bar-h: 68px;
 
   /* The second strip, carrying the current section's tools. Held as a token
@@ -1157,7 +1199,8 @@ main > * {
   pointer-events: none;
 }
 
-/* Sharp. On purpose. The curtain does the blurring; the photo never does. */
+/* Sharp, full-viewport source. The frost copy below deliberately reads the
+   exact same image token, so a Settings background change updates both. */
 .sd-backdrop__img {
   position: absolute;
   inset: 0;
@@ -1170,20 +1213,65 @@ main > * {
   background-repeat: no-repeat;
 }
 
+/* A backdrop-filter can only blur what the browser has composited behind its
+   element. Our fixed background is a sibling, which made the old blur visually
+   unreliable. This duplicate is filtered directly, then clipped to the frosted
+   side of the layout. The small overscan prevents a sharp halo at its edges. */
+.sd-backdrop__frost {
+  position: absolute;
+  inset: -32px;
+  clip-path: inset(32px 32px 32px calc(var(--sd-split) + 32px));
+  background-image: var(--sd-bg, url("/bg/hub.jpg"));
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: blur(var(--sd-frost-image-blur));
+  transform: scale(1.025);
+}
+
+/* A separate, stronger blur source for the masthead. It covers the entire
+   bar, including the sharp character channel, rather than relying on
+   backdrop-filter to sample sibling layers. */
+.sd-backdrop__bar-frost {
+  position: absolute;
+  inset: -32px;
+  clip-path: inset(32px 32px calc(100% - var(--sd-bar-h) - 32px) 32px);
+  background-image: var(--sd-bg, url("/bg/hub.jpg"));
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: blur(var(--sd-bar-image-blur));
+  transform: scale(1.035);
+}
+
 .sd-backdrop__scrim {
   position: absolute;
   inset: 0;
-  background-color: rgb(7 8 10 / var(--sd-scrim));
+  background-color: rgb(var(--sd-ground-rgb, 7 8 10) / var(--sd-scrim));
+}
+
+/* The filter belongs on the sticky compositor itself. A filtered child inside
+   a z-indexed sticky parent can inherit that parent as its backdrop root, so
+   it sees only the parent's own empty layer and leaves scrolling page content
+   sharp. On the sticky parent, the sampled backdrop is the page underneath. */
+.sd-masthead-frost {
+  /* Chromium only composites backdrop filters reliably when the element
+     paints. This near-transparent coat keeps the original tint intact while
+     making the live content underneath a guaranteed filter input. */
+  background-color: rgb(var(--sd-ground-rgb, 7 8 10) / 0.025);
+  will-change: backdrop-filter;
+  /* The actual filter declaration lives in public/theme.css so Vite cannot
+     rewrite it to a WebKit-only property in production. */
 }
 
 .sd-bar {
+  /* Tint only. The dedicated masthead compositor immediately below this
+     layer owns the single live-content blur pass. */
   background-image: linear-gradient(
     180deg,
-    rgb(7 8 10 / var(--sd-bar-top)) 0%,
-    rgb(7 8 10 / var(--sd-bar-bottom)) 100%
+    rgb(var(--sd-ground-rgb, 7 8 10) / var(--sd-bar-top)) 0%,
+    rgb(var(--sd-ground-rgb, 7 8 10) / var(--sd-bar-bottom)) 100%
   );
-  backdrop-filter: blur(var(--sd-bar-blur)) saturate(125%);
-  -webkit-backdrop-filter: blur(var(--sd-bar-blur)) saturate(125%);
   border-bottom: 2px solid var(--sd-bar-stroke);
 }
 
@@ -1200,11 +1288,11 @@ main > * {
   pointer-events: none;
   background-image: linear-gradient(
     180deg,
-    rgb(19 22 29 / var(--sd-panel-top)) 0%,
-    rgb(19 22 29 / var(--sd-panel-bottom)) 100%
+    rgb(var(--sd-glass-rgb, 19 22 29) / var(--sd-panel-top)) 0%,
+    rgb(var(--sd-glass-rgb, 19 22 29) / var(--sd-panel-bottom)) 100%
   );
-  backdrop-filter: blur(var(--sd-curtain-blur)) saturate(115%);
-  -webkit-backdrop-filter: blur(var(--sd-curtain-blur)) saturate(115%);
+  /* Tint only. The directly filtered background copy owns the page frost;
+     another backdrop pass here can replace it with the original sharp scene. */
   /* The edge is hard in the mock, so it is hard here. One hairline of light
      down the seam is the only concession: without it the boundary between
      sharp and blurred reads as a rendering artefact rather than as an edge
@@ -1229,8 +1317,8 @@ main > * {
 .sd-glass {
   background-image: linear-gradient(
     180deg,
-    rgb(19 22 29 / var(--sd-glass-top, 0.62)) 0%,
-    rgb(19 22 29 / var(--sd-glass-bottom, 0.52)) 100%
+    rgb(19 22 29 / var(--sd-glass-top, 0.66)) 0%,
+    rgb(19 22 29 / var(--sd-glass-bottom, 0.56)) 100%
   );
   backdrop-filter: blur(26px) saturate(115%);
   -webkit-backdrop-filter: blur(26px) saturate(115%);
@@ -1242,8 +1330,8 @@ main > * {
 .sd-panel {
   background-image: linear-gradient(
     180deg,
-    rgb(19 22 29 / 0.38) 0%,
-    rgb(19 22 29 / 0.24) 100%
+    rgb(19 22 29 / 0.44) 0%,
+    rgb(19 22 29 / 0.3) 100%
   );
   border: 1px solid rgb(232 237 243 / 0.1);
 }
@@ -1294,13 +1382,16 @@ main > * {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .sd-backdrop__img {
+  .sd-backdrop__img,
+  .sd-backdrop__frost,
+  .sd-backdrop__bar-frost {
     display: none;
   }
   .sd-backdrop__scrim {
     background-image: none;
     background-color: var(--color-slate-950);
   }
+  .sd-masthead-frost,
   .sd-bar,
   .sd-curtain,
   .sd-panel,
@@ -1550,7 +1641,7 @@ input[type="number"]::-webkit-inner-spin-button {
    but it now resolves to the same values rather than a second scheme. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #48546a transparent;
+  scrollbar-color: #59677c transparent;
 }
 ::-webkit-scrollbar {
   width: 7px;
@@ -1560,11 +1651,11 @@ input[type="number"]::-webkit-inner-spin-button {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #48546a;
+  background: #59677c;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6a5d85;
+  background: #8797ad;
 }
 ::-webkit-scrollbar-corner {
   background: transparent;
@@ -1572,7 +1663,38 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .scrollbar-dark {
   scrollbar-width: thin;
-  scrollbar-color: #48546a transparent;
+  scrollbar-color: #59677c transparent;
+}
+
+/*
+ * The document rail is a navigation control, not a one-pixel blue edge.
+ * Give only the outer scrollbar a stable dark trough and a 10px hit area;
+ * nested lists keep the compact transparent-track treatment above.
+ */
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: auto;
+  scrollbar-color: #59677c #0b0d11;
+}
+
+html::-webkit-scrollbar {
+  width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #0b0d11;
+}
+
+html::-webkit-scrollbar-thumb {
+  min-height: 40px;
+  border: 2px solid #0b0d11;
+  background: #59677c;
+  background-clip: padding-box;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #8797ad;
+  background-clip: padding-box;
 }
 
 /* =========================================================================

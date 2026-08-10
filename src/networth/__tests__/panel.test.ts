@@ -165,6 +165,11 @@ describe("coin formatting", () => {
 });
 
 describe("labels", () => {
+  it("uses Canadian armour labels in the Profile networth breakdown", () => {
+    expect(categoryLabel("armor")).toBe("Armour");
+    expect(categoryLabel("wardrobe")).toBe("Saved Armour");
+  });
+
   it("names every category the engine can produce", () => {
     // A category with no label would render as a raw key, which reads as a bug.
     for (const key of CATEGORY_ORDER) {

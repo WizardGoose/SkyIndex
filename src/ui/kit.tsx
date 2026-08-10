@@ -1,4 +1,5 @@
 import React from "react";
+import { MAX_ITEM_QUANTITY, normaliseItemQuantity } from "../utilities/itemQuantity";
 
 /**
  * The inventory block lives in components/common because several unrelated
@@ -212,7 +213,15 @@ export const BADGE = "text-[9px] font-medium tracking-[0.06em]";
  * with the one underneath. A caption's whole job is to be legible once and
  * then get out of the way of the column it names.
  */
-export const COL = "text-[10px] font-normal text-slate-400";
+export const COL = "text-[10px] font-medium text-slate-400";
+
+/**
+ * Supporting prose that still needs to survive a zoomed-out dashboard.
+ * Profile's readable hierarchy uses a true body size and a lighter colour for
+ * hierarchy, not tiny low-contrast type. Keep that rule shared so explanatory
+ * copy in every tool stays readable without competing with primary values.
+ */
+export const HELP = "text-[12px] leading-relaxed text-slate-300";
 
 /**
  * A labelled figure, for a strip of headline counts.
@@ -383,6 +392,44 @@ export const INPUT =
   `transition-colors duration-150 hover:border-white/20 focus:outline-none focus:border-emerald-500/70 ${FOCUS}`;
 
 /**
+ * Whole-item quantity used by Crafting and Forge.
+ *
+ * This deliberately matches the shard calculator's label-above-field shape,
+ * but lives in the kit so the two item tools cannot drift into different
+ * sizes, wheel behavior or invalid-value rules.
+ */
+export const ItemQuantityField: React.FC<{
+  id: string;
+  value: number;
+  onChange: (value: number) => void;
+  className?: string;
+}> = ({ id, value, onChange, className = "" }) => (
+  <div className={className}>
+    <label htmlFor={id} className="mb-1 block text-[12px] font-medium text-slate-300">
+      Quantity
+    </label>
+    <input
+      id={id}
+      type="number"
+      min={1}
+      max={MAX_ITEM_QUANTITY}
+      step={1}
+      inputMode="numeric"
+      value={value}
+      onChange={(event) => onChange(normaliseItemQuantity(event.currentTarget.value))}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          event.currentTarget.blur();
+        }
+      }}
+      onWheel={(event) => event.currentTarget.blur()}
+      className={`${INPUT} ${NUM} w-full text-[14px]`}
+    />
+  </div>
+);
+
+/**
  * What a two-tone rail is made of.
  *
  * Kept out of the component and pure so the arithmetic can be tested without
@@ -550,11 +597,11 @@ export const SplitPage: React.FC<{ rail: React.ReactNode; children: React.ReactN
   <div className="flex min-h-0 flex-1 flex-col min-[900px]:flex-row min-[900px]:items-start">
     <aside
       aria-label={railLabel}
-      className="w-full space-y-3 px-3 pt-4 sm:max-[900px]:px-6 min-[900px]:sticky min-[900px]:top-[var(--sd-chrome-h)] min-[900px]:max-h-[calc(100vh-var(--sd-chrome-h))] min-[900px]:w-[var(--sd-col)] min-[900px]:shrink-0 min-[900px]:self-start min-[900px]:overflow-y-auto min-[900px]:border-r min-[900px]:border-white/8 min-[900px]:pb-10 min-[900px]:pl-[var(--sd-gutter)] min-[900px]:pr-4"
+      className="w-full space-y-3 px-3 pt-4 sm:max-[900px]:px-6 min-[900px]:sticky min-[900px]:top-[var(--sd-chrome-h)] min-[900px]:max-h-[calc(100vh-var(--sd-chrome-h))] min-[900px]:w-[var(--sd-col)] min-[900px]:shrink-0 min-[900px]:self-start min-[900px]:overflow-y-auto min-[900px]:border-r min-[900px]:border-white/8 min-[900px]:pb-6 min-[900px]:pl-[var(--sd-gutter)] min-[900px]:pr-4"
     >
       {rail}
     </aside>
-    <div className="min-w-0 flex-1 space-y-3 px-3 pb-10 pt-4 sm:max-[900px]:px-6 min-[900px]:pl-[var(--sd-inset)] min-[900px]:pr-6">
+    <div className="min-w-0 flex-1 space-y-3 px-3 pb-6 pt-4 sm:max-[900px]:px-6 min-[900px]:pl-[var(--sd-inset)] min-[900px]:pr-6">
       {children}
     </div>
   </div>
@@ -616,7 +663,7 @@ export const PageHeader: React.FC<{
           >
             {title}
           </h1>
-          {sub && <p className="mt-1.5 text-[11px] leading-snug text-slate-300">{sub}</p>}
+          {sub && <p className="mt-1.5 text-[12px] leading-snug text-slate-300">{sub}</p>}
         </div>
       </div>
       {actions && <div className="flex shrink-0 items-center gap-1.5">{actions}</div>}
@@ -652,7 +699,7 @@ export const Field: React.FC<{
       {label}
     </label>
     {children}
-    {hint && <p className="text-[10px] leading-snug text-slate-500">{hint}</p>}
+    {hint && <p className={HELP}>{hint}</p>}
   </div>
 );
 

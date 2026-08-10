@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState, useSyncExternalStore 
 import { Link, useSearchParams } from "react-router-dom";
 import { Boxes, ChevronDown, ChevronRight, HelpCircle, Info, KeyRound, Search, Sparkles, Trash2 } from "lucide-react";
 import { ItemIcon } from "../ui/ItemIcon";
-import { itemResourceVersion, requestItemResource, subscribeItemResource } from "../items/itemResource";
+import { itemResourceVersion, requestItemResource, resourceTierFor, subscribeItemResource } from "../items/itemResource";
 import { WikiLink } from "../ui/WikiLink";
 import {
   EmptySlot,
@@ -1580,7 +1580,15 @@ const RarityCell: React.FC<{ item: GearItem; context: SlotContext }> = ({ item, 
  * item whose tier is merely unknown.
  */
 const EmptyGearCell: React.FC = () => (
-  <div className="aspect-square rounded-md border border-white/8 bg-white/2" />
+  <div
+    aria-label="Empty slot"
+    className="flex aspect-square items-center justify-center rounded-md border border-slate-600/45 bg-slate-950/25"
+  >
+    <span className="relative block h-5 w-4 opacity-55" aria-hidden>
+      <span className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 rounded-[1px] border-2 border-slate-400/80" />
+      <span className="absolute inset-x-0 bottom-0 h-2 rounded-[1px] border-2 border-slate-400/80 border-t-0" />
+    </span>
+  </div>
 );
 
 /**
@@ -1589,38 +1597,37 @@ const EmptyGearCell: React.FC = () => (
  * whose decoder drops empties before position can be known).
  */
 const GearCluster: React.FC<{
-  label: string;
+  label?: string;
   items: (GearItem | null)[];
   context: SlotContext;
   note: string;
 }> = ({ label, items, context, note }) => (
-  <div className="w-[13rem]">
-    <div className={LABEL}>{label}</div>
-    {items.every((item) => item === null) ? (
-      <p className="mt-1.5 text-[11px] text-slate-500">{note}</p>
-    ) : (
-      <div className="mt-1.5 grid grid-cols-4 gap-1">
-        {items.map((item, i) => (item ? <RarityCell key={i} item={item} context={context} /> : <EmptyGearCell key={i} />))}
-      </div>
-    )}
+  <div className="w-[13rem]" role="group" aria-label={label ?? note}>
+    {label && <div className={LABEL}>{label}</div>}
+    <div className={`${label ? "mt-1.5" : ""} grid grid-cols-4 gap-1`}>
+      {Array.from({ length: 4 }, (_, i) =>
+        items[i] ? <RarityCell key={i} item={items[i]!} context={context} /> : <EmptyGearCell key={i} />
+      )}
+    </div>
   </div>
 );
 
 /**
- * One wardrobe set: a numbered set of up to four pieces, positional, on
+ * One armour set: a numbered set of up to four pieces, positional, on
  * rarity tiles.
  */
 /**
- * One wardrobe set as a bare vertical column: helmet, chest, legs, boots.
- * No card, no "Set N" caption. A wardrobe reads at a glance as columns of
- * outfits; the H/C/L/B rail beside the grid says what the rows are once,
- * instead of every set repeating a label that told nobody anything.
+ * One armour set as a bare vertical column: helmet, chest, legs, boots.
+ * The visual reading is the four-piece silhouette, so no redundant row rail
+ * or visible set number competes with the item tiles. The set remains named
+ * for assistive technology through its group label.
  */
-const WardrobeColumn: React.FC<{
+const ArmourColumn: React.FC<{
+  id: number;
   pieces: (GearItem | null)[];
   context: SlotContext;
-}> = ({ pieces, context }) => (
-  <div className="grid w-11 shrink-0 grid-rows-4 gap-1">
+}> = ({ id, pieces, context }) => (
+  <div role="group" aria-label={`Armour set ${id}`} className="grid w-11 shrink-0 grid-rows-4 gap-1">
     {Array.from({ length: 4 }, (_, i) =>
       pieces[i] ? <RarityCell key={i} item={pieces[i]!} context={context} /> : <EmptyGearCell key={i} />
     )}
@@ -1634,23 +1641,19 @@ interface DisplaySet {
 }
 
 /**
- * The equipment wardrobe: equipment is a wardrobe just as armour is,
- * and the payload agrees: `loadout.equipment` stores
- * numbered equipment sets exactly as `loadout.armor` stores armor sets. One
+ * Stored equipment: the payload carries numbered equipment sets alongside
+ * armour sets. One
  * column per set, four positional rows. The rows carry no slot names on
  * purpose: the payload keys them EQUIPMENT_SLOT_1..4 and naming them
  * necklace/cloak/belt/bracelet would be our claim, not its.
  */
-const EquipmentWardrobe: React.FC<{ sets: DisplaySet[]; context: SlotContext }> = ({ sets, context }) => (
-  <div className="flex flex-wrap gap-2">
+const EquipmentColumns: React.FC<{ sets: DisplaySet[]; context: SlotContext }> = ({ sets, context }) => (
+  <div className="flex flex-wrap gap-1.5">
     {sets.map((set) => (
-      <div key={set.id} className={`${TILE} p-2`}>
-        <div className={`${LABEL} mb-1.5`}>Set {set.id}</div>
-        <div className="grid w-11 grid-rows-4 gap-1">
-          {set.pieces.map((piece, i) =>
-            piece ? <RarityCell key={i} item={piece} context={context} /> : <EmptyGearCell key={i} />
-          )}
-        </div>
+      <div key={set.id} role="group" aria-label={`Equipment set ${set.id}`} className="grid w-11 shrink-0 grid-rows-4 gap-1">
+        {set.pieces.map((piece, i) =>
+          piece ? <RarityCell key={i} item={piece} context={context} /> : <EmptyGearCell key={i} />
+        )}
       </div>
     ))}
   </div>
@@ -1680,7 +1683,14 @@ const TUNING_STATS: ReadonlyArray<{ key: string; label: string; glyph: string; c
 
 const TuningTable: React.FC<{ allocation: Record<string, number> }> = ({ allocation }) => {
   const rows = TUNING_STATS.filter((stat) => (allocation[stat.key] ?? 0) > 0);
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    return (
+      <div className="min-w-[7rem]">
+        <div className={LABEL}>Tuning</div>
+        <div className="mt-1 text-[11px] text-slate-400">No points allocated</div>
+      </div>
+    );
+  }
   return (
     <div className="min-w-[7rem]">
       <div className={LABEL}>Tuning</div>
@@ -1694,6 +1704,40 @@ const TuningTable: React.FC<{ allocation: Record<string, number> }> = ({ allocat
             <span className={`shrink-0 ${NUM} text-slate-100`}>{allocation[stat.key]}</span>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+const DetailChip: React.FC<{ label: string; value: string; title?: string }> = ({ label, value, title }) => (
+  <span title={title} className="inline-flex min-w-0 items-baseline gap-1.5 rounded-md border border-white/10 bg-black/20 px-2 py-1 text-[11px]">
+    <span className={`${LABEL} shrink-0`}>{label}</span>
+    <span className="min-w-0 truncate font-semibold text-slate-200">{value}</span>
+  </span>
+);
+
+const ActiveLoadoutSummary: React.FC<{
+  armor: GearItem[];
+  wornEquipment: (GearItem | null)[];
+  activePet: PetTile | null;
+  context: SlotContext;
+}> = ({ armor, wornEquipment, activePet, context }) => {
+  return (
+    <div className="flex flex-wrap items-start gap-3 border-b border-white/8 pb-3">
+      <GearCluster items={armor} context={context} note="Current armour" />
+      <GearCluster items={wornEquipment} context={context} note="Current equipment" />
+      <div className="shrink-0 border-white/8 lg:border-l lg:pl-3">
+          {activePet ? (
+            <div className="flex min-w-0 items-center gap-2 rounded-md border border-white/10 bg-black/20 px-2 py-1.5">
+              <SlotIcon name={activePet.iconName} hypixelId={activePet.packId} size={24} />
+              <span className="min-w-0">
+                <span className={LABEL}>Pet</span>
+                <span className={`block truncate text-[11px] font-semibold ${RARITY[activePet.tier] ?? "text-slate-200"}`}>
+                  {activePet.name} <span className={`${NUM} text-slate-400`}>Lvl {activePet.level}</span>
+                </span>
+              </span>
+            </div>
+          ) : <DetailChip label="Pet" value="None summoned" />}
       </div>
     </div>
   );
@@ -1745,7 +1789,7 @@ const LoadoutCard: React.FC<{
         <p className="mt-1.5 text-[11px] text-slate-500">Nothing assigned to this loadout.</p>
       ) : (
         <div className="mt-2 flex flex-wrap items-start gap-x-4 gap-y-2">
-          {armor && column("Armor", armor)}
+          {armor && column("Armour", armor)}
           {equipment && column("Equip", equipment)}
           <div className="min-w-0 flex-1 space-y-2">
             {pet && (
@@ -1805,52 +1849,44 @@ const GearSection: React.FC<{
 }) => {
   const armorSetById = new Map(armorSets.map((set) => [set.id, set]));
   const equipmentSetById = new Map(equipmentSets.map((set) => [set.id, set]));
-
+  const activePet = [...petByUuid.values()].find((pet) => pet.active) ?? null;
   return (
     <div className={PANEL}>
-      <SectionHead title="Armor & Wardrobe" />
+      <SectionHead title="Active Loadout" />
       {!inventoryShared ? (
         <p className="px-3 py-2 text-[11px] text-amber-400/90">
-          Hypixel is not sharing your inventory, so your armor, equipment and wardrobe are missing rather than empty.
+          Hypixel is not sharing your inventory, so your armour, equipment and saved sets are missing rather than empty.
           Turn Inventory on in game under SkyBlock Menu → Settings → API Settings.
         </p>
       ) : (
         <div className="p-3 space-y-3">
-          <div className="flex flex-wrap gap-x-8 gap-y-3">
-            <GearCluster label="Armor" items={armor} context={context} note="Nothing worn." />
-            <GearCluster label="Equipment" items={wornEquipment} context={context} note="Nothing equipped." />
-          </div>
+          <ActiveLoadoutSummary
+            armor={armor}
+            wornEquipment={wornEquipment}
+            activePet={activePet}
+            context={context}
+          />
 
           <div>
-            <div className={LABEL}>Wardrobe</div>
+            <div className={LABEL}>Armour</div>
             {armorSets.length === 0 ? (
-              <p className="mt-1.5 text-[11px] text-slate-500">The wardrobe is empty.</p>
+              <p className="mt-1.5 text-[11px] text-slate-500">No saved armour sets on this profile.</p>
             ) : (
-              <div className="mt-1.5 flex gap-1.5">
-                {/* The row key, said once. */}
-                <div className="grid w-4 shrink-0 grid-rows-4 gap-1">
-                  {["H", "C", "L", "B"].map((letter) => (
-                    <span key={letter} className="flex items-center justify-center font-mono text-[10px] text-slate-400">
-                      {letter}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {armorSets.map((set) => (
-                    <WardrobeColumn key={set.id} pieces={set.pieces} context={context} />
-                  ))}
-                </div>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {armorSets.map((set) => (
+                  <ArmourColumn key={set.id} id={set.id} pieces={set.pieces} context={context} />
+                ))}
               </div>
             )}
           </div>
 
           <div>
-            <div className={LABEL}>Equipment wardrobe</div>
+            <div className={LABEL}>Equipment</div>
             {equipmentSets.length === 0 ? (
               <p className="mt-1.5 text-[11px] text-slate-500">No stored equipment sets on this profile.</p>
             ) : (
               <div className="mt-1.5">
-                <EquipmentWardrobe sets={equipmentSets} context={context} />
+                <EquipmentColumns sets={equipmentSets} context={context} />
               </div>
             )}
           </div>
@@ -1877,7 +1913,7 @@ const GearSection: React.FC<{
           </div>
 
           <p className="text-[10px] leading-snug text-slate-500">
-            A recombed piece wears its upgraded rarity. Hover a wardrobe set to see it on the character panel.
+            A recombed piece wears its upgraded rarity. Hover an armour set to see it on the character panel.
           </p>
         </div>
       )}
@@ -1945,7 +1981,7 @@ const ApiKeyLink: React.FC = () => {
       <SectionHead title="Hypixel API" right={<span className={LABEL}>optional</span>} />
       <div className="p-3 space-y-2.5">
         <p className="text-[11px] text-slate-400 leading-relaxed">
-          A key adds your <span className="text-slate-200">sack totals, networth, armor, wardrobe and pets</span> without
+          A key adds your <span className="text-slate-200">sack totals, networth, armour, saved equipment and pets</span> without
           the mod. It cannot add chests, inventory or ender chest. Hypixel does not publish those at any privacy setting,
           which is why the mod exists.
         </p>
@@ -2075,7 +2111,7 @@ export const IslandPage: React.FC = () => {
   }, [itemIndex]);
 
   /** The rarity lookup the Networth panel's grids share, one function for the whole page. */
-  const tierOf = useCallback((id: string) => tierByHypixelId.get(id) ?? null, [tierByHypixelId]);
+  const tierOf = useCallback((id: string) => tierByHypixelId.get(id) ?? resourceTierFor(id), [tierByHypixelId]);
 
   /**
    * NPC unit prices by Hypixel id, for the networth panel's NPC sell row.
