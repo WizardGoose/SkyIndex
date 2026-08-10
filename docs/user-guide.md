@@ -176,12 +176,12 @@ servers for anything, which keeps it in the same allowed category as mods like
 Skyblocker and NEU.
 
 There are two ways the data reaches the site, and the mod's settings screen
-(`/skyindex` in game) asks you which Skydex you use:
+(`/skydex` in game) asks you which Skydex you use:
 
 ### Paste codes (for the hosted site)
 
-Run `/skyindex copy` in game (or press the button in `/skyindex`). The mod
-puts an export code on your clipboard. It starts with `SKYINDEX1.` and is your
+Run `/skydex copy` in game (or press the button in `/skydex`). The mod
+puts an export code on your clipboard. It starts with `SKYDEX2-` or `SKYDEX-` and is your
 island data, compressed and encoded, nothing more. Paste it into the box on
 the Island page and the site decodes it locally, in your browser. The code
 never touches a network.

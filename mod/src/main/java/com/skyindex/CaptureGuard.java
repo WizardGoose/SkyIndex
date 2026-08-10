@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class CaptureGuard {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("SkyIndex");
+    private static final Logger LOGGER = LoggerFactory.getLogger("Skydex");
     /** One chat line per session, however many paths fail. */
     private static final AtomicBoolean TOLD_THE_PLAYER = new AtomicBoolean();
 
@@ -71,7 +71,7 @@ public final class CaptureGuard {
 
     private void disable(Throwable failure) {
         disabled = true;
-        LOGGER.error("SkyIndex disabled its {} path after an internal error", name, failure);
+        LOGGER.error("Skydex disabled its {} path after an internal error", name, failure);
         if (TOLD_THE_PLAYER.compareAndSet(false, true)) {
             announce();
         }
@@ -90,7 +90,7 @@ public final class CaptureGuard {
             client.execute(() -> {
                 try {
                     ClientCompat.addClientSystemMessage(client,
-                            Component.literal("[SkyIndex] ")
+                            Component.literal("[Skydex] ")
                                     .withStyle(Style.EMPTY.withColor(SkydexTheme.rgb(SkydexTheme.ACCENT)))
                                     .append(Component.literal(
                                                     "capture disabled after an internal error - restart the game")

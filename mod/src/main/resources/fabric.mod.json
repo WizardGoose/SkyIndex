@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "skyindex",
+  "id": "skydex",
   "version": "${version}",
-  "name": "SkyIndex",
-  "description": "Passively captures your Hypixel SkyBlock island chests, sacks, ender chest, storage and inventory, and hands them to the SkyIndex website over a localhost HTTP endpoint or a clipboard export code. Reads only what your client already displays.",
+  "name": "Skydex",
+  "description": "Passively captures your Hypixel SkyBlock island chests, sacks, ender chest, storage and inventory, and hands them to the Skydex website over a localhost HTTP endpoint or a clipboard export code. Reads only what your client already displays.",
   "authors": [
     "WizardGoose"
   ],

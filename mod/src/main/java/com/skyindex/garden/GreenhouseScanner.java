@@ -62,7 +62,7 @@ import java.util.TreeMap;
  */
 public final class GreenhouseScanner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("SkyIndex");
+    private static final Logger LOGGER = LoggerFactory.getLogger("Skydex");
 
     /** Rescan every 2 seconds. Cheap, and covers arriving without a change event. */
     public static final int SCAN_INTERVAL_TICKS = 40;
@@ -228,10 +228,10 @@ public final class GreenhouseScanner {
                     && !GreenhouseOffset.agreesWith(cx, cy, cz, found.originX, found.bedY, found.originZ)) {
                 // Loud on purpose: the constant has drifted, and the found bed
                 // is what gets used until it is corrected.
-                LOGGER.warn("SkyIndex greenhouse: the Carpenter offset disagrees with the real bed. "
+                LOGGER.warn("Skydex greenhouse: the Carpenter offset disagrees with the real bed. "
                         + "Measured {}. Using the bed that was actually found.", measured);
             } else if (!GreenhouseOffset.isKnown()) {
-                LOGGER.info("SkyIndex greenhouse offset measured: {}. "
+                LOGGER.info("Skydex greenhouse offset measured: {}. "
                         + "Report this line so it can become the built-in constant.", measured);
             }
             result = found.withMeasured(measured);
@@ -256,7 +256,7 @@ public final class GreenhouseScanner {
             return;
         }
         lastLoggedStatus = d.status();
-        LOGGER.warn("SkyIndex captured no greenhouse data: {}", d.summary());
+        LOGGER.warn("Skydex captured no greenhouse data: {}", d.summary());
     }
 
     // --------------------------------------------------------------- finding

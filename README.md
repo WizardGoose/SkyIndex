@@ -43,7 +43,7 @@ The quickest, easiest way to start is
 [Skydex on GitHub Pages](https://wizardgoose.github.io/Skydex/): open it in a
 browser and use Skydex. No install, no account and no local server.
 
-The companion mod is the other route for island data. Run `/skyindex copy` in
+The companion mod is the other route for island data. Run `/skydex copy` in
 game, then paste the code into the Island page. Skydex imports it locally in
 your browser, so the code does not go anywhere else.
 
@@ -157,8 +157,8 @@ it is reachable from the network.
 
 Most people should download the JAR whose filename ends with their Minecraft
 version from the [latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest):
-`skyindex-1.0.1+26.1.2.jar` for Minecraft 26.1.2 or
-`skyindex-1.0.1+26.2.jar` for Minecraft 26.2. Put that JAR and the matching
+`skydex-1.0+26.1.2.jar` for Minecraft 26.1.2 or
+`skydex-1.0+26.2.jar` for Minecraft 26.2. Put that JAR and the matching
 [Fabric API](https://modrinth.com/mod/fabric-api) in the instance's `mods`
 folder. Both versions use Java 25. Close Minecraft before replacing the JAR;
 Java keeps the old archive open and a live swap can make it crash later in a
@@ -242,12 +242,15 @@ not the site name, and it survives renames on purpose: renaming it would orphan
 every saved planner, target list, profile and island snapshot. Nobody is losing
 their planner over a tidy string.
 
-The repo's directory name is the same kind of namespace. The companion mod,
-which shipped under the earlier SkyIndex name, keeps its `/skyindex` commands
-(a command is muscle memory, not branding), and as of this release both the mod
-and the site write island codes with the `SKYDEX-` prefix. Both still read
-`SKYDEX-`, `SKYDEX1.` and the older `SKYINDEX1.` alike, so every code already
-in circulation still pastes. See the comment in `src/ui/brand.ts`.
+The repo's directory name is the same kind of namespace. The companion mod now
+uses the Skydex id, filename, chat tag and primary `/skydex` command; `/skyindex`
+remains only as a compatibility alias. New installs store data under
+`config/skydex`, while upgrades can keep reading their existing
+`config/skyindex` data.
+
+Clipboard exports choose the shorter of two lossless formats for each island:
+`SKYDEX2-` binary or `SKYDEX-` compressed JSON. The site reads both, plus the
+older `SKYDEX1.` and `SKYINDEX1.` JSON forms, so existing codes still paste.
 
 ## License
 

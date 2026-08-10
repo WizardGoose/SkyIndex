@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * PROPOSED schema-2 payload. Not emitted yet — {@code /skyindex copy} still
+ * PROPOSED schema-2 payload. Not emitted yet — {@code /skydex copy} still
  * produces v1 until the site ships a v2 decoder.
  *
  * <p>v1 writes one JSON object per stack, so the keys {@code id}, {@code count},

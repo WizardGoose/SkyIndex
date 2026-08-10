@@ -24,7 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
 /**
- * {@code /skyindex} (settings GUI), {@code copy}, {@code status} and
+ * {@code /skydex} (settings GUI), {@code copy}, {@code status} and
  * {@code layout [anchor|rotate|clear]}.
  *
  * <p>Chat is the mod's other surface, and the one that holds the diagnostics
@@ -41,14 +41,14 @@ public final class SkyIndexCommand {
     private static final Style ACCENT = colour(SkydexTheme.ACCENT);
 
     /** One spelling of the tag, so the prefix cannot drift between helpers. */
-    private static final String TAG = "[SkyIndex] ";
+    private static final String TAG = "[Skydex] ";
 
     private SkyIndexCommand() {
     }
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher,
                                 SkyIndexMod mod) {
-        dispatcher.register(ClientCommands.literal("skyindex")
+        dispatcher.register(ClientCommands.literal("skydex")
                 .then(ClientCommands.literal("copy").executes(ctx -> copy(ctx, mod)))
                 .then(ClientCommands.literal("status").executes(ctx -> status(ctx, mod)))
                 .then(ClientCommands.literal("layout")
@@ -59,6 +59,9 @@ public final class SkyIndexCommand {
                         .then(ClientCommands.literal("clear").executes(ctx -> clearLayout(ctx, mod)))
                         .executes(ctx -> toggleOverlay(ctx, mod)))
                 .executes(ctx -> openSettings(ctx, mod)));
+        // Compatibility alias for existing players and documentation links.
+        dispatcher.register(ClientCommands.literal("skyindex")
+                .redirect(dispatcher.getRoot().getChild("skydex")));
     }
 
     // --------------------------------------------------------------- layout
@@ -66,14 +69,14 @@ public final class SkyIndexCommand {
     private static int toggleOverlay(CommandContext<FabricClientCommandSource> ctx, SkyIndexMod mod) {
         LayoutStore layouts = mod.layouts();
         if (!layouts.hasLayout()) {
-            error(ctx, "No layout loaded. Push one from the SkyIndex site first.");
+            error(ctx, "No layout loaded. Push one from the Skydex site first.");
             return Command.SINGLE_SUCCESS;
         }
         boolean on = layouts.toggleOverlay();
         mod.saveLayouts();
         if (on && layouts.anchor() == null) {
             info(ctx, "Overlay on, but no anchor yet - stand at the greenhouse corner "
-                    + "and run /skyindex layout anchor.");
+                    + "and run /skydex layout anchor.");
             return Command.SINGLE_SUCCESS;
         }
         info(ctx, "Overlay " + (on ? "on" : "off") + " (" + layouts.label() + ")");
@@ -92,7 +95,7 @@ public final class SkyIndexCommand {
                                         SkyIndexMod mod) {
         LayoutStore layouts = mod.layouts();
         if (!layouts.hasLayout()) {
-            error(ctx, "No layout loaded. Push one from the SkyIndex site first.");
+            error(ctx, "No layout loaded. Push one from the Skydex site first.");
             return Command.SINGLE_SUCCESS;
         }
         boolean on = layouts.toggleProjection();
@@ -101,11 +104,11 @@ public final class SkyIndexCommand {
                 + (on ? " - built cells go green, the rest get a ghost block." : ""));
         if (on && !layouts.overlayEnabled()) {
             line(ctx, "The overlay itself is off, so nothing is drawn yet - "
-                    + "run /skyindex layout to turn it on.");
+                    + "run /skydex layout to turn it on.");
         }
         if (on && layouts.anchor() == null) {
             line(ctx, "No anchor yet - stand at the greenhouse corner "
-                    + "and run /skyindex layout anchor.");
+                    + "and run /skydex layout anchor.");
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -125,14 +128,14 @@ public final class SkyIndexCommand {
 
         info(ctx, "Anchor set to " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ()
                 + " - grid runs " + orientation.description() + ".");
-        line(ctx, "Not lined up? Run /skyindex layout rotate.");
+        line(ctx, "Not lined up? Run /skydex layout rotate.");
         return Command.SINGLE_SUCCESS;
     }
 
     private static int rotate(CommandContext<FabricClientCommandSource> ctx, SkyIndexMod mod) {
         GridOrientation orientation = mod.layouts().rotate();
         if (orientation == null) {
-            error(ctx, "No anchor yet - run /skyindex layout anchor first.");
+            error(ctx, "No anchor yet - run /skydex layout anchor first.");
             return Command.SINGLE_SUCCESS;
         }
         mod.saveLayouts();
@@ -163,13 +166,13 @@ public final class SkyIndexCommand {
             error(ctx, "Nothing captured yet - join SkyBlock and open a container first.");
             return Command.SINGLE_SUCCESS;
         }
-        info(ctx, "Copied " + summary + " to your clipboard. Paste it into SkyIndex.");
+        info(ctx, "Copied " + summary + " to your clipboard. Paste it into Skydex.");
         return Command.SINGLE_SUCCESS;
     }
 
     private static int status(CommandContext<FabricClientCommandSource> ctx, SkyIndexMod mod) {
         SnapshotStore store = mod.stores() == null ? null : mod.stores().active();
-        info(ctx, "SkyIndex " + mod.modVersion());
+        info(ctx, "Skydex " + mod.modVersion());
         line(ctx, "Site mode: " + mod.config().siteMode.label());
 
         if (store == null) {

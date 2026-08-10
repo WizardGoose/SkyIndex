@@ -6,7 +6,7 @@ package com.skyindex.gui;
  * <p>Three groups, top to bottom, each earning its place: the mode question and
  * what follows from it, the greenhouse layout controls, and the export controls.
  * Nothing diagnostic: server addresses, profile names and capture counts live
- * in {@code /skyindex status}, because they are things to read, not things to
+ * in {@code /skydex status}, because they are things to read, not things to
  * act on, and a settings screen should only hold the latter.
  *
  * <p>Height matters: at GUI scale 4 on a 1080p display the whole usable area is

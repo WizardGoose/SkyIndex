@@ -263,7 +263,7 @@ public final class GreenhouseDiagnostics {
     }
 
     /**
-     * One line for {@code /skyindex status}.
+     * One line for {@code /skydex status}.
      *
      * <p>Every outcome names coordinates the owner can check against F3, because
      * the failure this whole rewrite exists for was a position that looked

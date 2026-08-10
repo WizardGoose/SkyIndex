@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 /**
- * The settings screen, opened with {@code /skyindex}.
+ * The settings screen, opened with {@code /skydex}.
  *
  * <p>Three groups, each holding only things the player acts on: the mode
  * question (and the "Open site" shortcut that follows from one answer), the
@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
  *
  * <p>Deliberately absent: the server address, the profile name, and the capture
  * counts. Those are worth knowing occasionally and worth acting on never, so
- * they live in {@code /skyindex status} instead. A settings screen that also
+ * they live in {@code /skydex status} instead. A settings screen that also
  * reports diagnostics reads as a debug panel.
  *
  * <p>Client-side only; it reads mod state and writes the config file, and never

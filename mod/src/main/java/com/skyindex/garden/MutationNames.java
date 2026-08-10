@@ -157,7 +157,7 @@ public final class MutationNames {
     /**
      * Whether the texture fallback has anything in it.
      *
-     * <p>Surfaced in {@code /skyindex status} so the owner is told the fallback
+     * <p>Surfaced in {@code /skydex status} so the owner is told the fallback
      * is inert rather than assuming it is covering for a name that drifted.
      */
     public static boolean hasTextureData() {

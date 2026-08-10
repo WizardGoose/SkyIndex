@@ -5,6 +5,8 @@ import com.skyindex.data.IslandSnapshot;
 import com.skyindex.data.ItemEntry;
 import com.skyindex.data.ItemExtra;
 import com.skyindex.data.ItemNames;
+import com.skyindex.data.GreenhouseBoard;
+import com.skyindex.data.GreenhouseCell;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,7 +15,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * SKYINDEX2 binary serialisation.
+ * SKYDEX2 binary serialisation.
  *
  * <p>Same semantic model as {@link CompactCodec}'s JSON — one string pool, an
  * interned extras table, columnar sections with sparse name/extra side-tables —
@@ -27,25 +29,26 @@ import java.util.TreeMap;
  * possibly remain, and trailing bytes are an error because they mean the
  * document was misread.
  *
- * <p>Not emitted yet: {@code /skyindex copy} still produces v1 until the site
- * ships a decoder.
+ * <p>The site mirrors this format in {@code src/island/code.ts}. The mod emits
+ * whichever of this binary form and the legacy JSON form is shorter.
  */
 public final class BinaryCodec {
 
     /** File magic, so a wrong payload fails immediately rather than deep inside. */
-    static final byte[] MAGIC = {'S', 'K', 'I', 'X'};
+    static final byte[] MAGIC = {'S', 'K', 'D', 'X'};
     static final int VERSION = 2;
-    /** Wire prefix: {@code SKYINDEX2.} + base64url(gzip(binary)). */
-    public static final String PREFIX = ExportCodec.FAMILY + "2.";
+    /** Wire prefix: {@code SKYDEX2-} + base64url(gzip(binary)). */
+    public static final String PREFIX = "SKYDEX2-";
 
     static final int HAS_SACKS = 1;
     static final int HAS_CHESTS = 1 << 1;
     static final int HAS_INVENTORY = 1 << 2;
     static final int HAS_ENDER_CHEST = 1 << 3;
     static final int HAS_STORAGE = 1 << 4;
+    static final int HAS_GREENHOUSE = 1 << 5;
     /** Bits above this are undefined in v2 and rejected. */
     private static final int KNOWN_FLAGS =
-            HAS_SACKS | HAS_CHESTS | HAS_INVENTORY | HAS_ENDER_CHEST | HAS_STORAGE;
+            HAS_SACKS | HAS_CHESTS | HAS_INVENTORY | HAS_ENDER_CHEST | HAS_STORAGE | HAS_GREENHOUSE;
 
     private BinaryCodec() {
     }
@@ -58,6 +61,13 @@ public final class BinaryCodec {
                 .encodeToString(ExportCodec.gzip(encode(snapshot)));
     }
 
+    /** Emit the shortest lossless clipboard representation for this snapshot. */
+    public static String shortestCode(IslandSnapshot snapshot) {
+        String json = ExportCodec.encode(snapshot.toMinifiedJson());
+        String binary = encodeCode(snapshot);
+        return binary.length() < json.length() ? binary : json;
+    }
+
     /** Clipboard code -> snapshot. Tolerates padding and pasted whitespace. */
     public static IslandSnapshot decodeCode(String code) {
         if (code == null) {
@@ -65,7 +75,7 @@ public final class BinaryCodec {
         }
         String trimmed = code.trim();
         if (!trimmed.startsWith(PREFIX)) {
-            throw new BinaryFormatException("not a SkyIndex v2 code (expected prefix " + PREFIX + ")");
+            throw new BinaryFormatException("not a Skydex v2 code (expected prefix " + PREFIX + ")");
         }
         String payload = trimmed.substring(PREFIX.length()).replaceAll("\\s", "");
         while (payload.endsWith("=")) {
@@ -105,6 +115,8 @@ public final class BinaryCodec {
         byte[] inventory = encodeSection(snapshot.inventory(), pool);
         byte[] enderChest = encodeSection(snapshot.enderChest(), pool);
         byte[] storage = encodeSection(snapshot.storage(), pool);
+        byte[] greenhouse = snapshot.greenhouse() == null ? null
+                : encodeGreenhouse(snapshot.greenhouse(), pool);
 
         int uuidRef = pool.intern(snapshot.playerUuid());
         int playerNameRef = pool.intern(snapshot.playerName());
@@ -138,10 +150,11 @@ public final class BinaryCodec {
                 | (chests != null ? HAS_CHESTS : 0)
                 | (inventory != null ? HAS_INVENTORY : 0)
                 | (enderChest != null ? HAS_ENDER_CHEST : 0)
-                | (storage != null ? HAS_STORAGE : 0);
+                | (storage != null ? HAS_STORAGE : 0)
+                | (greenhouse != null ? HAS_GREENHOUSE : 0);
         out.writeByte(flags);
 
-        appendAll(out, sacks, chests, inventory, enderChest, storage);
+        appendAll(out, sacks, chests, inventory, enderChest, storage, greenhouse);
         return out.toByteArray();
     }
 
@@ -184,6 +197,21 @@ public final class BinaryCodec {
         return out.toByteArray();
     }
 
+    private static byte[] encodeGreenhouse(GreenhouseBoard board, Pool pool) {
+        BinaryWriter out = new BinaryWriter();
+        out.writeVarLong(board.observedAt());
+        out.writeVarInt(board.width());
+        out.writeVarInt(board.height());
+        out.writeVarInt(board.cells().size());
+        for (GreenhouseCell cell : board.cells()) {
+            out.writeVarInt(cell.x());
+            out.writeVarInt(cell.y());
+            out.writeVarInt(pool.intern(cell.id()));
+            out.writeByte(cell.isMutation() ? 1 : 0);
+            out.writeVarLong(cell.nextStageAt());
+        }
+        return out.toByteArray();
+    }
     /** @return the encoded section, or null when the section was never captured */
     private static byte[] encodeSection(List<ItemEntry> items, Pool pool) {
         if (items == null) {
@@ -236,7 +264,7 @@ public final class BinaryCodec {
         BinaryReader in = new BinaryReader(payload);
         for (int i = 0; i < MAGIC.length; i++) {
             if (in.readByte("magic") != MAGIC[i]) {
-                throw new BinaryFormatException("not a SkyIndex binary payload (bad magic)", i);
+                throw new BinaryFormatException("not a Skydex binary payload (bad magic)", i);
             }
         }
         int version = in.readByte("version") & 0xFF;
@@ -307,11 +335,40 @@ public final class BinaryCodec {
         if ((flags & HAS_STORAGE) != 0) {
             snapshot.storage(readSection(in, pool, extras));
         }
+        if ((flags & HAS_GREENHOUSE) != 0) {
+            snapshot.greenhouse(readGreenhouse(in, pool));
+        }
 
         in.expectEnd();
         return snapshot;
     }
 
+    private static GreenhouseBoard readGreenhouse(BinaryReader in, List<String> pool) {
+        long observedAt = in.readVarLong("greenhouse observedAt");
+        int width = in.readVarInt("greenhouse width");
+        int height = in.readVarInt("greenhouse height");
+        int count = in.readCount("greenhouse cells");
+        List<GreenhouseCell> cells = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            int x = in.readVarInt("greenhouse x");
+            int y = in.readVarInt("greenhouse y");
+            String id = deref(pool, in.readVarInt("greenhouse id"), in, "greenhouse id");
+            if (id == null) throw new BinaryFormatException("greenhouse cell has no id", in.offset());
+            int kind = in.readByte("greenhouse kind") & 0xFF;
+            if (kind > 1) {
+                throw new BinaryFormatException("invalid greenhouse kind " + kind, in.offset());
+            }
+            boolean mutation = kind == 1;
+            long next = in.readVarLong("greenhouse nextStageAt");
+            GreenhouseCell cell = mutation ? GreenhouseCell.mutation(x, y, id) : GreenhouseCell.crop(x, y, id);
+            cells.add(next > 0 ? cell.withNextStageAt(next) : cell);
+        }
+        try {
+            return new GreenhouseBoard(observedAt, width, height, cells);
+        } catch (IllegalArgumentException invalid) {
+            throw new BinaryFormatException("invalid greenhouse: " + invalid.getMessage(), in.offset());
+        }
+    }
     private static ItemExtra readExtra(BinaryReader in, List<String> pool, int index) {
         String reforge = deref(pool, in.readVarInt("extra[" + index + "] reforge"), in, "reforge");
         int stars = in.readVarInt("extra[" + index + "] stars");

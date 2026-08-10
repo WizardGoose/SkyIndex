@@ -53,7 +53,7 @@ public final class RenderCompat {
                         geometry.render((PoseStack.Pose) args[0], (VertexConsumer) args[1]);
                         yield null;
                     }
-                    case "toString" -> "SkyIndex custom geometry";
+                    case "toString" -> "Skydex custom geometry";
                     case "hashCode" -> System.identityHashCode(proxy);
                     case "equals" -> proxy == args[0];
                     default -> throw new UnsupportedOperationException(method.toString());

@@ -1,8 +1,8 @@
-# SkyIndex
+# Skydex
 
 A passive Fabric **client** mod for Hypixel SkyBlock that captures the storage
 data the Hypixel API does not reliably expose — island chests, sacks, ender
-chest, storage backpacks and your inventory — and hands it to the **SkyIndex**
+chest, storage backpacks and your inventory — and hands it to the **Skydex**
 website.
 
 Minecraft **26.1.2 or 26.2** · Fabric Loader 0.19.3+ · Fabric API · Java 25
@@ -80,14 +80,14 @@ If you have an API key on the site, sacks are also available there in bulk.
 The Runes sack is skipped on purpose: rune items carry no usable item id, and
 recording plausible-but-wrong ids is worse than recording nothing.
 
-## How do you use SkyIndex?
+## How do you use Skydex?
 
 This is the one question the mod needs answering, and it is the first thing in
-the settings screen (`/skyindex`). It decides how your data reaches the site.
+the settings screen (`/skydex`). It decides how your data reaches the site.
 
 ### Locally Hosted — live updates *(default)*
 
-You run the SkyIndex site on this machine. The mod runs a small local server
+You run the Skydex site on this machine. The mod runs a small local server
 and the site updates itself as you play — open a chest, watch it appear.
 
 ```
@@ -110,8 +110,8 @@ You use the hosted site. A page on the internet generally cannot reach a server
 inside your machine, so the mod **does not start one at all** rather than hold a
 port nothing will connect to.
 
-To update the site: press **Copy export code** in `/skyindex` (or run
-`/skyindex copy`) and paste it into the site's paste box.
+To update the site: press **Copy export code** in `/skydex` (or run
+`/skydex copy`) and paste it into the site's paste box.
 
 Switching modes takes effect immediately — no restart, and the choice is saved
 as soon as you click it.
@@ -123,7 +123,7 @@ cannot give the site. It leaves out your **inventory, ender chest and storage**,
 because the API already exposes those and they are the bulk of the code's size.
 Dropping them roughly halves it.
 
-**Include inventory in export code** in `/skyindex` controls this, and it
+**Include inventory in export code** in `/skydex` controls this, and it
 follows your site mode until you touch it: **on** for GitHub Pages, because the
 hosted site has no other way to get those sections, and **off** for Locally
 Hosted, because the live feed already carries them. Once you pick a side
@@ -140,20 +140,15 @@ that genuinely differ — starred items, renamed items — are always sent.
 
 ### What the code looks like
 
-Every code this mod copies starts with `SKYDEX-`, followed by base64url of the
-gzipped JSON. There is no version digit in that prefix. The schema number rides
-inside the payload instead, which is where the site reads it and where a format
-change would actually show up.
+The mod builds both lossless representations and copies whichever is shorter:
+`SKYDEX2-` is the compact binary format, while `SKYDEX-` is gzipped minified
+JSON. Both use unpadded base64url and maximum gzip compression. On the realistic
+test island, binary reduces the 7,807-character JSON code to 6,407 characters;
+on unusually diverse data where pooling loses, the JSON form wins automatically.
 
-Codes copied by builds predating that name start with `SKYINDEX1.`. The data
-inside is identical and only the label differs, so nothing already sitting on a
-clipboard is invalidated: the site reads `SKYDEX-`, `SKYINDEX1.` and the
-short-lived `SKYDEX1.` form it briefly emitted itself, and this mod's own
-decoder reads the same three. Only the prefix it writes is a single one.
-
-The `/skyindex` command and the chat tag keep their spelling. Those are typed
-and matched, not stored, and renaming them would cost muscle memory to buy
-nothing.
+The site reads both current formats and the older `SKYDEX1.` and `SKYINDEX1.`
+JSON forms. The primary command and chat tag are now `/skydex` and `[Skydex]`;
+`/skyindex` remains as a compatibility alias for existing players.
 
 ## Greenhouse board detection
 
@@ -168,7 +163,7 @@ has already drawn for you. It never asks the server anything.
 
 ### Making sure it worked
 
-Stand in your greenhouse and run **`/skyindex status`**. Two lines matter:
+Stand in your greenhouse and run **`/skydex status`**. Two lines matter:
 
 ```
   Greenhouse: 37 cells (4 mutations)
@@ -227,7 +222,7 @@ the feature on properly.
 
 ## Greenhouse layout overlay
 
-Design a greenhouse on the SkyIndex site, push it to the game, and the mod
+Design a greenhouse on the Skydex site, push it to the game, and the mod
 paints translucent ghost tiles on your island floor showing what goes where —
 like Litematica, but for greenhouse plots.
 
@@ -239,23 +234,23 @@ scope.
 
 1. Be in **Locally Hosted** mode (the push arrives over the local server).
 2. On the site, design the layout and press its send button. The mod chat-logs
-   what it loaded, and `/skyindex` shows the label.
+   what it loaded, and `/skydex` shows the label.
 3. Stand at the corner of your greenhouse, look at the corner block, and run
-   **`/skyindex layout anchor`**. That block becomes grid cell (0,0) and the
+   **`/skydex layout anchor`**. That block becomes grid cell (0,0) and the
    layout extends from it. If you are not looking at anything within 5 blocks,
    the block under your feet is used instead.
-4. Run **`/skyindex layout`** to show the overlay.
-5. Facing the wrong way? **`/skyindex layout rotate`** cycles the four
+4. Run **`/skydex layout`** to show the overlay.
+5. Facing the wrong way? **`/skydex layout rotate`** cycles the four
    orientations. The corner you anchored stays put while the grid swings around
    it, so you can just press it until it lines up.
 
 | Command | What it does |
 |---|---|
-| `/skyindex layout` | Shows/hides the overlay |
-| `/skyindex layout anchor` | Sets grid (0,0) to the block you are looking at |
-| `/skyindex layout rotate` | Cycles the four grid orientations |
-| `/skyindex layout progress` | Shows/hides the built-versus-unbuilt comparison |
-| `/skyindex layout clear` | Drops the loaded layout |
+| `/skydex layout` | Shows/hides the overlay |
+| `/skydex layout anchor` | Sets grid (0,0) to the block you are looking at |
+| `/skydex layout rotate` | Cycles the four grid orientations |
+| `/skydex layout progress` | Shows/hides the built-versus-unbuilt comparison |
+| `/skydex layout clear` | Drops the loaded layout |
 
 ### Reading the overlay
 
@@ -270,7 +265,7 @@ your private island, only while enabled, and is off until you turn it on.
 
 ### Progress view
 
-**`/skyindex layout progress`**, or the middle button in the settings screen's
+**`/skydex layout progress`**, or the middle button in the settings screen's
 greenhouse row, turns the flat plan into a comparison against what you have
 actually built. Also off until you turn it on.
 
@@ -304,16 +299,16 @@ there is none until the data is real.
 projects the same. Nothing in the overlay is claiming to know what to do first.
 
 The layout, its anchor and its rotation are saved in
-`config/skyindex/layout.json`, so they survive a restart.
+`config/skydex/layout.json`, so they survive a restart.
 
 ## Commands
 
 | Command | What it does |
 |---|---|
-| `/skyindex` | Opens the settings screen |
-| `/skyindex copy` | Copies the export code to your clipboard |
-| `/skyindex status` | Chat summary: captured counts, mode, server state, layout, location, greenhouse scan |
-| `/skyindex layout …` | Greenhouse overlay — see above |
+| `/skydex` | Opens the settings screen |
+| `/skydex copy` | Copies the export code to your clipboard |
+| `/skydex status` | Chat summary: captured counts, mode, server state, layout, location, greenhouse scan |
+| `/skydex layout …` | Greenhouse overlay — see above |
 
 ## Install (Prism Launcher)
 
@@ -323,9 +318,9 @@ The layout, its anchor and its rotation are saved in
      Settings → Java*, point it at a JDK/JRE 25.
 2. Install the matching **Fabric API** into the instance's `mods` folder.
 3. Drop the matching release asset into the same folder:
-   `skyindex-1.0.1+26.1.2.jar` or `skyindex-1.0.1+26.2.jar`.
+   `skydex-1.0+26.1.2.jar` or `skydex-1.0+26.2.jar`.
 4. Launch, join Hypixel, go to your island and open some chests.
-5. Run `/skyindex` and pick which SkyIndex you use.
+5. Run `/skydex` and pick which Skydex you use.
 
 Build for 26.1.2 with `./gradlew build`, or for 26.2 with
 `./gradlew build -Pminecraft_version=26.2 -Pfabric_api_version=0.156.0+26.2`.
@@ -335,16 +330,16 @@ automatically, so you do not need one on your PATH to compile.
 ## Where your data lives
 
 ```
-config/skyindex/config.json                  settings
-config/skyindex/layout.json                  greenhouse layout, anchor, overlay state
-config/skyindex/<uuid>_<profile>.json        one store per profile
+config/skydex/config.json                  settings
+config/skydex/layout.json                  greenhouse layout, anchor, overlay state
+config/skydex/<uuid>_<profile>.json        one store per profile
 ```
 
 Profiles are kept separate — an ironman profile's chests never merge into your
 main. Chests you have not opened in **30 days** are dropped automatically, so a
 rebuilt island does not haunt the export forever.
 
-### Settings (`config/skyindex/config.json`)
+### Settings (`config/skydex/config.json`)
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -367,7 +362,7 @@ Your data never leaves your machine unless you send it yourself.
 
 ## Hypixel rules
 
-SkyIndex is **passive**. It only reads what your client has already been sent
+Skydex is **passive**. It only reads what your client has already been sent
 and rendered — container screens, item lore, the scoreboard, the tab list. It
 does not:
 

@@ -188,7 +188,7 @@ A report that can be acted on has:
 3. **What you saw instead**, as a screenshot. Exact text copied verbatim
    beats a paraphrase, especially for anything a parser touched.
 4. If it involves the mod or the Island page: the output of
-   `/skyindex status` in game, copied as-is.
+   `/skydex status` in game, copied as-is.
 
 For suggestions rather than bugs, say what problem you are trying to solve,
 not just the feature you have in mind. The planner's plot sizing, the harvest

@@ -25,7 +25,7 @@ public final class SkyIndexConfig {
     public static final String DEFAULT_SITE_URL = "http://localhost:5173";
 
     /**
-     * Which SkyIndex site the player uses. Decides whether the localhost server
+     * Which Skydex site the player uses. Decides whether the localhost server
      * runs at all; there is no separate on/off switch, because two overlapping
      * controls for one behaviour is how people end up confused about why the
      * site says "offline".

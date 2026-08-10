@@ -48,8 +48,8 @@ class ModMetadataTest {
     void metadataIsConsistent() throws IOException {
         JsonObject json = modJson();
         assertEquals(1, json.get("schemaVersion").getAsInt());
-        // The config path in the spec is config/skyindex/... which is the mod id.
-        assertEquals("skyindex", json.get("id").getAsString());
+        // New installs use config/skydex; the entrypoint falls back to the legacy directory on upgrades.
+        assertEquals("skydex", json.get("id").getAsString());
         assertEquals("client", json.get("environment").getAsString());
 
         JsonObject depends = json.getAsJsonObject("depends");

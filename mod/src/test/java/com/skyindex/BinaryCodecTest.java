@@ -77,7 +77,7 @@ class BinaryCodecTest {
         byte[] payload = BinaryCodec.encode(Fixtures.snapshot());
         assertEquals('S', payload[0]);
         assertEquals('K', payload[1]);
-        assertEquals('I', payload[2]);
+        assertEquals('D', payload[2]);
         assertEquals('X', payload[3]);
         assertEquals(2, payload[4]);
     }
@@ -207,7 +207,7 @@ class BinaryCodecTest {
                 .getMessage().contains("bad magic"));
 
         assertTrue(assertThrows(BinaryFormatException.class,
-                () -> BinaryCodec.decode(new byte[]{'S', 'K', 'I', 'X', 9}))
+                () -> BinaryCodec.decode(new byte[]{'S', 'K', 'D', 'X', 9}))
                 .getMessage().contains("unsupported binary version 9"));
 
         assertThrows(BinaryFormatException.class, () -> BinaryCodec.decode(new byte[0]));
@@ -250,7 +250,7 @@ class BinaryCodecTest {
         byte[] out = new byte[5 + trailing.length];
         out[0] = 'S';
         out[1] = 'K';
-        out[2] = 'I';
+        out[2] = 'D';
         out[3] = 'X';
         out[4] = 2;
         for (int i = 0; i < trailing.length; i++) {

@@ -534,7 +534,7 @@ public final class LayoutOverlayRenderer {
     }
 
     /**
-     * Where {@code /skyindex layout anchor} puts the origin: the block the
+     * Where {@code /skydex layout anchor} puts the origin: the block the
      * player is looking at within {@link #ANCHOR_REACH}, else the block they
      * are standing on.
      */

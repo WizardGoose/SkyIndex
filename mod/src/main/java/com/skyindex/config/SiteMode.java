@@ -3,7 +3,7 @@ package com.skyindex.config;
 import java.util.Locale;
 
 /**
- * Which SkyIndex site the player uses. This is the one setting the GUI exists
+ * Which Skydex site the player uses. This is the one setting the GUI exists
  * to ask about, because it decides whether the localhost server runs at all.
  */
 public enum SiteMode {
@@ -17,7 +17,7 @@ public enum SiteMode {
     /**
      * The hosted GitHub Pages site: the localhost server is stopped entirely
      * rather than holding a port nothing will connect to. Updates are manual,
-     * via the Copy button or {@code /skyindex copy}.
+     * via the Copy button or {@code /skydex copy}.
      */
     GITHUB_PAGES("githubPages", "GitHub Pages");
 

@@ -9,7 +9,7 @@ import com.skyindex.config.SkyIndexConfig;
 import com.skyindex.data.IslandSnapshot;
 import com.skyindex.data.SnapshotStore;
 import com.skyindex.data.StoreManager;
-import com.skyindex.export.ExportCodec;
+import com.skyindex.export.BinaryCodec;
 import com.skyindex.garden.GreenhouseScanner;
 import com.skyindex.gui.SkyIndexScreen;
 import com.skyindex.http.SkyIndexHttpServer;
@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Files;
 
 /**
  * Client entrypoint.
@@ -48,8 +49,8 @@ import java.nio.file.Path;
  */
 public final class SkyIndexMod implements ClientModInitializer {
 
-    public static final String MOD_ID = "skyindex";
-    private static final Logger LOGGER = LoggerFactory.getLogger("SkyIndex");
+    public static final String MOD_ID = "skydex";
+    private static final Logger LOGGER = LoggerFactory.getLogger("Skydex");
 
     /** Rescan location/profile every second; it changes rarely. */
     private static final int LOCATION_INTERVAL_TICKS = 20;
@@ -91,7 +92,11 @@ public final class SkyIndexMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        Path configDir = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID);
+        Path configRoot = FabricLoader.getInstance().getConfigDir();
+        Path currentDir = configRoot.resolve(MOD_ID);
+        Path legacyDir = configRoot.resolve("skyindex");
+        // Existing installs keep their captured data. New installs use config/skydex.
+        Path configDir = Files.exists(currentDir) || !Files.exists(legacyDir) ? currentDir : legacyDir;
         this.configFile = configDir.resolve("config.json");
         this.modVersion = FabricLoader.getInstance().getModContainer(MOD_ID)
                 .map(c -> c.getMetadata().getVersion().getFriendlyString())
@@ -122,7 +127,7 @@ public final class SkyIndexMod implements ClientModInitializer {
         registerEvents();
         applySiteMode();
 
-        LOGGER.info("SkyIndex {} ready ({} mode, data dir: {})",
+        LOGGER.info("Skydex {} ready ({} mode, data dir: {})",
                 modVersion, config.siteMode.label(), configDir);
     }
 
@@ -306,7 +311,7 @@ public final class SkyIndexMod implements ClientModInitializer {
             snapshot = snapshot.withoutApiCoveredSections();
         }
         String json = snapshot.toMinifiedJson();
-        String code = ExportCodec.encode(json);
+        String code = BinaryCodec.shortestCode(snapshot);
         Minecraft.getInstance().keyboardHandler.setClipboard(code);
         return humanBytes(code.length()) + " code (" + humanBytes(json.length()) + " uncompressed)";
     }

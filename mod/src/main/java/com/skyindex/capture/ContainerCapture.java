@@ -48,7 +48,7 @@ import java.util.OptionalLong;
  */
 public final class ContainerCapture {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("SkyIndex");
+    private static final Logger LOGGER = LoggerFactory.getLogger("Skydex");
 
     /** How long a remembered block interaction stays valid. */
     private static final long INTERACT_WINDOW_MS = 5_000L;
@@ -257,7 +257,7 @@ public final class ContainerCapture {
             return;
         }
         ClientCompat.addClientSystemMessage(client,
-                Component.literal("[SkyIndex] ")
+                Component.literal("[Skydex] ")
                         .withStyle(Style.EMPTY.withColor(SkydexTheme.rgb(SkydexTheme.ACCENT)))
                         .append(Component.literal(message)
                                 .withStyle(Style.EMPTY.withColor(SkydexTheme.rgb(SkydexTheme.MUTED)))));
@@ -302,7 +302,7 @@ public final class ContainerCapture {
         loggedDiagnosticsScreen = true;
 
         StringBuilder dump = new StringBuilder();
-        dump.append("SkyIndex Crop Diagnostics capture (parser is fixture-pending, nothing recorded)\n");
+        dump.append("Skydex Crop Diagnostics capture (parser is fixture-pending, nothing recorded)\n");
         dump.append("title: ").append(title).append('\n');
         for (Slot slot : menu.slots) {
             if (slot.container instanceof Inventory) {

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public final class EagerClasses {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("SkyIndex");
+    private static final Logger LOGGER = LoggerFactory.getLogger("Skydex");
 
     /**
      * Every class reachable from a tick, screen, chat or render handler, plus
