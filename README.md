@@ -12,6 +12,7 @@ Skydex is a Hypixel SkyBlock toolkit that runs entirely in your browser.
 <a href="#quick-start"><img src="docs/assets/badge-browser.svg" alt="runs in your browser" height="20"></a>
 <a href="#privacy"><img src="docs/assets/badge-no-tracking.svg" alt="no ads, no tracking" height="20"></a>
 <a href="#privacy"><img src="docs/assets/badge-api-key.svg" alt="API key: Hypixel only" height="20"></a>
+<a href="https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml"><img src="https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml/badge.svg" alt="companion mod build status" height="20"></a>
 
 </div>
 
@@ -182,8 +183,12 @@ pnpm run build:all
 
 `pnpm run build:mod` is also the cross-platform root command when Node/pnpm is
 already installed. Mod builds write the JAR to `mod/build/libs/`; that output is
-ignored on purpose. Releases carry the player download instead of checking
-binaries into Git.
+ignored on purpose. Every mod change is also tested by
+[GitHub Actions](https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml),
+where its logs and a short-lived, GitHub-built JAR are available as build
+evidence and previews. Use the [latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest)
+for the stable player download; Actions artifacts are not published as release
+assets automatically.
 
 (so yes, it is your computer talking to itself. Weird? A bit. Local? Entirely.)
 
