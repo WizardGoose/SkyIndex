@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ModMetadataTest {
 
     private static JsonObject modJson() throws IOException {
-        Path file = Path.of("src/main/resources/fabric.mod.json");
+        Path file = Path.of("build/resources/main/fabric.mod.json");
         assertTrue(Files.exists(file), "fabric.mod.json missing at " + file.toAbsolutePath());
         return JsonParser.parseString(Files.readString(file, StandardCharsets.UTF_8)).getAsJsonObject();
     }
@@ -53,9 +53,10 @@ class ModMetadataTest {
         assertEquals("client", json.get("environment").getAsString());
 
         JsonObject depends = json.getAsJsonObject("depends");
-        assertTrue(depends.get("minecraft").getAsString().contains("26.1"),
-                "must target the 26.1 line: " + depends.get("minecraft"));
-        // 26.1.2 requires a Java 25 runtime (Mojang version manifest).
+        assertEquals(System.getProperty("minecraftVersion"),
+                depends.get("minecraft").getAsString(),
+                "processed metadata must target exactly the compiled Minecraft version");
+        // Both supported releases require a Java 25 runtime (Mojang version manifest).
         assertEquals(">=25", depends.get("java").getAsString());
     }
 }

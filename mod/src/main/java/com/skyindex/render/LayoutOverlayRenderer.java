@@ -4,6 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.skyindex.SkydexTheme;
 import com.skyindex.capture.ItemIds;
+import com.skyindex.compat.ClientCompat;
+import com.skyindex.compat.RenderCompat;
 import com.skyindex.garden.GreenhouseScanner;
 import com.skyindex.garden.MutationNames;
 import com.skyindex.layout.CellStatus;
@@ -19,7 +21,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
@@ -293,17 +294,15 @@ public final class LayoutOverlayRenderer {
 
         Vec3 camera = context.levelState().cameraRenderState.pos;
         PoseStack poseStack = context.poseStack();
-        MultiBufferSource.BufferSource buffers = context.bufferSource();
         // debugQuads: QUADS topology, translucent blending, depth-tested
         // (so the ghost reads as lying on the floor and is occluded by walls),
         // and back-face culling off.
         RenderType renderType = RenderTypes.debugQuads();
-        VertexConsumer consumer = buffers.getBuffer(renderType);
 
         poseStack.pushPose();
-        // World space -> camera-relative render space.
+        // World space -> camera-relative render space. The 26.2 submit-node
+        // renderer snapshots this pose before the stack is popped.
         poseStack.translate(-camera.x, -camera.y, -camera.z);
-        PoseStack.Pose pose = poseStack.last();
 
         BlockPos targeted = targetedBlock(client);
         LayoutCell hovered = null;
@@ -314,12 +313,29 @@ public final class LayoutOverlayRenderer {
             int worldX = anchor.worldX(cell);
             int worldZ = anchor.worldZ(cell);
             CellStatus status = projecting ? snapshot.at(worldX, worldZ) : CellStatus.EMPTY;
-
             if (targeted != null && targeted.getX() == worldX && targeted.getZ() == worldZ
                     && Math.abs(targeted.getY() - anchor.y()) <= 1) {
                 hovered = cell;
                 hoveredStatus = status;
             }
+        }
+
+        RenderCompat.submit(context, renderType,
+                (pose, consumer) -> drawLayout(consumer, pose, layout, anchor,
+                        projecting, snapshot, surfaceY));
+        poseStack.popPose();
+
+        showHoveredLabel(client, hovered, hoveredStatus, projecting, snapshot);
+    }
+
+    private static void drawLayout(VertexConsumer consumer, PoseStack.Pose pose,
+                                   GreenhouseLayout layout, LayoutAnchor anchor,
+                                   boolean projecting, LayoutProgress snapshot,
+                                   double surfaceY) {
+        for (LayoutCell cell : layout.cells()) {
+            int worldX = anchor.worldX(cell);
+            int worldZ = anchor.worldZ(cell);
+            CellStatus status = projecting ? snapshot.at(worldX, worldZ) : CellStatus.EMPTY;
 
             if (projecting && status.isDone()) {
                 // Finished cells lose the ghost entirely. What is left is a flat
@@ -340,11 +356,6 @@ public final class LayoutOverlayRenderer {
                         projecting ? LayoutPalette.GROUND_NOTE_FILL : LayoutPalette.GROUND_FILL);
             }
         }
-
-        poseStack.popPose();
-        buffers.endBatch(renderType);
-
-        showHoveredLabel(client, hovered, hoveredStatus, projecting, snapshot);
     }
 
     /**
@@ -499,7 +510,7 @@ public final class LayoutOverlayRenderer {
             label = label.append(Component.literal("  (" + hovered.ground() + ")")
                     .withStyle(Style.EMPTY.withColor(SkydexTheme.rgb(SkydexTheme.SUCCESS))));
         }
-        client.gui.setOverlayMessage(label, false);
+        ClientCompat.setOverlayMessage(client, label, false);
     }
 
     /** Plain words for a state, so the colour is never the only carrier. */

@@ -155,12 +155,14 @@ it is reachable from the network.
 
 ### Install it (no compiling needed)
 
-Most people should simply download `skyindex-<version>.jar` from the
-[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest).
-Put that JAR and [Fabric API](https://modrinth.com/mod/fabric-api) in the
-`mods` folder of a Fabric Minecraft 26.1.2 instance running Java 25. Close
-Minecraft before replacing the JAR; Java keeps the old archive open and a live
-swap can make it crash later in a very confusing way.
+Most people should download the JAR whose filename ends with their Minecraft
+version from the [latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest):
+`skyindex-1.0.1+26.1.2.jar` for Minecraft 26.1.2 or
+`skyindex-1.0.1+26.2.jar` for Minecraft 26.2. Put that JAR and the matching
+[Fabric API](https://modrinth.com/mod/fabric-api) in the instance's `mods`
+folder. Both versions use Java 25. Close Minecraft before replacing the JAR;
+Java keeps the old archive open and a live swap can make it crash later in a
+very confusing way.
 
 ### Build it yourself
 
@@ -172,10 +174,13 @@ clone can build either half without installing the other toolchain:
 pnpm install
 pnpm run build:site
 
-# Mod only: needs Java 25 or lets Gradle fetch it; no Node install required.
+# Mod only: defaults to Minecraft 26.1.2; no Node install required.
 cd mod
 ./gradlew build             # macOS / Linux
 # .\gradlew.bat build       # Windows PowerShell
+
+# Minecraft 26.2:
+./gradlew build -Pminecraft_version=26.2 -Pfabric_api_version=0.156.0+26.2
 
 # Both, from the repository root: needs pnpm and uses the mod's Gradle wrapper.
 pnpm run build:all
@@ -185,10 +190,11 @@ pnpm run build:all
 already installed. Mod builds write the JAR to `mod/build/libs/`; that output is
 ignored on purpose. Every mod change is also tested by
 [GitHub Actions](https://github.com/WizardGoose/Skydex/actions/workflows/mod-build.yml),
-where its logs and a short-lived, GitHub-built JAR are available as build
-evidence and previews. Use the [latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest)
-for the stable player download; Actions artifacts are not published as release
-assets automatically.
+where its logs and short-lived, GitHub-built JARs are available as build
+evidence and previews. Publishing a tagged GitHub Release runs the same matrix
+and attaches both versioned JARs only after both builds pass. Use the
+[latest Skydex Release](https://github.com/WizardGoose/Skydex/releases/latest)
+for stable downloads.
 
 (so yes, it is your computer talking to itself. Weird? A bit. Local? Entirely.)
 

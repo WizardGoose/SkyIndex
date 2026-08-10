@@ -1,6 +1,7 @@
 package com.skyindex.capture;
 
 import com.skyindex.SkydexTheme;
+import com.skyindex.compat.ClientCompat;
 import com.skyindex.config.SkyIndexConfig;
 import com.skyindex.data.ItemEntry;
 import com.skyindex.data.SnapshotStore;
@@ -255,7 +256,7 @@ public final class ContainerCapture {
         if (client.gui == null) {
             return;
         }
-        client.gui.getChat().addClientSystemMessage(
+        ClientCompat.addClientSystemMessage(client,
                 Component.literal("[SkyIndex] ")
                         .withStyle(Style.EMPTY.withColor(SkydexTheme.rgb(SkydexTheme.ACCENT)))
                         .append(Component.literal(message)

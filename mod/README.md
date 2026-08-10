@@ -5,7 +5,7 @@ data the Hypixel API does not reliably expose — island chests, sacks, ender
 chest, storage backpacks and your inventory — and hands it to the **SkyIndex**
 website.
 
-Minecraft **26.1.2** · Fabric Loader 0.19.3+ · Fabric API · Java 25
+Minecraft **26.1.2 or 26.2** · Fabric Loader 0.19.3+ · Fabric API · Java 25
 
 ---
 
@@ -317,19 +317,20 @@ The layout, its anchor and its rotation are saved in
 
 ## Install (Prism Launcher)
 
-1. Create or open a **Fabric** instance on Minecraft **26.1.2**.
-   - Prism: *Add Instance* → Minecraft 26.1.2 → *Mod Loader* → **Fabric**.
-   - Java: this version of Minecraft requires **Java 25**. In Prism, *Edit
-     Instance → Settings → Java*, point it at a JDK/JRE 25.
-2. Install **Fabric API** (`0.145.4+26.1.2` or newer) into the instance's
-   `mods` folder.
-3. Drop `skyindex-<version>.jar` into the same `mods` folder.
+1. Create or open a **Fabric** instance on Minecraft **26.1.2** or **26.2**.
+   - Prism: *Add Instance* → choose the Minecraft version → *Mod Loader* → **Fabric**.
+   - Java: both versions require **Java 25**. In Prism, *Edit Instance →
+     Settings → Java*, point it at a JDK/JRE 25.
+2. Install the matching **Fabric API** into the instance's `mods` folder.
+3. Drop the matching release asset into the same folder:
+   `skyindex-1.0.1+26.1.2.jar` or `skyindex-1.0.1+26.2.jar`.
 4. Launch, join Hypixel, go to your island and open some chests.
 5. Run `/skyindex` and pick which SkyIndex you use.
 
-Build it yourself with `./gradlew build` — the jar lands in `build/libs/`.
-Gradle downloads a matching JDK 25 automatically, so you do not need one on
-your PATH to compile.
+Build for 26.1.2 with `./gradlew build`, or for 26.2 with
+`./gradlew build -Pminecraft_version=26.2 -Pfabric_api_version=0.156.0+26.2`.
+The versioned JAR lands in `build/libs/`. Gradle downloads a matching JDK 25
+automatically, so you do not need one on your PATH to compile.
 
 ## Where your data lives
 

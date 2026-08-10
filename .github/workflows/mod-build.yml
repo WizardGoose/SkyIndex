@@ -10,6 +10,8 @@ on:
     paths:
       - "mod/**"
       - ".github/workflows/mod-build.yml"
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -21,9 +23,17 @@ concurrency:
 
 jobs:
   build:
-    name: Test and build (Java 25)
+    name: Test and build (Minecraft ${{ matrix.minecraft }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - minecraft: "26.1.2"
+            fabric_api: "0.145.4+26.1.2"
+          - minecraft: "26.2"
+            fabric_api: "0.156.0+26.2"
 
     defaults:
       run:
@@ -46,14 +56,38 @@ jobs:
         run: chmod +x gradlew
 
       - name: Test and build mod
-        run: ./gradlew build --no-daemon
+        run: >-
+          ./gradlew build --no-daemon
+          -Pminecraft_version=${{ matrix.minecraft }}
+          -Pfabric_api_version=${{ matrix.fabric_api }}
 
-      - name: Upload runnable mod JAR
+      - name: Upload Minecraft ${{ matrix.minecraft }} JAR
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: skyindex-mod-${{ github.sha }}
-          path: |
-            mod/build/libs/skyindex-*.jar
-            !mod/build/libs/*-sources.jar
+          name: skyindex-mod-minecraft-${{ matrix.minecraft }}-${{ github.sha }}
+          path: mod/build/libs/skyindex-1.0.1+${{ matrix.minecraft }}.jar
           if-no-files-found: error
           retention-days: 14
+
+  publish-release:
+    name: Attach verified JARs to Release
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download verified mod JARs
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: skyindex-mod-minecraft-*
+          merge-multiple: true
+          path: release-assets
+
+      - name: Attach JARs to published Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$RELEASE_TAG" release-assets/*.jar --clobber

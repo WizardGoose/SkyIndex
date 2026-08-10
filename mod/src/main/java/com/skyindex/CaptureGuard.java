@@ -1,5 +1,7 @@
 package com.skyindex;
 
+import com.skyindex.compat.ClientCompat;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -87,7 +89,7 @@ public final class CaptureGuard {
             }
             client.execute(() -> {
                 try {
-                    client.gui.getChat().addClientSystemMessage(
+                    ClientCompat.addClientSystemMessage(client,
                             Component.literal("[SkyIndex] ")
                                     .withStyle(Style.EMPTY.withColor(SkydexTheme.rgb(SkydexTheme.ACCENT)))
                                     .append(Component.literal(

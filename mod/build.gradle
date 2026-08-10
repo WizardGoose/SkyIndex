@@ -30,7 +30,7 @@ dependencies {
 }
 
 java {
-	// Minecraft 26.1.2 is compiled for and requires Java 25.
+	// Both supported Minecraft releases are compiled for and require Java 25.
 	toolchain.languageVersion = JavaLanguageVersion.of(25)
 	withSourcesJar()
 }
@@ -42,15 +42,18 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(ProcessResources).configureEach {
 	def version = project.version
+	def minecraftDependency = project.minecraft_version.toString()
 	inputs.property 'version', version
+	inputs.property 'minecraftDependency', minecraftDependency
 
 	filesMatching('fabric.mod.json') {
-		expand 'version': version
+		expand 'version': version, 'minecraft_dependency': minecraftDependency
 	}
 }
 
 test {
 	useJUnitPlatform()
+	systemProperty 'minecraftVersion', project.minecraft_version
 	testLogging {
 		events 'passed', 'skipped', 'failed'
 	}

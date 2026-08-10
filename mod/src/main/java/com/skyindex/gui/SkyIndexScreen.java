@@ -1,6 +1,7 @@
 package com.skyindex.gui;
 
 import com.skyindex.SkydexTheme;
+import com.skyindex.compat.ClientCompat;
 import com.skyindex.SkyIndexMod;
 import com.skyindex.config.SiteMode;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -180,7 +181,7 @@ public final class SkyIndexScreen extends Screen {
             graphics.blurBeforeThisStratum();
         }
         graphics.fill(0, 0, width, height, SkydexTheme.SCRIM);
-        minecraft.gui.extractDeferredSubtitles();
+        ClientCompat.extractDeferredSubtitles(minecraft);
     }
 
     @Override

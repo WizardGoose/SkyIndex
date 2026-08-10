@@ -3,6 +3,7 @@ package com.skyindex;
 import com.skyindex.capture.ContainerCapture;
 import com.skyindex.capture.SackChatListener;
 import com.skyindex.command.SkyIndexCommand;
+import com.skyindex.compat.ClientCompat;
 import com.skyindex.config.SiteMode;
 import com.skyindex.config.SkyIndexConfig;
 import com.skyindex.data.IslandSnapshot;
@@ -168,7 +169,7 @@ public final class SkyIndexMod implements ClientModInitializer {
         if (pendingScreen != null) {
             Screen screen = pendingScreen;
             pendingScreen = null;
-            client.setScreen(screen);
+            ClientCompat.setScreen(client, screen);
         }
         capture.tick();
         // Its own fence, and its own interval inside the scanner.
