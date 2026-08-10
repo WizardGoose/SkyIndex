@@ -12,7 +12,8 @@ import { Wordmark } from "../../ui/Wordmark";
  * at the right end. The bar is the one piece of chrome every page shares, so
  * every item that earns a place in it costs every page some attention.
  *
- * The glass itself is `.sd-bar`: #07080A 60% -> 40%, blurred, 2px stroke on
+ * The glass itself is `.sd-bar`: the shared theme's 76% -> 64% ground tint,
+ * strongly blurred with a 2px stroke on
  * the bottom edge. Height is the `--sd-bar-h` token (68px): the mock's canvas
  * puts the bar at ~7.4% of viewport height, which is an ~80px masthead you
  * notice more than the page; 68px keeps the drawing's wordmark-to-bar
@@ -157,8 +158,8 @@ export const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-40">
-      <div className="sd-bar w-full" style={{ height: "var(--sd-bar-h)" }}>
+    <nav className="sd-masthead-frost sticky top-0 z-[60]">
+      <div className="sd-bar relative z-10 w-full" style={{ height: "var(--sd-bar-h)" }}>
         <div className="flex h-full items-center pr-3 sm:pr-5">
           {/* The wordmark's cell is exactly as wide as the page's sharp
               channel, so on a channel page the masthead is columned like the

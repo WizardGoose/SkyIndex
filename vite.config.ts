@@ -73,6 +73,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const isProd = mode === "production";
   const isGitHubPages = env.GITHUB_PAGES === "true";
+  const deployRevision = (process.env.GITHUB_SHA ?? "local").slice(0, 12);
 
   /*
    * There is no dev proxy any more, and that is deliberate.
@@ -89,7 +90,19 @@ export default defineConfig(({ mode }) => {
    * `VITE_API_TARGET` went with it; it had no other reader.
    */
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: "skydex-deploy-revision",
+        transformIndexHtml(html) {
+          return html.replaceAll(
+            "__SKYDEX_DEPLOY_REVISION__",
+            deployRevision,
+          );
+        },
+      },
+    ],
     // The Pages repo is WizardGoose/Skydex, and this path has to spell the
     // repo name exactly or every asset 404s at the deploy address ("/SkyShards/"
     // was the fork's path and did precisely that). It moved here with the

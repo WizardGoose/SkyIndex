@@ -126,9 +126,9 @@ const ChestBreakdown: React.FC<{ chests: ChestValue[] }> = ({ chests }) => {
             <div key={chest.key} className="flex items-baseline gap-2 border-t border-white/8 px-3 py-1 first:border-t-0">
               <span className="min-w-0 flex-1 truncate text-[12px] text-slate-400">
                 {chest.name || "Chest"}
-                <span className={`ml-2 text-[10px] ${NUM} text-slate-600`}>{chest.pos.join(" ")}</span>
+                <span className={`ml-2 text-[10px] ${NUM} text-slate-500`}>{chest.pos.join(" ")}</span>
               </span>
-              <span className={`shrink-0 text-[10px] ${NUM} text-slate-600`}>{ago(chest.lastSeen)}</span>
+              <span className={`shrink-0 text-[10px] ${NUM} text-slate-500`}>{ago(chest.lastSeen)}</span>
               <span className={`shrink-0 w-20 text-right text-[12px] ${NUM} text-slate-200`} title={exactCoins(chest.total)}>
                 {coins(chest.total)}
               </span>

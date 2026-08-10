@@ -9,8 +9,13 @@
     <title>Skydex</title>
     <meta name="description" content="Personal Hypixel SkyBlock toolkit: greenhouse planner, shard fusion calculator, recipes." />
     <meta name="robots" content="noindex, nofollow" />
-    <meta name="theme-color" content="#07080a" />
     <meta name="color-scheme" content="dark" />
+
+    <!-- First paint reads the same semantic theme tokens as the mounted app.
+         Preloading the shipped backdrop prevents a flat dark frame while the
+         JavaScript bundle starts. -->
+    <link rel="stylesheet" href="/theme.css?v=__SKYDEX_DEPLOY_REVISION__" />
+    <link rel="preload" as="image" href="/bg/hub.jpg" fetchpriority="high" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
     <link rel="icon" type="image/png" href="/favicon/favicon.png" />
@@ -20,13 +25,6 @@
          /fonts on this origin, declared in src/index.css, so there is no
          third-party socket to open early. -->
 
-    <!-- Paint the obsidian ground before the stylesheet arrives, so the first
-         frame is not a white flash. -->
-    <style>
-      html {
-        background-color: #07080a;
-      }
-    </style>
   </head>
   <body>
     <div id="root"></div>

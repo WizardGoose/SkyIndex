@@ -1,0 +1,43 @@
+:root {
+  --sd-ground: #07080a;
+  --sd-ground-rgb: 7 8 10;
+  --sd-glass-rgb: 19 22 29;
+
+  /* First paint and the mounted application consume this same material
+     recipe, so refresh cannot briefly fall back to a different hardcoded
+     masthead. */
+  --sd-bar-top: 0.58;
+  --sd-bar-bottom: 0.46;
+  --sd-bar-blur: 36px;
+  --sd-bar-stroke: rgb(232 237 243 / 0.16);
+  --sd-panel-top: 0.55;
+  --sd-panel-bottom: 0.45;
+  --sd-curtain-blur: 46px;
+  /* This is a real image filter on the dedicated frost copy. It does not
+     rely on a browser sampling a sibling through backdrop-filter. */
+  --sd-frost-image-blur: 16px;
+  --sd-bar-image-blur: 24px;
+  --sd-bar-content-blur: 28px;
+  --sd-scrim: 0.12;
+}
+
+html {
+  background-color: var(--sd-ground);
+}
+
+/* Kept in the unprocessed first-paint stylesheet deliberately. Vite 7's
+   production CSS transform rewrites this declaration to a WebKit-only
+   property, which Chromium and Opera ignore. The token remains the single
+   source of truth; only the browser-sensitive declaration bypasses that
+   transform. */
+.sd-masthead-frost {
+  backdrop-filter: blur(var(--sd-bar-content-blur)) saturate(125%);
+  -webkit-backdrop-filter: blur(var(--sd-bar-content-blur)) saturate(125%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .sd-masthead-frost {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

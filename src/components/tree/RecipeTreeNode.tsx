@@ -304,7 +304,7 @@ export const RecipeTreeNode: React.FC<RecipeTreeNodeProps> = ({
                 showRomanNumerals={false}
               >
                 <div className="flex items-center gap-1 px-[5px] py-1 text-xs bg-green-500/20 text-green-400 border border-green-500/30 rounded">
-                  <span className="text-xs text-green-300 font-extralight">{crocProcs}</span>
+                  <span className="text-xs font-medium text-green-300">{crocProcs}</span>
                   <GeckoIcon className="w-3 h-3 text-green-400" />
                 </div>
               </Tooltip>
@@ -608,7 +608,7 @@ export const RecipeTreeNode: React.FC<RecipeTreeNodeProps> = ({
               showRomanNumerals={false}
             >
               <div className="flex items-center gap-1 px-[5px] py-1 text-xs bg-green-500/20 text-green-400 border border-green-500/30 rounded">
-                <span className="text-xs text-green-300 font-extralight">{crocProcs}</span>
+                <span className="text-xs font-medium text-green-300">{crocProcs}</span>
                 <GeckoIcon className="w-3 h-3 text-green-400" />
               </div>
             </Tooltip>

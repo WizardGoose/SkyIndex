@@ -179,7 +179,7 @@ export const RouteLine: React.FC<{
                   not solvable yet: {shortReason(board.solver_approach)}
                 </div>
               ) : (
-                <div className="flex h-24 items-center justify-center text-[11px] text-slate-600">
+                <div className="flex h-24 items-center justify-center text-[11px] text-slate-500">
                   solving...
                 </div>
               )}
