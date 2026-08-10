@@ -44,6 +44,10 @@ export interface ProfileFacts {
   tuning: Record<string, Record<string, number>>;
   /** `accessory_bag_storage.selected_power`, the worn power stone, or null. */
   selectedPower: string | null;
+  /** The selected Heart of the Mountain tree name, exactly as Hypixel states it. */
+  hotmName: string | null;
+  /** The selected Heart of the Forest tree name, exactly as Hypixel states it. */
+  hotfName: string | null;
 }
 
 export const EMPTY_FACTS: ProfileFacts = {
@@ -53,6 +57,8 @@ export const EMPTY_FACTS: ProfileFacts = {
   levelXp: null,
   tuning: {},
   selectedPower: null,
+  hotmName: null,
+  hotfName: null,
 };
 
 export const readProfileFacts = (member: unknown): ProfileFacts => {
@@ -100,5 +106,11 @@ export const readProfileFacts = (member: unknown): ProfileFacts => {
   }
   const selectedPower = bag && typeof bag.selected_power === "string" && bag.selected_power ? bag.selected_power : null;
 
-  return { skillXp, firstJoin, fairySouls, levelXp, tuning, selectedPower };
+  const skillTree = isRecord(member.skill_tree) ? member.skill_tree : undefined;
+  const miningTree = skillTree && isRecord(skillTree.mining) ? skillTree.mining : undefined;
+  const foragingTree = skillTree && isRecord(skillTree.foraging) ? skillTree.foraging : undefined;
+  const hotmName = miningTree && typeof miningTree.custom_name === "string" && miningTree.custom_name ? miningTree.custom_name : null;
+  const hotfName = foragingTree && typeof foragingTree.custom_name === "string" && foragingTree.custom_name ? foragingTree.custom_name : null;
+
+  return { skillXp, firstJoin, fairySouls, levelXp, tuning, selectedPower, hotmName, hotfName };
 };

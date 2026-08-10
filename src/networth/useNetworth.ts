@@ -273,6 +273,7 @@ const EMPTY_LOADOUTS: MemberLoadouts = {
   armorSets: [],
   equipmentSets: [],
   wornEquipment: [null, null, null, null],
+  equippedEquipmentSetId: null,
   loadouts: [],
 };
 

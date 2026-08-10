@@ -105,7 +105,13 @@ const WIKI = "https://hypixelskyblock.minecraft.wiki";
 // (Scarf's Grimoire read back from the v14 blob without the flag). Burned
 // exactly as v5, v7 and v9 were; THIS bump is a single edit with the parse
 // already in the file, which is the only shape that closes the window.
-export const CACHE_KEY = "wizardsky.crafting.v15";
+// v16: fishing nets now survive even when the wiki's crafting module omits
+// their output. The concrete miss was Gigantic Fishing Net: Hypixel's live
+// item resource states GIGANTIC_FISHING_NET beside Bee Saliva from the same
+// update, but Module:Crafting/Data contains Bee Saliva and no Gigantic Fishing
+// Net key. A v15 snapshot has already discarded it before search can run, so
+// it must be rebuilt rather than kept for the remainder of its one-day TTL.
+export const CACHE_KEY = "wizardsky.crafting.v16";
 const STALE_KEYS = [
   "wizardsky.crafting.v1",
   "wizardsky.crafting.v2",
@@ -121,6 +127,7 @@ const STALE_KEYS = [
   "wizardsky.crafting.v12",
   "wizardsky.crafting.v13",
   "wizardsky.crafting.v14",
+  "wizardsky.crafting.v15",
 ];
 
 /** Refresh the parsed database at most once a day. */
@@ -466,7 +473,21 @@ export interface HypixelItem {
  * a reason to drop it. Including the category also makes every accessory
  * linkable from `/items`, which is what the page's cross-links point at.
  */
-const RECIPELESS_CATEGORIES = new Set(["MUTATION", "ACCESSORY"]);
+const RECIPELESS_CATEGORIES = new Set(["MUTATION", "ACCESSORY", "FISHING_NET"]);
+
+/**
+ * Whether the item belongs behind the Craftable only filter.
+ *
+ * Usually the parsed ingredient list is the answer. Fishing nets need one
+ * extra signal because the official crafting module currently omits Gigantic
+ * Fishing Net altogether even though Hypixel's item resource classifies it
+ * with the other progressive fishing nets. Keeping this predicate next to the
+ * ingestion exception makes the two halves impossible to drift apart: rescuing
+ * the row but hiding it under the default filter would reproduce the same bug
+ * one stage later.
+ */
+export const hasKnownCraftingRecipe = (item: Pick<Item, "recipe" | "category">): boolean =>
+  Boolean(item.recipe) || item.category === "FISHING_NET";
 
 /**
  * Turn the three parsed sources into the item index.

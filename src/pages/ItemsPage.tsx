@@ -8,11 +8,12 @@ import { WikiLink } from "../ui/WikiLink";
 import { fetchMaterialChains, readChainCache, writeChainCache, type ChainIndex } from "../items/materialChain";
 import { useForgeRecipes, mergeForgeItems, formatDuration, type ForgeRecipe } from "../items/wikiForge";
 import { useShopStock, describeCosts, type ShopListing } from "../items/wikiShops";
-import { norm, slug } from "../items/wikiCrafting";
+import { hasKnownCraftingRecipe, norm, slug } from "../items/wikiCrafting";
 import { itemResourceVersion, resourceHasId, resourceTierFor, subscribeItemResource } from "../items/itemResource";
 import { useAdminItems, isTestingItem } from "../items/wikiAdmin";
 import { fetchWikiTiers, readTierCache, tierCacheFresh, writeTierCache, type WikiTierCache } from "../items/wikiTiers";
 import { useOwned, describeSources, type OwnedIndex } from "../inventory";
+import { normaliseItemQuantity } from "../utilities/itemQuantity";
 import {
   PANEL,
   TILE,
@@ -27,7 +28,9 @@ import {
   META,
   BADGE,
   COL,
+  HELP,
   Figure,
+  ItemQuantityField,
   stated,
 } from "../ui/kit";
 
@@ -579,6 +582,7 @@ export const ItemsPage: React.FC = () => {
    */
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
+  const [quantity, setQuantity] = useState(() => normaliseItemQuantity(searchParams.get("qty")));
   const [selected, setSelected] = useState<string | null>(null);
   const [craftableOnly, setCraftableOnly] = useState(true);
 
@@ -834,14 +838,14 @@ export const ItemsPage: React.FC = () => {
   }, [query, matches, chains, items]);
 
   const list = useMemo(
-    () => matches.filter(([, it]) => (craftableOnly ? Boolean(it.recipe) : true)).slice(0, 300),
+    () => matches.filter(([, it]) => (craftableOnly ? hasKnownCraftingRecipe(it) : true)).slice(0, 300),
     [matches, craftableOnly]
   );
 
   const tree = useMemo(() => {
     if (!selected || !enriched[selected]) return null;
-    return buildCostTree(selected, 1, enriched, bazaar.prices, ironman);
-  }, [selected, enriched, bazaar.prices, ironman]);
+    return buildCostTree(selected, quantity, enriched, bazaar.prices, ironman);
+  }, [selected, quantity, enriched, bazaar.prices, ironman]);
 
   /**
    * Any leaf we have not tried to break down yet gets looked up once. Results
@@ -957,7 +961,7 @@ export const ItemsPage: React.FC = () => {
   const craftableCount = useMemo(
     () =>
       Object.values(enriched).filter(
-        (i) => i.recipe && (showVanilla || !i.vanilla) && (showUnobtainable || !unobtainable(i))
+        (i) => hasKnownCraftingRecipe(i) && (showVanilla || !i.vanilla) && (showUnobtainable || !unobtainable(i))
       ).length,
     [enriched, showVanilla, showUnobtainable, unobtainable]
   );
@@ -1031,6 +1035,7 @@ export const ItemsPage: React.FC = () => {
                   spellCheck={false}
                 />
               </div>
+              <ItemQuantityField id="crafting-quantity" value={quantity} onChange={setQuantity} className="mb-2" />
               {/*
                 Filter pills, in the exact language the Forge page filters with.
                 These were three stacked ToggleRows in a bordered ControlGrid,
@@ -1116,16 +1121,12 @@ export const ItemsPage: React.FC = () => {
                       }`}
                     >
                       <ItemIcon id={id} name={it.wikiTitle ?? it.name} size={16} />
-                      {/* 11px, the site's body size. At 12px this one string
-                          was carrying nine tenths of the characters on the
-                          page, which left no size free to mean "heading".
-
-                          The explicit 18px line is what keeps the row at the
-                          31px it already was. 12px text at the inherited 1.5
-                          measured exactly 18px, so pinning the line rather
-                          than letting 11px text pick its own 16.5 means the
-                          type got smaller and the rhythm did not move. */}
-                      <span className={`min-w-0 flex-1 truncate text-[11px] leading-[18px] ${TIER[it.tier ?? ""] ?? "text-slate-300"}`}>
+                      {/* Item names are primary content, not metadata. The old
+                          11px line was visibly smaller than the Profile page's
+                          body labels and became difficult to distinguish at
+                          normal zoom. A 14px face with a 20px line keeps the
+                          compact list while restoring the shared hierarchy. */}
+                      <span className={`min-w-0 flex-1 truncate text-[14px] leading-5 ${TIER[it.tier ?? ""] ?? "text-slate-300"}`}>
                         {it.name}
                       </span>
                       {/*
@@ -1245,9 +1246,12 @@ export const ItemsPage: React.FC = () => {
       </div>
 
       {!chosen && (
-        <p className="text-[11px] leading-snug text-slate-400">
+        <div className={`${PANEL} flex items-center gap-2.5 px-3 py-2.5 ${HELP}`}>
+          <Package className="h-4 w-4 shrink-0 text-emerald-300" />
+          <p>
           Pick an item from the index to see how it is made. Try Hyperion, or Perfect Boots for a twelve-level tree.
-        </p>
+          </p>
+        </div>
       )}
 
       {chosen && tree && (
@@ -1289,7 +1293,7 @@ export const ItemsPage: React.FC = () => {
                         <>
                           {npcRollup.known === 0 ? "-" : formatCoins(npcRollup.total)}
                           {npcRollup.unknown > 0 && npcRollup.known > 0 && (
-                            <span className="ml-1 text-[10px] font-normal text-slate-500">+{npcRollup.unknown} unpriced</span>
+                            <span className="ml-1 text-[10px] font-medium text-slate-500">+{npcRollup.unknown} unpriced</span>
                           )}
                         </>
                       }
@@ -1354,12 +1358,12 @@ export const ItemsPage: React.FC = () => {
 
           {!chosen.recipe &&
             (chosen.unlocks?.some((u) => u.type !== "Trade") ? (
-              <p className="text-[12px] text-slate-500 px-3 py-4">
+              <p className={`${HELP} px-3 py-3`}>
                 A collection tier unlocks this recipe in game, but the wiki&apos;s crafting database has no grid for it, so there is no tree to
                 show. The unlock above is what you need.
               </p>
             ) : (
-              <p className="text-[12px] text-slate-500 px-3 py-4">
+              <p className={`${HELP} px-3 py-3`}>
                 No crafting recipe. Check the sources above, or it drops from a mob or comes from an event.
               </p>
             ))}
@@ -1367,7 +1371,7 @@ export const ItemsPage: React.FC = () => {
           {chosen.recipe && (
             <>
               {ironman && (
-                <p className="flex items-center gap-1.5 border-b border-white/8 px-3 py-1.5 text-[11px] text-slate-500">
+                <p className={`flex items-center gap-1.5 border-b border-white/8 px-3 py-2 ${HELP}`}>
                   <Hammer className="h-2.5 w-2.5 shrink-0 text-emerald-400" />
                   Ironman: nothing can be bought, so every branch runs down to what you gather, and NPC is what a shop pays rather than a price
                   you can buy at.
@@ -1500,7 +1504,7 @@ export const ItemsPage: React.FC = () => {
                       <p className="mt-2 text-[12px] text-emerald-300">You already have everything on this list.</p>
                     )}
                     {owned.has && (
-                      <p className="mt-2 text-[10px] text-slate-500">
+                      <p className={`mt-2 ${HELP}`}>
                         Held counts come from your island data, the Hypixel API and anything you entered by hand. Hover a number to see which.
                       </p>
                     )}

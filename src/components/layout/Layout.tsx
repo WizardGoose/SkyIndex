@@ -134,11 +134,13 @@ export const Layout: React.FC = () => {
 
   return (
     <div className="flex min-h-[100dvh] flex-col">
-      {/* The three-layer ground: the render (sharp, full strength), a near
-          nothing scrim, then ONE sheet of frosted glass from --sd-split to
-          the right margin. See the Glass ground block in index.css. */}
+      {/* The ground has a sharp render and an explicitly blurred copy. The
+          copy is clipped to the frost region, so the effect is real even in
+          engines which cannot sample a sibling through backdrop-filter. */}
       <div className="sd-backdrop" aria-hidden>
         <div className="sd-backdrop__img" />
+        <div className="sd-backdrop__frost" />
+        <div className="sd-backdrop__bar-frost" />
         <div className="sd-backdrop__scrim" />
       </div>
       {!curtainless && <div className="sd-curtain" aria-hidden />}
@@ -169,7 +171,7 @@ export const Layout: React.FC = () => {
       {/* Compact on purpose. The credits stay complete and 11px (the
           floor a person can actually read); what shrank is the box around
           them: half the vertical padding and a tighter leading. */}
-      <footer className={`mt-4 border-t border-white/10 px-3 py-2 sm:px-4 ${curtainless ? "bg-slate-950/70" : ""}`}>
+      <footer className={`mt-2 border-t border-white/10 px-3 py-2 sm:px-4 ${curtainless ? "bg-slate-950/70" : ""}`}>
         <div className="mx-auto w-full max-w-screen-2xl">
           <p className="max-w-[120ch] text-[11px] leading-snug text-slate-300">
             Item, recipe and mutation data and all item images are loaded live from the{" "}

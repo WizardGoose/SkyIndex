@@ -6,7 +6,8 @@ import { useRecipes } from "../items/useItemData";
 import { norm } from "../items/wikiCrafting";
 import { itemResourceVersion, requestItemResource, resourceTierFor, subscribeItemResource } from "../items/itemResource";
 import { ItemIcon } from "../ui/ItemIcon";
-import { BTN_QUIET, INPUT, NUM, PANEL, PageHeader, RARITY, SectionHead, SplitPage, Tag, TILE_HOVER } from "../ui/kit";
+import { BTN_QUIET, INPUT, ItemQuantityField, NUM, PANEL, PageHeader, RARITY, SectionHead, SplitPage, Tag, TILE_HOVER } from "../ui/kit";
+import { normaliseItemQuantity } from "../utilities/itemQuantity";
 
 /**
  * The Forge, as its own tab.
@@ -43,6 +44,7 @@ export const ForgePage: React.FC = () => {
   const { items: itemIndex } = useRecipes();
   const [query, setQuery] = useState("");
   const [section, setSection] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(() => normaliseItemQuantity(1));
 
   /** Below the split breakpoint the rail collapses behind one button. */
   const [railOpen, setRailOpen] = useState(false);
@@ -124,6 +126,7 @@ export const ForgePage: React.FC = () => {
                 spellCheck={false}
               />
             </div>
+            <ItemQuantityField id="forge-quantity" value={quantity} onChange={setQuantity} />
             {/* Section chips wrap to the rail's width; picking one filters the grid. */}
             <div className="flex flex-wrap gap-1.5">
               {sections.map((s) => {
@@ -181,7 +184,7 @@ export const ForgePage: React.FC = () => {
               return (
                 <Link
                   key={recipe.name}
-                  to={`/items?q=${encodeURIComponent(recipe.name)}`}
+                  to={`/items?q=${encodeURIComponent(recipe.name)}&qty=${quantity}`}
                   title="Open in Crafting for the full cost tree against what you hold"
                   className={`${TILE_HOVER} group flex flex-col gap-2 p-2.5`}
                 >
@@ -193,7 +196,7 @@ export const ForgePage: React.FC = () => {
                         integer halvings (16/32/64) downscale without smearing. */}
                     <ItemIcon name={recipe.wikiTitle ?? recipe.name} size={32} />
                     <span
-                      className={`min-w-0 flex-1 truncate text-[13px] font-medium ${
+                      className={`min-w-0 flex-1 truncate text-[14px] leading-5 font-medium ${
                         tier ? RARITY[tier] ?? "text-slate-100" : "text-slate-100"
                       }`}
                     >
@@ -205,21 +208,21 @@ export const ForgePage: React.FC = () => {
                     {recipe.ingredients.map((ing) => (
                       <Tag key={ing.name}>
                         <ItemIcon name={ing.name} size={14} />
-                        <span className={NUM}>{ing.qty.toLocaleString("en-US")}x</span>
+                        <span className={NUM}>{(ing.qty * quantity).toLocaleString("en-US")}x</span>
                         <span className="max-w-[10rem] truncate">{ing.name}</span>
                       </Tag>
                     ))}
                     {recipe.coins !== null && (
                       <Tag>
-                        <span className={NUM}>{recipe.coins.toLocaleString("en-US")}</span> coins
+                        <span className={NUM}>{(recipe.coins * quantity).toLocaleString("en-US")}</span> coins
                       </Tag>
                     )}
                   </span>
 
                   <span className="mt-auto flex items-center gap-1.5">
                     {recipe.seconds !== null && (
-                      <Tag accent title="Base forge time. Quick Forge and Cole shorten it in game.">
-                        {formatDuration(recipe.seconds)} base
+                      <Tag accent title="Base time for each item. Multiple forge slots can run in parallel; Quick Forge and Cole shorten it in game.">
+                        {formatDuration(recipe.seconds)} base each
                       </Tag>
                     )}
                     {recipe.hotm !== null && (
