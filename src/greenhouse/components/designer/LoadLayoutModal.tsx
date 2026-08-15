@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, Edit2, FolderOpen, Search, Trash2, X } from "lucide-react";
+import { Check, Edit2, FolderOpen, Search, Share2, Trash2, X } from "lucide-react";
 import type { SavedLayout } from "../../types/layout";
 import { FOCUS } from "../../../ui/kit";
 import { DesignerLayoutPreview } from "./DesignerLayoutPreview";
@@ -13,6 +13,7 @@ interface LoadLayoutModalProps {
   onLoadMostRecent: () => void;
   onDelete: (layoutId: string) => void;
   onRename: (layoutId: string, newName: string) => void;
+  onShare: (layout: SavedLayout, displayName: string) => void;
   layouts: SavedLayout[];
   mostRecentLayout: SavedLayout | null;
 }
@@ -24,14 +25,67 @@ const formatDate = (timestamp: number): string =>
     year: "numeric",
   });
 
+interface LayoutCardActionButtonsProps {
+  onLoad: () => void;
+  onShare: () => void;
+  onDelete?: () => void;
+  onDeleteBlur?: () => void;
+  showDeleteConfirm?: boolean;
+}
+
+export const LayoutCardActionButtons = ({
+  onLoad,
+  onShare,
+  onDelete,
+  onDeleteBlur,
+  showDeleteConfirm = false,
+}: LayoutCardActionButtonsProps) => (
+  <>
+    <button
+      type="button"
+      aria-label="Load layout"
+      onClick={onLoad}
+      className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/20 px-4 py-2 text-[12px] font-medium text-emerald-200 transition-colors hover:bg-emerald-500/30 sm:flex-none ${FOCUS}`}
+    >
+      <FolderOpen className="h-4 w-4" />
+      Load layout
+    </button>
+    <button
+      type="button"
+      aria-label="Share layout"
+      onClick={onShare}
+      className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md border border-slate-600 bg-slate-800/70 px-4 py-2 text-[12px] font-medium text-slate-300 transition-colors hover:border-emerald-500/35 hover:bg-emerald-500/10 hover:text-emerald-200 sm:flex-none ${FOCUS}`}
+    >
+      <Share2 className="h-4 w-4" />
+      Share layout
+    </button>
+    {onDelete && (
+      <button
+        type="button"
+        onClick={onDelete}
+        onBlur={onDeleteBlur}
+        title={showDeleteConfirm ? "Select again to delete" : "Delete layout"}
+        className={`cursor-pointer rounded-md border px-3 py-2 text-[12px] transition-colors ${FOCUS} ${
+          showDeleteConfirm
+            ? "border-red-500/50 bg-red-500/20 text-red-200"
+            : "border-slate-600 bg-slate-800/70 text-slate-400 hover:border-red-500/35 hover:bg-red-500/10 hover:text-red-300"
+        }`}
+      >
+        <Trash2 className="h-4 w-4" />
+      </button>
+    )}
+  </>
+);
+
 const LayoutCard: React.FC<{
   layout: SavedLayout;
   onLoad: () => void;
+  onShare: () => void;
   onDelete?: () => void;
   onRename?: (newName: string) => void;
   isMostRecent?: boolean;
   displayName?: string;
-}> = ({ layout, onLoad, onDelete, onRename, isMostRecent = false, displayName }) => {
+}> = ({ layout, onLoad, onShare, onDelete, onRename, isMostRecent = false, displayName }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(layout.name);
@@ -147,29 +201,13 @@ const LayoutCard: React.FC<{
       <DesignerLayoutPreview layout={layout} className="p-3 sm:p-4" />
 
       <div className="flex gap-2 border-t border-white/10 bg-black/10 px-3 py-2.5 sm:justify-end sm:px-4">
-        <button
-          type="button"
-          onClick={onLoad}
-          className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/20 px-4 py-2 text-[12px] font-medium text-emerald-200 transition-colors hover:bg-emerald-500/30 sm:flex-none ${FOCUS}`}
-        >
-          <FolderOpen className="h-4 w-4" />
-          Load layout
-        </button>
-        {onDelete && (
-          <button
-            type="button"
-            onClick={handleDelete}
-            onBlur={() => setShowDeleteConfirm(false)}
-            title={showDeleteConfirm ? "Select again to delete" : "Delete layout"}
-            className={`cursor-pointer rounded-md border px-3 py-2 text-[12px] transition-colors ${FOCUS} ${
-              showDeleteConfirm
-                ? "border-red-500/50 bg-red-500/20 text-red-200"
-                : "border-slate-600 bg-slate-800/70 text-slate-400 hover:border-red-500/35 hover:bg-red-500/10 hover:text-red-300"
-            }`}
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        )}
+        <LayoutCardActionButtons
+          onLoad={onLoad}
+          onShare={onShare}
+          onDelete={onDelete ? handleDelete : undefined}
+          onDeleteBlur={() => setShowDeleteConfirm(false)}
+          showDeleteConfirm={showDeleteConfirm}
+        />
       </div>
     </article>
   );
@@ -182,6 +220,7 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
   onLoadMostRecent,
   onDelete,
   onRename,
+  onShare,
   layouts,
   mostRecentLayout,
 }) => {
@@ -285,6 +324,7 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
                   layout={mostRecentLayout}
                   displayName={`Most Recent (${mostRecentLayoutNickname(mostRecentLayout)})`}
                   onLoad={onLoadMostRecent}
+                  onShare={() => onShare(mostRecentLayout, mostRecentLayoutNickname(mostRecentLayout))}
                   isMostRecent
                 />
               )}
@@ -293,6 +333,7 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
                   key={layout.id}
                   layout={layout}
                   onLoad={() => onLoad(layout)}
+                  onShare={() => onShare(layout, layout.name)}
                   onDelete={() => onDelete(layout.id)}
                   onRename={(newName) => onRename(layout.id, newName)}
                 />

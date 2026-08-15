@@ -3,7 +3,7 @@ import { Save, FolderOpen, Share2, Clipboard, Trash2, RotateCcw, Layers, X, Imag
 import { motion, AnimatePresence } from "framer-motion";
 import { useDesigner, useGreenhouseData } from "../../context";
 import { useToast } from "../ui/toastContext";
-import { encodeDesign, decodeDesign, extractLayoutCode, buildShareUrl } from "../../utilities";
+import { encodeDesign, encodeSharedDesign, decodeDesign, extractLayoutCode, buildShareUrl } from "../../utilities";
 import { generateLayoutId } from "../../utilities/layoutStorage";
 import {
   captureGridAsPng,
@@ -17,6 +17,7 @@ import type { SavedLayout } from "../../types/layout";
 import type { DesignerGridHandle } from "./DesignerGrid";
 import { SaveLayoutModal } from "./SaveLayoutModal";
 import { LoadLayoutModal } from "./LoadLayoutModal";
+import { mostRecentLayoutNickname } from "./layoutPreviewPresentation";
 import { SendToGameButton } from "./SendToGameButton";
 import type { LayoutItem } from "../../../island/layout";
 import { FOCUS } from "../../../ui/kit";
@@ -244,11 +245,14 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
    * what was removed here and why). Nothing is uploaded: the code is the whole
    * layout.
    */
-  const handleExportCode = useCallback(() => {
+  const copyLayoutShareLink = useCallback(async (
+    layout: Pick<SavedLayout, "inputs" | "targets">,
+    displayName: string,
+  ) => {
     try {
-      const encoded = encodeDesign(inputPlacements, targetPlacements);
+      const encoded = encodeSharedDesign(layout.inputs, layout.targets, displayName);
       const shareUrl = buildShareUrl(encoded, window.location.origin, import.meta.env.BASE_URL);
-      navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(shareUrl);
 
       toast({
         title: "Share link copied!",
@@ -264,7 +268,27 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
         duration: 5000,
       });
     }
-  }, [inputPlacements, targetPlacements, toast]);
+  }, [toast]);
+
+  const handleExportCode = useCallback(() => {
+    const encoded = encodeDesign(inputPlacements, targetPlacements);
+    const savedName = savedLayouts.find((layout) => {
+      try {
+        return encodeDesign(layout.inputs, layout.targets) === encoded;
+      } catch {
+        return false;
+      }
+    })?.name;
+    const displayName = savedName ?? mostRecentLayoutNickname({
+      inputs: inputPlacements,
+      targets: targetPlacements,
+    });
+
+    void copyLayoutShareLink(
+      { inputs: inputPlacements, targets: targetPlacements },
+      displayName,
+    );
+  }, [inputPlacements, targetPlacements, savedLayouts, copyLayoutShareLink]);
   
   // Open import modal
   const handleOpenImport = useCallback(() => {
@@ -810,6 +834,7 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
         isOpen={isLoadModalOpen}
         onClose={() => setIsLoadModalOpen(false)}
         onLoad={handleLoadLayout}
+        onShare={copyLayoutShareLink}
         onLoadMostRecent={handleLoadMostRecent}
         onDelete={handleDeleteLayout}
         onRename={handleRenameLayout}
