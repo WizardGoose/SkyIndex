@@ -17,6 +17,7 @@ The payload contains the complete mutation layout and the exact display name sho
 - An automatically generated name is also frozen into the payload. Opening the link later must show the same name even if Skydex's naming rules change.
 - The main Designer Share action copies the queryless canonical URL.
 - Every card in the Load layout modal has a Share button beside Load layout, including Most Recent and manually saved layouts.
+- `Most Recent` remains a UI role label. Its frozen shared name is the generated nickname shown inside the parentheses, such as `Soggy Field`.
 - Sharing a card copies its link without loading it, closing the modal, or changing the active design.
 - The existing success/error toast pattern reports the clipboard result.
 - Existing rename and delete controls retain their current behaviour.
@@ -58,7 +59,7 @@ The page-level Share action determines the displayed name: an exact matching sav
 
 ### Load layout modal
 
-`LoadLayoutModal` receives one `onShare(layout, displayName)` callback. Each card invokes it with the exact visible name. Most Recent therefore shares its `Most Recent (<generated name>)` display name, while a manually saved card shares its user-set name.
+`LoadLayoutModal` receives one `onShare(layout, displayName)` callback. Most Recent shares the generated nickname inside its UI role label, while a manually saved card shares its user-set name.
 
 ### Cloudflare preview Worker
 
