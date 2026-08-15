@@ -31,6 +31,13 @@ const MAX_ENCODED_LENGTH = 12 * 1024;
 const MAX_INFLATED_BYTES = 4 * 1024;
 const GRID_SIZE = 10;
 const LETTERS = "abcdefghijklmnopqrstuvwxyz";
+const PREVIEW_RENDER_VERSION = "2";
+
+const ARTICLE_FREE_PREFIX = /^(?:a|an|the|this|that|these|those|my|your|our|their|his|her|its|some|any)\b/i;
+const POSSESSIVE_PREFIX = /^\S+[’']s\b/i;
+const IRREGULAR_PLURALS = new Set([
+  "children", "feet", "geese", "men", "mice", "people", "teeth", "women",
+]);
 
 const TARGET_NICKNAMES = {
   soggybud: "Soggy Field",
@@ -58,6 +65,37 @@ const normalizeSharedName = (value) => {
     .trim();
   const name = Array.from(normalized).slice(0, 80).join("");
   return name || null;
+};
+
+const likelyPluralTitle = (value) => {
+  const finalWord = value.match(/[a-z]+(?=[^a-z]*$)/i)?.[0]?.toLowerCase();
+  if (!finalWord) return false;
+  if (IRREGULAR_PLURALS.has(finalWord)) return true;
+  return finalWord.endsWith("s") && !/(?:ss|us|is)$/.test(finalWord);
+};
+
+const indefiniteArticle = (value) => {
+  const firstWord = value.match(/[a-z]+/i)?.[0]?.toLowerCase() ?? "";
+  if (/^(?:heir|honest|honou?r|hour)/.test(firstWord)) return "an";
+  if (/^(?:euro|one|uni(?!form)|use|user)/.test(firstWord)) return "a";
+  return /^[aeiou]/.test(firstWord) ? "an" : "a";
+};
+
+const layoutCardTitle = (displayName) => {
+  const needsArticle = !ARTICLE_FREE_PREFIX.test(displayName)
+    && !POSSESSIVE_PREFIX.test(displayName)
+    && !likelyPluralTitle(displayName);
+  const framedName = needsArticle
+    ? `${indefiniteArticle(displayName)} ${displayName}`
+    : displayName;
+  return `Oooo, ${framedName}! - Open in Skydex!`;
+};
+
+const previewImageUrl = (origin, code, legacyName, displayName) => {
+  const imageUrl = new URL(`${origin}/greenhouse/share/${code}/preview.png`);
+  imageUrl.searchParams.set("v", PREVIEW_RENDER_VERSION);
+  if (legacyName) imageUrl.searchParams.set("name", displayName);
+  return imageUrl;
 };
 
 const decodeBase64Url = (value) => {
@@ -251,7 +289,10 @@ const summarizeMutationStatus = (layout, dataset) => {
     const state = evaluated.get(target.id)?.state ?? "invalid";
     counts[state] += 1;
   }
-  return counts;
+  return {
+    ...counts,
+    targetStates: targets.map((target) => evaluated.get(target.id)?.state ?? "invalid"),
+  };
 };
 
 const itemChips = (items, origin, kind) => items.map((item) => `
@@ -280,12 +321,11 @@ export const buildLayoutShareDocument = async (code, origin, suppliedDataset, re
   const displayName = layout.name ?? legacyName ?? summary.name;
   const shareUrl = new URL(`${origin}/greenhouse/share/${code}`);
   if (legacyName) shareUrl.searchParams.set("name", displayName);
-  const imageUrl = new URL(`${origin}/greenhouse/share/${code}/preview.png`);
-  if (legacyName) imageUrl.searchParams.set("name", displayName);
+  const imageUrl = previewImageUrl(origin, code, legacyName, displayName);
   const oembedUrl = new URL(`${origin}/greenhouse/share/${code}/oembed.json`);
   if (legacyName) oembedUrl.searchParams.set("name", displayName);
   const destination = `/greenhouse?layout=${encodeURIComponent(code)}#designer`;
-  const cardTitle = `Oooo a ${displayName}! - Open in Skydex!`;
+  const cardTitle = layoutCardTitle(displayName);
 
   return `<!doctype html>
 <html lang="en"><head>
@@ -320,13 +360,12 @@ export const buildLayoutOembed = async (code, origin, suppliedDataset, requested
   const summary = summarizeLayout(layout, dataset);
   const legacyName = layout.name ? null : normalizeSharedName(requestedName);
   const displayName = layout.name ?? legacyName ?? summary.name;
-  const imageUrl = new URL(`${origin}/greenhouse/share/${code}/preview.png`);
-  if (legacyName) imageUrl.searchParams.set("name", displayName);
+  const imageUrl = previewImageUrl(origin, code, legacyName, displayName);
 
   return {
     version: "1.0",
     type: "photo",
-    title: `Oooo a ${displayName}! - Open in Skydex!`,
+    title: layoutCardTitle(displayName),
     provider_name: "Skydex",
     provider_url: origin,
     url: imageUrl.toString(),
@@ -345,17 +384,25 @@ export const buildLayoutPreviewDocument = async (code, origin, suppliedDataset, 
   const legacyName = layout.name ? null : normalizeSharedName(requestedName);
   const displayName = layout.name ?? legacyName ?? summary.name;
   const cells = Array.from({ length: 100 }, () => '<div class="cell"></div>').join("");
-  const placements = [...layout.inputs.map((item) => ({ ...item, target: false })), ...layout.targets.map((item) => ({ ...item, target: true }))]
+  const placements = [
+    ...layout.inputs.map((item) => ({ ...item, target: false, targetState: "" })),
+    ...layout.targets.map((item, index) => ({
+      ...item,
+      target: true,
+      targetState: status.targetStates[index] ?? "invalid",
+    })),
+  ]
     .map((placement) => {
       const definition = definitionFor(dataset, placement.cropId);
       const size = Math.max(1, Number(definition?.size) || 1);
       const ground = definition?.ground ?? "farmland";
-      return `<div class="placement ${placement.target ? "target" : ""}" style="grid-column:${placement.position[1] + 1}/span ${size};grid-row:${placement.position[0] + 1}/span ${size};background-image:url('${origin}/greenhouse/ground/${encodeURIComponent(ground)}.png')"><img src="${origin}/greenhouse/crops/${encodeURIComponent(placement.cropId)}.png" alt="" /></div>`;
+      const targetClass = placement.target ? ` target ${placement.targetState}` : "";
+      return `<div class="placement${targetClass}" style="grid-column:${placement.position[1] + 1}/span ${size};grid-row:${placement.position[0] + 1}/span ${size};background-image:url('${origin}/greenhouse/ground/${encodeURIComponent(ground)}.png')"><img src="${origin}/greenhouse/crops/${encodeURIComponent(placement.cropId)}.png" alt="" /></div>`;
     }).join("");
 
   return `<!doctype html><html><head><meta charset="utf-8" /><style>
     @font-face{font-family:"Skydex Chrome";src:url('${origin}/fonts/montserrat-latin-var.woff2') format('woff2');font-style:normal;font-weight:100 900;font-display:swap}
-    *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#070b12;color:#f4f7fb;font-family:Arial,sans-serif}body{border-top:6px solid #20b8e6}.page{height:624px;padding:34px 42px 38px;display:grid;grid-template-rows:46px 1fr;gap:26px}.brand{display:flex;align-items:center;gap:24px}.brand strong{display:inline-block;margin-right:-.055em;background-image:linear-gradient(171.3deg,#e8edf3 0 47.4%,#20b8e6 47.4% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:"Skydex Chrome","Space Grotesk",sans-serif;font-size:38px;font-weight:800;line-height:1;letter-spacing:.055em}.brand small{font-size:14px;font-weight:700;letter-spacing:5px;color:#b6c2d8}.content{display:grid;grid-template-columns:500px 1fr;gap:54px;min-height:0}.grid{position:relative;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;width:500px;height:500px;padding:8px;border:2px solid #263246;border-radius:10px;background:#0b111d}.cell{border:1px solid #344156;border-radius:4px;background:#151d2a}.placement{z-index:2;display:grid;place-items:center;border:2px solid #526175;border-radius:5px;background-color:#392313;background-repeat:repeat;background-size:34px;overflow:hidden}.placement.target{border-color:#20c4ee;box-shadow:0 0 14px #12bde9aa}.placement img{width:88%;height:88%;object-fit:contain;image-rendering:auto}.info{min-width:0;padding-top:4px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:5px;color:#27c4ef}.info h1{margin:10px 0 22px;font-size:42px;line-height:1.05}.row{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:18px 0;border-top:1px solid #273246}.row label{padding-top:12px;font-size:13px;font-weight:800;letter-spacing:3px;color:#a6b4cb}.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{display:inline-flex;align-items:center;gap:9px;min-height:54px;padding:8px 13px;border:1px solid #38465b;border-radius:8px;background:#141c29;font-size:18px}.chip img{width:38px;height:38px;object-fit:contain}.chip span{color:#aebbd0;font-weight:700}.status-row{padding:14px 0}.status-row label{padding-top:9px}.statuses{display:flex;flex-wrap:wrap;gap:8px}.status{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:8px 10px;border:1px solid;border-radius:7px;font-size:15px;font-weight:800}.status b{font-size:16px}.status.ready{border-color:#168aa1;background:#0b2b35;color:#9ae8f5}.status.delayed{border-color:#8a7119;background:#2d2812;color:#ffe46f}.status.blocked{border-color:#8e3440;background:#2b171c;color:#ffabb5}
+    *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#070b12;color:#f4f7fb;font-family:Arial,sans-serif}body{border-top:6px solid #20b8e6}.page{height:624px;padding:34px 42px 38px;display:grid;grid-template-rows:46px 1fr;gap:26px}.brand{display:flex;align-items:center;gap:24px}.brand strong{display:inline-block;margin-right:-.055em;background-image:linear-gradient(171.3deg,#e8edf3 0 47.4%,#20b8e6 47.4% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:"Skydex Chrome","Space Grotesk",sans-serif;font-size:38px;font-weight:800;line-height:1;letter-spacing:.055em}.brand small{font-size:14px;font-weight:700;letter-spacing:5px;color:#b6c2d8}.content{display:grid;grid-template-columns:500px 1fr;gap:54px;min-height:0}.grid{position:relative;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;width:500px;height:500px;padding:8px;border:2px solid #263246;border-radius:10px;background:#0b111d}.cell{border:1px solid #344156;border-radius:4px;background:#151d2a}.placement{z-index:2;display:grid;place-items:center;border:2px solid #526175;border-radius:5px;background-color:#392313;background-repeat:repeat;background-size:34px;overflow:hidden}.placement.target.valid{border-color:#20c4ee;box-shadow:0 0 14px #12bde9aa}.placement.target.delayed{border-color:#f5d54a;box-shadow:0 0 14px #e8bd2baa}.placement.target.invalid{border-color:#ef475b;box-shadow:0 0 12px #ef475b88}.placement img{width:88%;height:88%;object-fit:contain;image-rendering:auto}.info{min-width:0;padding-top:4px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:5px;color:#27c4ef}.info h1{margin:10px 0 22px;font-size:42px;line-height:1.05}.row{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:18px 0;border-top:1px solid #273246}.row label{padding-top:12px;font-size:13px;font-weight:800;letter-spacing:3px;color:#a6b4cb}.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{display:inline-flex;align-items:center;gap:9px;min-height:54px;padding:8px 13px;border:1px solid #38465b;border-radius:8px;background:#141c29;font-size:18px}.chip img{width:38px;height:38px;object-fit:contain}.chip span{color:#aebbd0;font-weight:700}.status-row{padding:14px 0}.status-row label{padding-top:9px}.statuses{display:flex;flex-wrap:wrap;gap:8px}.status{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:8px 10px;border:1px solid;border-radius:7px;font-size:15px;font-weight:800}.status b{font-size:16px}.status.ready{border-color:#168aa1;background:#0b2b35;color:#9ae8f5}.status.delayed{border-color:#8a7119;background:#2d2812;color:#ffe46f}.status.blocked{border-color:#8e3440;background:#2b171c;color:#ffabb5}
   </style></head><body><main class="page"><header class="brand"><strong>SKYDEX</strong><small>GREENHOUSE DESIGNER</small></header><section class="content"><div class="grid">${cells}${placements}</div><div class="info"><div class="eyebrow">SHARED MUTATION LAYOUT</div><h1>${escapeHtml(displayName)}</h1><div class="row"><label>YIELDS</label><div class="chips">${itemChips(summary.makes, origin, "crops")}</div></div><div class="row"><label>PLANT</label><div class="chips">${itemChips(summary.plants, origin, "crops")}</div></div><div class="row"><label>GROUND</label><div class="chips">${itemChips(summary.grounds, origin, "ground")}</div></div><div class="row status-row"><label>MUTATION STATUS</label><div class="statuses"><span class="status ready"><b>✓</b>${status.valid} ready</span><span class="status delayed"><b>◷</b>${status.delayed} delayed</span><span class="status blocked"><b>!</b>${status.invalid} blocked</span></div></div></div></section></main></body></html>`;
 };
 

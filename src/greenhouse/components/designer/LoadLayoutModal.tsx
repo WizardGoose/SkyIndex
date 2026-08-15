@@ -4,7 +4,7 @@ import { Check, Edit2, FolderOpen, Search, Share2, Trash2, X } from "lucide-reac
 import type { SavedLayout } from "../../types/layout";
 import { FOCUS } from "../../../ui/kit";
 import { DesignerLayoutPreview } from "./DesignerLayoutPreview";
-import { mostRecentLayoutNickname } from "./layoutPreviewPresentation";
+import { mostRecentLayoutName } from "./layoutPreviewPresentation";
 
 interface LoadLayoutModalProps {
   isOpen: boolean;
@@ -258,6 +258,10 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
 
   if (!isOpen) return null;
 
+  const recentName = mostRecentLayout
+    ? mostRecentLayoutName(mostRecentLayout, layouts)
+    : null;
+
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 backdrop-blur-sm sm:p-4"
@@ -322,9 +326,9 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
               {mostRecentLayout && (
                 <LayoutCard
                   layout={mostRecentLayout}
-                  displayName={`Most Recent (${mostRecentLayoutNickname(mostRecentLayout)})`}
+                  displayName={`Most Recent (${recentName})`}
                   onLoad={onLoadMostRecent}
-                  onShare={() => onShare(mostRecentLayout, mostRecentLayoutNickname(mostRecentLayout))}
+                  onShare={() => onShare(mostRecentLayout, recentName!)}
                   isMostRecent
                 />
               )}

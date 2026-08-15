@@ -10,6 +10,8 @@ import {
 import { encodeSharedDesign } from "../../greenhouse/utilities/designEncoding";
 
 const SOGGY_FIELD_CODE = "y9YxqTE0qdEjHiQ6JmGwiAIA";
+const DELAYED_SOGGYBUDS_CODE =
+  "KzOqcUnNSaxMTVE1MgjOT0-vTCpNKa4x1jGpMTTRya7RIwiSYAwnRygz0ckRUxYPAAA";
 const SOGGY_INPUTS = [
   { cropId: "gloomgourd", position: [4, 3] as [number, number] },
   { cropId: "melon", position: [4, 5] as [number, number] },
@@ -77,9 +79,9 @@ describe("stateless layout link embeds", () => {
   it("returns layout-specific Open Graph metadata and a browser redirect", async () => {
     const html = await buildLayoutShareDocument(SOGGY_FIELD_CODE, "https://skydex.ca", DATASET);
 
-    expect(html).toContain('property="og:title" content="Oooo a Soggy Field! - Open in Skydex!"');
+    expect(html).toContain('property="og:title" content="Oooo, a Soggy Field! - Open in Skydex!"');
     expect(html).toContain(
-      `property="og:image" content="https://skydex.ca/greenhouse/share/${SOGGY_FIELD_CODE}/preview.png"`,
+      `property="og:image" content="https://skydex.ca/greenhouse/share/${SOGGY_FIELD_CODE}/preview.png?v=2"`,
     );
     expect(html).toContain(
       `type="application/json+oembed" href="https://skydex.ca/greenhouse/share/${SOGGY_FIELD_CODE}/oembed.json"`,
@@ -101,10 +103,10 @@ describe("stateless layout link embeds", () => {
     expect(oembed).toEqual({
       version: "1.0",
       type: "photo",
-      title: "Oooo a Soggy Field! - Open in Skydex!",
+      title: "Oooo, a Soggy Field! - Open in Skydex!",
       provider_name: "Skydex",
       provider_url: "https://skydex.ca",
-      url: `https://skydex.ca/greenhouse/share/${SOGGY_FIELD_CODE}/preview.png`,
+      url: `https://skydex.ca/greenhouse/share/${SOGGY_FIELD_CODE}/preview.png?v=2`,
       width: 1200,
       height: 630,
     });
@@ -140,7 +142,7 @@ describe("stateless layout link embeds", () => {
     expect(layout.inputs).toEqual(SOGGY_INPUTS);
     expect(layout.targets).toEqual(SOGGY_TARGETS);
     expect(html).toContain(
-      'property="og:title" content="Oooo a Wizard\'s | Waterworks! - Open in Skydex!"',
+      'property="og:title" content="Oooo, Wizard\'s | Waterworks! - Open in Skydex!"',
     );
     expect(html).toContain(`/greenhouse/share/${namedCode}/preview.png`);
     expect(html).toContain(`/greenhouse/share/${namedCode}/oembed.json`);
@@ -148,8 +150,8 @@ describe("stateless layout link embeds", () => {
     expect(html).not.toContain("Query Override");
     expect(preview).toContain("Wizard's | Waterworks");
     expect(preview).not.toContain("Query Override");
-    expect(oembed.title).toBe("Oooo a Wizard's | Waterworks! - Open in Skydex!");
-    expect(oembed.url).toBe(`https://skydex.ca/greenhouse/share/${namedCode}/preview.png`);
+    expect(oembed.title).toBe("Oooo, Wizard's | Waterworks! - Open in Skydex!");
+    expect(oembed.url).toBe(`https://skydex.ca/greenhouse/share/${namedCode}/preview.png?v=2`);
   });
 
   it("keeps query names as a fallback for existing v1 links", async () => {
@@ -160,8 +162,42 @@ describe("stateless layout link embeds", () => {
       "Wizard's Waterworks",
     );
 
-    expect(html).toContain("Oooo a Wizard's Waterworks! - Open in Skydex!");
-    expect(html).toContain(`/preview.png?name=Wizard%27s+Waterworks`);
+    expect(html).toContain("Oooo, Wizard's Waterworks! - Open in Skydex!");
+    expect(html).toContain(`/preview.png?v=2&name=Wizard%27s+Waterworks`);
+  });
+
+  it.each([
+    ["Delayed Soggybuds", "Oooo, Delayed Soggybuds! - Open in Skydex!"],
+    ["Gloomgourd", "Oooo, a Gloomgourd! - Open in Skydex!"],
+    ["Gloomgourds", "Oooo, Gloomgourds! - Open in Skydex!"],
+    ["Amber Orchard", "Oooo, an Amber Orchard! - Open in Skydex!"],
+    ["The Bog", "Oooo, The Bog! - Open in Skydex!"],
+    ["Wizard's Waterworks", "Oooo, Wizard's Waterworks! - Open in Skydex!"],
+  ])("frames the user title %s with natural grammar", async (name, expectedTitle) => {
+    const code = encodeSharedDesign(SOGGY_INPUTS, SOGGY_TARGETS, name);
+
+    const html = await buildLayoutShareDocument(code, "https://skydex.ca", DATASET);
+    const oembed = await buildLayoutOembed(code, "https://skydex.ca", DATASET);
+
+    expect(html).toContain(`property="og:title" content="${expectedTitle}"`);
+    expect(oembed.title).toBe(expectedTitle);
+  });
+
+  it("uses the exact delayed Soggybuds link title and a revisioned preview resource", async () => {
+    const layout = await decodeSharedLayout(DELAYED_SOGGYBUDS_CODE);
+    const html = await buildLayoutShareDocument(
+      DELAYED_SOGGYBUDS_CODE,
+      "https://skydex.ca",
+      DATASET,
+    );
+
+    expect(layout.name).toBe("Delayed Soggybuds");
+    expect(html).toContain(
+      'property="og:title" content="Oooo, Delayed Soggybuds! - Open in Skydex!"',
+    );
+    expect(html).toContain(
+      `property="og:image" content="https://skydex.ca/greenhouse/share/${DELAYED_SOGGYBUDS_CODE}/preview.png?v=2"`,
+    );
   });
 
   it("builds a readable full-field screenshot document from the same link payload", async () => {
@@ -205,6 +241,30 @@ describe("stateless layout link embeds", () => {
     expect(html).toContain("2 ready");
     expect(html).toContain("1 delayed");
     expect(html).toContain("0 blocked");
+  });
+
+  it("paints each target with its evaluated ready or delayed state", async () => {
+    const statusCode = encodeSharedDesign(
+      [
+        { cropId: "melon", position: [3, 3] },
+        { cropId: "melon", position: [5, 5] },
+        { cropId: "pumpkin", position: [4, 2] },
+        { cropId: "melon", position: [6, 2] },
+      ],
+      [
+        { cropId: "gloomgourd", position: [4, 3] },
+        { cropId: "gloomgourd", position: [5, 3] },
+        { cropId: "soggybud", position: [4, 4] },
+      ],
+      "Waterworks",
+    );
+
+    const html = await buildLayoutPreviewDocument(statusCode, "https://skydex.ca", DATASET);
+
+    expect(html).toContain('class="placement target valid"');
+    expect(html).toMatch(
+      /class="placement target delayed"[^>]*><img src="https:\/\/skydex\.ca\/greenhouse\/crops\/soggybud\.png"/,
+    );
   });
 
   it("returns failed share-page visitors to the Designer instead of a bare edge error", async () => {

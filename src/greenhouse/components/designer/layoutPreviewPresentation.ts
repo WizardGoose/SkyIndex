@@ -37,3 +37,24 @@ export const mostRecentLayoutNickname = (layout: Pick<SavedLayout, "inputs" | "t
   const primaryInput = layout.inputs[0]?.cropId;
   return primaryInput ? `${title(primaryInput)} Plot` : "Fresh Plot";
 };
+
+const placementSignature = (layout: Pick<SavedLayout, "inputs" | "targets">): string =>
+  JSON.stringify({
+    inputs: layout.inputs
+      .map((placement) => `${placement.cropId}@${placement.position[0]},${placement.position[1]}`)
+      .sort(),
+    targets: layout.targets
+      .map((placement) => `${placement.cropId}@${placement.position[0]},${placement.position[1]}`)
+      .sort(),
+  });
+
+export const mostRecentLayoutName = (
+  mostRecent: Pick<SavedLayout, "inputs" | "targets">,
+  savedLayouts: Array<Pick<SavedLayout, "name" | "inputs" | "targets">>,
+): string => {
+  const signature = placementSignature(mostRecent);
+  return (
+    savedLayouts.find((layout) => placementSignature(layout) === signature)?.name ??
+    mostRecentLayoutNickname(mostRecent)
+  );
+};

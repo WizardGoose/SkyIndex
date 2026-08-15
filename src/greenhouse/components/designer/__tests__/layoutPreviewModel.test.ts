@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { SavedLayout } from "../../../types/layout";
 import { buildLayoutPreviewModel, buildLayoutPreviewStatus } from "../layoutPreviewModel";
-import { mostRecentLayoutNickname, previewGridCells } from "../layoutPreviewPresentation";
+import {
+  mostRecentLayoutName,
+  mostRecentLayoutNickname,
+  previewGridCells,
+} from "../layoutPreviewPresentation";
 
 const layout: SavedLayout = {
   id: "saved-1",
@@ -103,6 +107,30 @@ describe("Designer saved-layout presentation", () => {
         ],
       }),
     ).toBe("Gloom Grove");
+  });
+
+  it("uses the player's saved name when Most Recent matches a saved layout", () => {
+    const mostRecent = {
+      ...layout,
+      id: "__skydex_most_recent__",
+      name: "Most Recent",
+    };
+    const savedCopy = {
+      ...layout,
+      id: "saved-waterworks",
+      name: "Wizard's Waterworks",
+    };
+
+    expect(mostRecentLayoutName(mostRecent, [savedCopy])).toBe("Wizard's Waterworks");
+  });
+
+  it("keeps the generated name when Most Recent has changed since it was saved", () => {
+    const changed = {
+      ...layout,
+      inputs: [...layout.inputs, { cropId: "melon", position: [5, 5] as [number, number] }],
+    };
+
+    expect(mostRecentLayoutName(changed, [layout])).toBe("Soggy Field");
   });
 });
 
