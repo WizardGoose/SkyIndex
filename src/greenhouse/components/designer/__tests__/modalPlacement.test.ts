@@ -26,7 +26,7 @@ describe("designer modal placement", () => {
     expect(preview).not.toContain("createPortal(");
   });
 
-  it("portals greenhouse notifications above the frosted modal layer", () => {
+  it("portals greenhouse notifications above the frosted modal layer on the left", () => {
     const source = readFileSync(
       resolve(process.cwd(), "src/greenhouse/components/ui/Toast.tsx"),
       "utf8",
@@ -34,7 +34,11 @@ describe("designer modal placement", () => {
 
     expect(source).toMatch(/createPortal\([\s\S]*document\.body[\s\S]*\)/);
     expect(source).toContain("z-[100]");
-    expect(source).toContain("left-1/2 -translate-x-1/2");
+    expect(source).toContain("bottom-3");
+    expect(source).toContain("left-3");
+    expect(source).not.toContain("top-3");
+    expect(source).not.toContain("left-1/2");
+    expect(source).not.toContain("-translate-x-1/2");
     expect(source).not.toContain("right-3");
   });
 });

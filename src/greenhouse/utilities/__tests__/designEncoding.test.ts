@@ -64,6 +64,14 @@ const targets: Placement[] = [
 ];
 
 describe("design code round trip", () => {
+  it("keeps the named layout copied from the live share flow readable", () => {
+    const out = decodeDesign("KzOqMVI1MgjOT0-vrDHRya4xNKnRIx4kOSZisIgCAA");
+
+    expect(out.name).toBe("2 Soggy");
+    expect(out.inputs).toHaveLength(4);
+    expect(out.targets).toHaveLength(2);
+  });
+
   it("freezes the normalized display name inside a v2 share payload", () => {
     const code = encodeSharedDesign(inputs, targets, "  Wizard\u0007 | Waterworks  ");
     const out = decodeDesign(code);
