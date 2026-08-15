@@ -157,8 +157,10 @@ const PrivacyPolicy: React.FC = () => (
 
     <Section title="Hosting">
       <p className={P}>
-        The site is served as static files by GitHub Pages. GitHub runs those servers and applies its own privacy terms to the requests they receive,
-        the same as for any page hosted there. Skydex adds no logging of its own, and has no back end that could.
+        The site is served as static files by GitHub Pages, with Cloudflare handling the public skydex.ca connection in front of it. Like any host and
+        delivery network, they receive ordinary request details such as your IP address, browser user agent, and the path or query string requested.
+        Anything after a <span className={HOST}>#</span> stays in your browser and is never part of that request. GitHub and Cloudflare apply their own
+        privacy terms to the traffic they handle. Skydex adds no logging of its own and has no application back end that stores it.
       </p>
     </Section>
 

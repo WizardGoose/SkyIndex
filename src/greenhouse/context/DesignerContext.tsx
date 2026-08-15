@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef } from "react";
 import type { MutationDefinition } from "../types/greenhouse";
+import type { SavedLayout } from "../types/layout";
 import {
   isPositionOccupiedByPlacements,
   findOverlappingPlacements,
@@ -8,6 +9,19 @@ import {
   generatePlacementId,
   LocalStorageManager,
 } from "../utilities";
+import { loadLayouts, saveLayouts } from "../utilities/layoutStorage";
+import {
+  createDesignerTimeline,
+  designerShortcut,
+  loadDesignerRecovery,
+  pushDesignerTimeline,
+  redoDesignerTimeline,
+  saveDesignerRecovery,
+  toMostRecentLayout,
+  undoDesignerTimeline,
+  type DesignerTimeline,
+  type DesignerWorkspace,
+} from "../utilities/designerWorkspace";
 
 export type DesignerMode = "inputs" | "targets";
 
@@ -58,6 +72,18 @@ interface DesignerContextType {
   clearInputPlacements: () => void;
   clearTargetPlacements: () => void;
   clearAllPlacements: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  undo: () => boolean;
+  redo: () => boolean;
+
+  // One automatic recovery slot plus layouts deliberately saved by the user
+  mostRecentLayout: SavedLayout | null;
+  savedLayouts: SavedLayout[];
+  restoreMostRecent: () => boolean;
+  saveNamedLayout: (layout: SavedLayout, overwriteId?: string) => boolean;
+  deleteNamedLayout: (id: string) => boolean;
+  renameNamedLayout: (id: string, name: string) => boolean;
   
   // Validation helpers
   isPositionOccupied: (position: [number, number], size: number, excludeId?: string) => boolean;
@@ -99,48 +125,51 @@ const DesignerContext = createContext<DesignerContextType | null>(null);
 
 export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<DesignerMode>("inputs");
-  const [inputPlacements, setInputPlacements] = useState<DesignerPlacement[]>(() => {
-    // Try to load from localStorage
-    const saved = LocalStorageManager.loadDesignerInputs();
-    return saved || [];
+  const [timeline, setTimeline] = useState<DesignerTimeline>(() => {
+    const recovery = loadDesignerRecovery();
+    return createDesignerTimeline({
+      inputPlacements: recovery?.inputPlacements ?? LocalStorageManager.loadDesignerInputs() ?? [],
+      targetPlacements: recovery?.targetPlacements ?? LocalStorageManager.loadDesignerTargets() ?? [],
+      mostRecent: recovery?.mostRecent ?? null,
+      savedLayouts: loadLayouts(),
+    });
   });
-  const [targetPlacements, setTargetPlacements] = useState<DesignerPlacement[]>(() => {
-    // Try to load from localStorage
-    const saved = LocalStorageManager.loadDesignerTargets();
-    return saved || [];
-  });
+  const timelineRef = useRef(timeline);
+  const { inputPlacements, targetPlacements, mostRecent, savedLayouts } = timeline.present;
   const [selectedCropForPlacement, setSelectedCropForPlacement] = useState<SelectedCropForDesigner | null>(null);
   const [hoveredTargetId, setHoveredTargetId] = useState<string | null>(null);
-  const isInitialInputsMount = useRef(true);
-  const isInitialTargetsMount = useRef(true);
-  
-  // Save input placements to localStorage when they change (but not empty defaults)
+
+  const persistTimeline = useCallback((next: DesignerTimeline): boolean => {
+    const previous = timelineRef.current;
+    if (
+      next.present.savedLayouts !== previous.present.savedLayouts &&
+      !saveLayouts(next.present.savedLayouts)
+    ) return false;
+
+    timelineRef.current = next;
+    setTimeline(next);
+    saveDesignerRecovery(next.present);
+    LocalStorageManager.saveDesignerInputs(next.present.inputPlacements);
+    LocalStorageManager.saveDesignerTargets(next.present.targetPlacements);
+    return true;
+  }, []);
+
+  const commitWorkspace = useCallback((
+    update: (workspace: DesignerWorkspace) => DesignerWorkspace,
+    options: { captureMostRecent?: boolean; now?: number } = {},
+  ): boolean => {
+    const current = timelineRef.current;
+    const nextWorkspace = update(current.present);
+    if (nextWorkspace === current.present) return true;
+    return persistTimeline(pushDesignerTimeline(current, nextWorkspace, options));
+  }, [persistTimeline]);
+
+  // Adopt a legacy active layout into the crash-safe record on first mount.
   useEffect(() => {
-    if (isInitialInputsMount.current) {
-      const saved = LocalStorageManager.loadDesignerInputs();
-      isInitialInputsMount.current = false;
-      if (!saved || saved.length === 0) {
-        return; // Don't save empty array on initial mount
-      }
-    }
-    LocalStorageManager.saveDesignerInputs(inputPlacements);
-  }, [inputPlacements]);
-  
-  // Save target placements to localStorage when they change (but not empty defaults)
-  useEffect(() => {
-    if (isInitialTargetsMount.current) {
-      const saved = LocalStorageManager.loadDesignerTargets();
-      isInitialTargetsMount.current = false;
-      if (!saved || saved.length === 0) {
-        return; // Don't save empty array on initial mount
-      }
-    }
-    LocalStorageManager.saveDesignerTargets(targetPlacements);
-  }, [targetPlacements]);
-  
-  // Get the current placements based on mode
+    saveDesignerRecovery(timelineRef.current.present);
+  }, []);
+
   const currentPlacements = mode === "inputs" ? inputPlacements : targetPlacements;
-  const setCurrentPlacements = mode === "inputs" ? setInputPlacements : setTargetPlacements;
   
   // All placements combined (for overlap checking and display)
   const allPlacements = useMemo(() => {
@@ -209,19 +238,28 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const overlapping = getOverlappingPlacements(placement.position, placement.size);
     const overlappingIds = new Set(overlapping.map(p => p.id));
     
-    setCurrentPlacements(prev => [
-      ...prev.filter(p => !overlappingIds.has(p.id)),
-      newPlacement,
-    ]);
+    commitWorkspace((workspace) => {
+      const key = mode === "inputs" ? "inputPlacements" : "targetPlacements";
+      return {
+        ...workspace,
+        [key]: [
+          ...workspace[key].filter((p) => !overlappingIds.has(p.id)),
+          newPlacement,
+        ],
+      };
+    });
     
     return { success: true };
-  }, [isValidPlacementPosition, getOverlappingPlacements, setCurrentPlacements]);
+  }, [isValidPlacementPosition, getOverlappingPlacements, commitWorkspace, mode]);
   
   // Remove placement from either list
   const removePlacement = useCallback((id: string) => {
-    setInputPlacements(prev => prev.filter(p => p.id !== id));
-    setTargetPlacements(prev => prev.filter(p => p.id !== id));
-  }, []);
+    commitWorkspace((workspace) => ({
+      ...workspace,
+      inputPlacements: workspace.inputPlacements.filter((p) => p.id !== id),
+      targetPlacements: workspace.targetPlacements.filter((p) => p.id !== id),
+    }));
+  }, [commitWorkspace]);
   
   // Move placement
   const movePlacement = useCallback((
@@ -240,32 +278,48 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     
     // Update in the correct list
     const isInput = inputPlacements.some(p => p.id === id);
-    if (isInput) {
-      setInputPlacements(prev =>
-        prev.map(p => p.id === id ? { ...p, position: newPosition } : p)
-      );
-    } else {
-      setTargetPlacements(prev =>
-        prev.map(p => p.id === id ? { ...p, position: newPosition } : p)
-      );
-    }
+    commitWorkspace((workspace) => isInput
+      ? {
+          ...workspace,
+          inputPlacements: workspace.inputPlacements.map((p) =>
+            p.id === id ? { ...p, position: newPosition } : p
+          ),
+        }
+      : {
+          ...workspace,
+          targetPlacements: workspace.targetPlacements.map((p) =>
+            p.id === id ? { ...p, position: newPosition } : p
+          ),
+        });
     
     return { success: true };
-  }, [allPlacements, inputPlacements, isValidPlacement]);
+  }, [allPlacements, inputPlacements, isValidPlacement, commitWorkspace]);
   
   // Clear functions
   const clearInputPlacements = useCallback(() => {
-    setInputPlacements([]);
-  }, []);
+    if (timelineRef.current.present.inputPlacements.length === 0) return;
+    commitWorkspace(
+      (workspace) => ({ ...workspace, inputPlacements: [] }),
+      { captureMostRecent: true },
+    );
+  }, [commitWorkspace]);
   
   const clearTargetPlacements = useCallback(() => {
-    setTargetPlacements([]);
-  }, []);
+    if (timelineRef.current.present.targetPlacements.length === 0) return;
+    commitWorkspace(
+      (workspace) => ({ ...workspace, targetPlacements: [] }),
+      { captureMostRecent: true },
+    );
+  }, [commitWorkspace]);
   
   const clearAllPlacements = useCallback(() => {
-    setInputPlacements([]);
-    setTargetPlacements([]);
-  }, []);
+    const current = timelineRef.current.present;
+    if (current.inputPlacements.length === 0 && current.targetPlacements.length === 0) return;
+    commitWorkspace(
+      (workspace) => ({ ...workspace, inputPlacements: [], targetPlacements: [] }),
+      { captureMostRecent: true },
+    );
+  }, [commitWorkspace]);
   
   // Get placement at position
   const getPlacementAt = useCallback((
@@ -300,9 +354,97 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       isMutation: true,
     }));
     
-    setInputPlacements(newInputs);
-    setTargetPlacements(newTargets);
-  }, []);
+    commitWorkspace(
+      (workspace) => ({
+        ...workspace,
+        inputPlacements: newInputs,
+        targetPlacements: newTargets,
+      }),
+      { captureMostRecent: true },
+    );
+  }, [commitWorkspace]);
+
+  const restoreMostRecent = useCallback((): boolean => {
+    const point = timelineRef.current.present.mostRecent;
+    if (!point) return false;
+    return commitWorkspace(
+      (workspace) => ({
+        ...workspace,
+        inputPlacements: point.inputPlacements,
+        targetPlacements: point.targetPlacements,
+      }),
+      { captureMostRecent: true },
+    );
+  }, [commitWorkspace]);
+
+  const saveNamedLayout = useCallback((layout: SavedLayout, overwriteId?: string): boolean => {
+    if (
+      overwriteId &&
+      !timelineRef.current.present.savedLayouts.some((saved) => saved.id === overwriteId)
+    ) return false;
+    return commitWorkspace((workspace) => {
+      if (!overwriteId) {
+        return { ...workspace, savedLayouts: [...workspace.savedLayouts, layout] };
+      }
+      const index = workspace.savedLayouts.findIndex((saved) => saved.id === overwriteId);
+      if (index === -1) return workspace;
+      const next = [...workspace.savedLayouts];
+      next[index] = {
+        ...layout,
+        id: overwriteId,
+        savedAt: workspace.savedLayouts[index].savedAt,
+      };
+      return { ...workspace, savedLayouts: next };
+    });
+  }, [commitWorkspace]);
+
+  const deleteNamedLayout = useCallback((id: string): boolean => {
+    const current = timelineRef.current.present;
+    if (!current.savedLayouts.some((layout) => layout.id === id)) return false;
+    return commitWorkspace((workspace) => ({
+      ...workspace,
+      savedLayouts: workspace.savedLayouts.filter((layout) => layout.id !== id),
+    }));
+  }, [commitWorkspace]);
+
+  const renameNamedLayout = useCallback((id: string, name: string): boolean => {
+    const trimmed = name.trim();
+    const current = timelineRef.current.present;
+    if (
+      !trimmed ||
+      current.savedLayouts.some((layout) => layout.id !== id && layout.name === trimmed) ||
+      !current.savedLayouts.some((layout) => layout.id === id)
+    ) return false;
+    return commitWorkspace((workspace) => ({
+      ...workspace,
+      savedLayouts: workspace.savedLayouts.map((layout) =>
+        layout.id === id ? { ...layout, name: trimmed, modifiedAt: Date.now() } : layout
+      ),
+    }));
+  }, [commitWorkspace]);
+
+  const undo = useCallback((): boolean => {
+    const current = timelineRef.current;
+    const next = undoDesignerTimeline(current);
+    return next !== current && persistTimeline(next);
+  }, [persistTimeline]);
+
+  const redo = useCallback((): boolean => {
+    const current = timelineRef.current;
+    const next = redoDesignerTimeline(current);
+    return next !== current && persistTimeline(next);
+  }, [persistTimeline]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const shortcut = designerShortcut(event);
+      if (!shortcut) return;
+      const changed = shortcut === "undo" ? undo() : redo();
+      if (changed) event.preventDefault();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo]);
   
   // Get possible mutations based on current input placements
   const getPossibleMutations = useCallback((
@@ -491,6 +633,16 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     clearInputPlacements,
     clearTargetPlacements,
     clearAllPlacements,
+    canUndo: timeline.past.length > 0,
+    canRedo: timeline.future.length > 0,
+    undo,
+    redo,
+    mostRecentLayout: toMostRecentLayout(mostRecent),
+    savedLayouts,
+    restoreMostRecent,
+    saveNamedLayout,
+    deleteNamedLayout,
+    renameNamedLayout,
     isPositionOccupied,
     isValidPlacement,
     isValidPlacementPosition,

@@ -106,14 +106,14 @@ That runs the build and then serves the result at `http://localhost:4180`. This
 is the version to check before publishing anything, because the dev server is
 more forgiving than a real static host.
 
-To publish to GitHub Pages, from an account that has push access:
+To build the GitHub Pages artifact locally:
 
 ```sh
-pnpm run deploy
+pnpm run build:pages
 ```
 
-That builds with the `/Skydex/` base path and pushes the result to the
-`gh-pages` branch.
+That creates the same root-based artifact the GitHub Pages workflow publishes
+for `https://skydex.ca`.
 
 ## 7. If something goes wrong
 

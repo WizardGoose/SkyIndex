@@ -40,7 +40,7 @@ project before (that is not a dig, it is genuinely who it is written for).
 ## Getting started
 
 The quickest, easiest way to start is
-[Skydex on GitHub Pages](https://wizardgoose.github.io/Skydex/): open it in a
+[Skydex](https://skydex.ca): open it in a
 browser and use Skydex. No install, no account and no local server.
 
 The companion mod is the other route for island data. Run `/skydex copy` in
@@ -111,24 +111,20 @@ pnpm start
 That builds and then serves the result at `http://localhost:4180`. This is the
 one that tells you the truth about what visitors actually get.
 
-Publish to GitHub Pages:
+Build the GitHub Pages artifact locally:
 
 ```sh
-pnpm run deploy
+pnpm run build:pages
 ```
 
 ## Configuration
 
-No environment file is needed, and there are no variables to set by hand!
-`GITHUB_PAGES=true` is read at build time to pick the base path, and that is
-all it does. It is the one difference between the two builds: with it the site
-is rooted at `/Skydex/` to match the repo name, without it at `/`.
-`pnpm run deploy` sets it for you, so the only time it matters by hand is if you
-build the Pages artifact yourself.
+No environment file is needed, and there are no variables to set by hand. The
+production artifact is rooted at `/`, as it is on `https://skydex.ca`.
 
 Deep links on Pages go through `public/404.html`, which is the whole reason that
 file exists: a static host has no rewrite rule, so a visitor opening
-`/Skydex/greenhouse/planner` directly is served the 404 page, which stashes the
+`/greenhouse` directly is served the 404 page, which stashes the
 address and hands it to `src/components/AppWithRedirect.tsx` to restore. They
 are a pair and only work together (please do not separate them, they get sad).
 

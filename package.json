@@ -12,7 +12,7 @@
     "build:all": "pnpm run build:site && pnpm run build:mod",
     "serve": "vite preview --port 4180 --host",
     "start": "pnpm run build && pnpm run serve",
-    "build:pages": "cross-env GITHUB_PAGES=true pnpm run build",
+    "build:pages": "pnpm run build",
     "deploy": "pnpm run build:pages && gh-pages -d dist -r https://github.com/WizardGoose/Skydex.git",
     "lint": "eslint .",
     "test": "vitest run",

@@ -68,10 +68,8 @@ export const LockedPlacementsProvider: React.FC<{ children: React.ReactNode }> =
   useEffect(() => {
     const loadDefaultPriorities = async () => {
       try {
-        // BASE_URL rather than a root-absolute path. This file lives in
-        // public/, and the Pages deploy serves the app from "/Skydex/", where
-        // "/greenhouse/..." resolves against the domain root and 404s. BASE_URL
-        // carries its own trailing slash, so nothing is added between.
+        // BASE_URL carries the deploy root and its trailing slash, so this
+        // bundled public asset remains correct if the host changes again.
         const response = await fetch(`${import.meta.env.BASE_URL}greenhouse/default_priorities.json`);
         if (!response.ok) {
           throw new Error(`Failed to load default priorities: ${response.statusText}`);

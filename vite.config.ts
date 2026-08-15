@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -69,10 +69,7 @@ function packageOfModule(id: string): string | null {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
-  const isProd = mode === "production";
-  const isGitHubPages = env.GITHUB_PAGES === "true";
+export default defineConfig(() => {
   const deployRevision = (process.env.GITHUB_SHA ?? "local").slice(0, 12);
 
   /*
@@ -103,11 +100,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     ],
-    // The Pages repo is WizardGoose/Skydex, and this path has to spell the
-    // repo name exactly or every asset 404s at the deploy address ("/SkyShards/"
-    // was the fork's path and did precisely that). It moved here with the
-    // Skydex rename; the two are one decision and have to travel together.
-    base: isProd && isGitHubPages ? "/Skydex/" : "/",
+    base: "/",
     build: {
       rollupOptions: {
         output: {

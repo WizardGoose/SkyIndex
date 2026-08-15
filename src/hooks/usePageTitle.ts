@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { SITE_NAME } from "../ui/brand";
+import { parseGreenhouseHash } from "../greenhouse/route";
 
 /** "<site> · <page>". Only the page half is literal here; the name comes from src/ui/brand.ts. */
 const title = (page: string) => `${SITE_NAME} · ${page}`;
@@ -13,9 +14,6 @@ const TITLES: Record<string, string> = {
   "/": SITE_NAME,
   "/dashboard": title("Dashboard"),
   "/forge": title("Forge"),
-  "/greenhouse": title("Solver"),
-  "/greenhouse/planner": title("Planner"),
-  "/greenhouse/designer": title("Designer"),
   "/items": title("Items"),
   /* "/accessories" redirects into the profile page now, so its old
      entry is gone and the profile route gets the name the nav calls it. */
@@ -24,12 +22,17 @@ const TITLES: Record<string, string> = {
   "/recipes": title("Recipes"),
   "/shards": title("Shards"),
   "/fusion-lines": title("Fusion Lines"),
+  "/settings": title("Settings"),
 };
 
 export const usePageTitle = () => {
   const location = useLocation();
 
   useEffect(() => {
-    document.title = TITLES[location.pathname] ?? SITE_NAME;
-  }, [location.pathname]);
+    const greenhouseTitle =
+      location.pathname === "/greenhouse"
+        ? title(parseGreenhouseHash(location.hash).tool.replace(/^./, (letter) => letter.toUpperCase()))
+        : null;
+    document.title = greenhouseTitle ?? TITLES[location.pathname] ?? SITE_NAME;
+  }, [location.hash, location.pathname]);
 };

@@ -206,11 +206,8 @@ export interface SelectedCropForPlacement {
  * Both of these used to return a root-absolute path, which worked in dev and
  * broke everywhere else.
  *
- * The production build is served from a sub-path (Vite's base is `/Skydex/`
- * on GitHub Pages), so `/greenhouse/crops/carrot.png` resolved against the
- * domain root, missed the deployed folder entirely, and 404d. Every crop and
- * mutation icon on the live site fell back to initials while looking perfect
- * locally, which is exactly why it survived this long.
+ * `import.meta.env.BASE_URL` keeps asset references correct from the canonical
+ * root deployment and if the host layout changes in a future release.
  *
  * `import.meta.env.BASE_URL` always carries its trailing slash, so it is
  * concatenated directly. This matches the convention the shard icons already

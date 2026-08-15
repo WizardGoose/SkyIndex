@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build GitHub Pages site
+      - name: Build skydex.ca Pages artifact
         run: pnpm run build:pages
 
       - name: Configure GitHub Pages

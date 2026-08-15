@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Search, X, Plus, Minus, RotateCcw, Package, TriangleAlert, PencilRuler, Check, Undo2, ChevronRight, Route, Undo, Info, Menu } from "lucide-react";
 import { useGreenhouseData, useDesigner } from "../context";
 import { CropImage } from "../components/shared/CropImage";
@@ -69,6 +69,7 @@ import { GreenhouseSettings, PlannerOptionsList, type GreenhouseGrowth } from ".
 import { setManualGreenhouseStats, useGreenhouseStats } from "../../island/profileStats";
 import { currentAccess } from "../../island/apiKey";
 import { manualGreenhouseLayer, resolveGrowth } from "../planner/growthSource";
+import { parseGreenhouseHash } from "../route";
 
 /**
  * A caption that earned a hover instead of a paragraph.
@@ -276,6 +277,7 @@ export const PlannerPage: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { loadFromSolverResult } = useDesigner();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const dataset = useMemo(
     () => ({
@@ -286,6 +288,27 @@ export const PlannerPage: React.FC = () => {
   );
 
   const catalogueById = useMemo(() => new Map(catalogue.map((t) => [t.id, t])), [catalogue]);
+
+  const linkedTarget = useMemo(() => {
+    const { tool, search } = parseGreenhouseHash(location.hash);
+    if (tool !== "planner") return null;
+    const match = search.match(/[?&]target=([^&]*)/);
+    if (!match?.[1]) return null;
+    try {
+      return decodeURIComponent(match[1]);
+    } catch {
+      return null;
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    if (!linkedTarget || state.targets.some((target) => target.id === linkedTarget)) return;
+    if (mutations.some((mutation) => mutation.id === linkedTarget)) {
+      planner.addTarget(linkedTarget, "mutation");
+    } else if (catalogueById.has(linkedTarget)) {
+      planner.addTarget(linkedTarget, "item");
+    }
+  }, [catalogueById, linkedTarget, mutations, planner, state.targets]);
 
   /**
    * What you already own, from your island as well as from what you typed.
@@ -607,7 +630,7 @@ export const PlannerPage: React.FC = () => {
       solved.result.placements.map((p) => ({ id: p.crop, name: dataset.crops[p.crop]?.name ?? p.crop, position: p.position, size: p.size })),
       solved.result.mutations.map((m) => ({ id: m.mutation, name: dataset.mutations[m.mutation]?.name ?? m.mutation, position: m.position, size: m.size }))
     );
-    navigate("/greenhouse/designer");
+    navigate("/greenhouse#designer");
   };
 
   const searchResults = useMemo(() => {

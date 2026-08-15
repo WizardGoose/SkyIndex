@@ -58,7 +58,7 @@ export const FirstTimeVisitorModal: React.FC<FirstTimeVisitorModalProps> = ({
   };
 
   const handleGoToDesigner = () => {
-    navigate("/designer");
+    navigate("/greenhouse#designer");
     onClose();
   };
 

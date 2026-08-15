@@ -1,17 +1,10 @@
-import React, { useCallback, useMemo, useState, useEffect, type RefObject } from "react";
-import { Save, FolderOpen, Share2, Clipboard, Trash2, RotateCcw, Layers, X, Image, Film, Download, ClipboardCopy, Loader2 } from "lucide-react";
+import React, { useCallback, useMemo, useState, type RefObject } from "react";
+import { Save, FolderOpen, Share2, Clipboard, Trash2, RotateCcw, Layers, X, Image, Film, Download, ClipboardCopy, Loader2, Undo2, Redo2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDesigner, useGreenhouseData } from "../../context";
 import { useToast } from "../ui/toastContext";
 import { encodeDesign, decodeDesign, extractLayoutCode, buildShareUrl } from "../../utilities";
-import { 
-  loadLayouts, 
-  saveLayouts,
-  deleteLayout,
-  renameLayout,
-  updateLayout,
-  generateLayoutId,
-} from "../../utilities/layoutStorage";
+import { generateLayoutId } from "../../utilities/layoutStorage";
 import {
   captureGridAsPng,
   captureGridAsGif,
@@ -53,6 +46,16 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
     loadFromSolverResult,
     selectedCropForPlacement,
     setSelectedCropForPlacement,
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+    mostRecentLayout,
+    savedLayouts,
+    restoreMostRecent,
+    saveNamedLayout,
+    deleteNamedLayout,
+    renameNamedLayout,
   } = useDesigner();
   const { getCropDef, getMutationDef } = useGreenhouseData();
   const { toast } = useToast();
@@ -60,7 +63,6 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
   // State for modals
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isLoadModalOpen, setIsLoadModalOpen] = useState(false);
-  const [savedLayouts, setSavedLayouts] = useState<SavedLayout[]>([]);
   
   // Export state
   const [exportStep, setExportStep] = useState<ExportStep>("choose-format");
@@ -71,13 +73,6 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
   
   // Delete all confirmation state
   const [showDeleteAllConfirm, setShowDeleteAllConfirm] = useState(false);
-  
-  // Reload layouts when load modal opens
-  useEffect(() => {
-    if (isLoadModalOpen) {
-      setSavedLayouts(loadLayouts());
-    }
-  }, [isLoadModalOpen]);
   
   // Reset export state
   const resetExportState = useCallback(() => {
@@ -108,92 +103,48 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
   // Save layout
   const handleSaveLayout = useCallback((name: string, overwriteId?: string) => {
     const now = Date.now();
-    
-    if (overwriteId) {
-      // Overwrite existing layout
-      const success = updateLayout(overwriteId, {
-        name,
-        modifiedAt: now,
-        inputs: inputPlacements.map(p => ({
-          cropId: p.cropId,
-          position: p.position,
-        })),
-        targets: targetPlacements.map(p => ({
-          cropId: p.cropId,
-          position: p.position,
-        })),
-      });
-      
-      if (success) {
-        setIsSaveModalOpen(false);
-        toast({
-          title: "Layout updated",
-          description: `"${name}" has been updated`,
-          variant: "success",
-          duration: 3000,
-        });
-      } else {
-        toast({
-          title: "Failed to update layout",
-          variant: "error",
-          duration: 3000,
-        });
-      }
-    } else {
-      // Create new layout
-      const newLayout: SavedLayout = {
-        id: generateLayoutId(),
-        name,
-        savedAt: now,
-        modifiedAt: now,
-        inputs: inputPlacements.map(p => ({
-          cropId: p.cropId,
-          position: p.position,
-        })),
-        targets: targetPlacements.map(p => ({
-          cropId: p.cropId,
-          position: p.position,
-        })),
-      };
-      
-      const layouts = loadLayouts();
-      layouts.push(newLayout);
 
-      if (!saveLayouts(layouts)) {
-        toast({
-          title: "Could not save layout",
-          description: "Browser storage is full. Delete a saved layout and try again.",
-          variant: "error",
-          duration: 6000,
-        });
-        return;
-      }
+    const layout: SavedLayout = {
+      id: overwriteId ?? generateLayoutId(),
+      name,
+      savedAt: now,
+      modifiedAt: now,
+      inputs: inputPlacements.map(({ cropId, position }) => ({ cropId, position })),
+      targets: targetPlacements.map(({ cropId, position }) => ({ cropId, position })),
+    };
 
-      setIsSaveModalOpen(false);
+    if (!saveNamedLayout(layout, overwriteId)) {
       toast({
-        title: "Layout saved",
-        description: `"${name}" has been saved`,
-        variant: "success",
-        duration: 3000,
+        title: overwriteId ? "Failed to update layout" : "Could not save layout",
+        description: "Browser storage is full. Delete a saved layout and try again.",
+        variant: "error",
+        duration: 6000,
       });
+      return;
     }
-  }, [inputPlacements, targetPlacements, toast]);
+
+    setIsSaveModalOpen(false);
+    toast({
+      title: overwriteId ? "Layout updated" : "Layout saved",
+      description: `"${name}" has been ${overwriteId ? "updated" : "saved"}`,
+      variant: "success",
+      duration: 3000,
+    });
+  }, [inputPlacements, targetPlacements, saveNamedLayout, toast]);
   
   // Open load modal
   const handleOpenLoad = useCallback(() => {
-    const layouts = loadLayouts();
-    if (layouts.length === 0) {
+    if (savedLayouts.length === 0 && !mostRecentLayout) {
       toast({
-        title: "No saved layouts",
-        description: "Save a layout first before loading",
+        title: "Nothing to load yet",
+        description: "Save a layout or keep designing to create a recovery point.",
         variant: "warning",
         duration: 3000,
       });
       return;
     }
-    setSavedLayouts(layouts);
     setIsLoadModalOpen(true);
-  }, [toast]);
+  }, [savedLayouts.length, mostRecentLayout, toast]);
   
   // Load layout
   const handleLoadLayout = useCallback((layout: SavedLayout) => {
@@ -232,16 +183,26 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
       duration: 3000,
     });
   }, [loadFromSolverResult, getCropDef, getMutationDef, toast]);
+
+  const handleLoadMostRecent = useCallback(() => {
+    if (!restoreMostRecent()) return;
+    setIsLoadModalOpen(false);
+    toast({
+      title: "Most Recent loaded",
+      variant: "success",
+      duration: 3000,
+    });
+  }, [restoreMostRecent, toast]);
   
   // Delete layout
   const handleDeleteLayout = useCallback((layoutId: string) => {
-    const success = deleteLayout(layoutId);
+    const success = deleteNamedLayout(layoutId);
     if (success) {
-      setSavedLayouts(loadLayouts());
       toast({
         title: "Layout deleted",
+        description: "Use Undo or Ctrl+Z to restore it.",
         variant: "success",
-        duration: 2000,
+        duration: 4000,
       });
     } else {
       toast({
@@ -250,13 +211,12 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
         duration: 3000,
       });
     }
-  }, [toast]);
+  }, [deleteNamedLayout, toast]);
   
   // Rename layout
   const handleRenameLayout = useCallback((layoutId: string, newName: string) => {
-    const success = renameLayout(layoutId, newName);
+    const success = renameNamedLayout(layoutId, newName);
     if (success) {
-      setSavedLayouts(loadLayouts());
       toast({
         title: "Layout renamed",
         description: `Renamed to "${newName}"`,
@@ -270,7 +230,7 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
         duration: 3000,
       });
     }
-  }, [toast]);
+  }, [renameNamedLayout, toast]);
   
   // State for import modal
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -593,6 +553,27 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
           Targets ({targetPlacements.length})
         </button>
       </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          onClick={undo}
+          disabled={!canUndo}
+          title="Undo (Ctrl+Z)"
+          className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-800/60 border border-slate-600/50 rounded-md text-xs text-slate-300 hover:bg-slate-700/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <Undo2 className="w-3.5 h-3.5" />
+          Undo
+        </button>
+        <button
+          onClick={redo}
+          disabled={!canRedo}
+          title="Redo (Ctrl+U)"
+          className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-slate-800/60 border border-slate-600/50 rounded-md text-xs text-slate-300 hover:bg-slate-700/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          <Redo2 className="w-3.5 h-3.5" />
+          Redo
+        </button>
+      </div>
       
       {/* Action Buttons */}
       <div className="grid grid-cols-2 gap-2">
@@ -829,9 +810,11 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
         isOpen={isLoadModalOpen}
         onClose={() => setIsLoadModalOpen(false)}
         onLoad={handleLoadLayout}
+        onLoadMostRecent={handleLoadMostRecent}
         onDelete={handleDeleteLayout}
         onRename={handleRenameLayout}
         layouts={savedLayouts}
+        mostRecentLayout={mostRecentLayout}
       />
     </div>
   );

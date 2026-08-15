@@ -130,7 +130,7 @@ describe("destination mapping", () => {
   });
 
   it("sends a page query to the page's own family", () => {
-    expect(dataRows("planner")[0]).toMatchObject({ destination: "greenhouse", href: "/greenhouse/planner" });
+    expect(dataRows("planner")[0]).toMatchObject({ destination: "greenhouse", href: "/greenhouse#planner" });
     expect(dataRows("fusion calc")[0]).toMatchObject({ destination: "shards", href: "/fusion" });
     expect(dataRows("dashboard")[0]).toMatchObject({ destination: "site", href: "/dashboard" });
   });

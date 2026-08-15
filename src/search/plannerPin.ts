@@ -90,7 +90,7 @@ const fallbackEntry = (target: PinTarget, hint: string): SearchEntry => {
     key: `pin:${target.kind}:${target.id}`,
     name,
     destination: "greenhouse",
-    href: `/greenhouse/planner?target=${encodeURIComponent(target.id)}`,
+    href: `/greenhouse#planner?target=${encodeURIComponent(target.id)}`,
     // No tier. We do not know it here and a wrong rarity is worse than none.
     rarity: null,
     iconName: name,

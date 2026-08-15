@@ -52,14 +52,14 @@ Things worth knowing:
   the solved layout into the game as a ghost-tile overlay (see the mod section
   below).
 
-### Greenhouse Designer (/greenhouse/designer)
+### Greenhouse Designer (/greenhouse#designer)
 
 Lay out a plot by hand and check it. Place crops and mutation targets on the
 grid, and the validator tells you which mutations your layout actually
 supports and which requirements are missing. Share links carry the whole
 layout in the URL, so sending a design to a friend involves no server.
 
-### Greenhouse Planner (/greenhouse/planner)
+### Greenhouse Planner (/greenhouse#planner)
 
 The big one. Pick a target (a shard, a recipe, a mutation, a quantity) and the
 planner turns it into a grow order: which mutations to farm, in what order,

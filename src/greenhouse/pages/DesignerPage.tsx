@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Eye, EyeOff, Menu, X } from "lucide-react";
 import { PageHeader, PANEL, TILE, LABEL, BTN_QUIET, SplitPage } from "../../ui/kit";
 import { Grid3x3 as DesignerIcon } from "lucide-react";
@@ -13,6 +13,7 @@ import { CropImage } from "../components/shared";
 import { useToast } from "../components/ui/toastContext";
 import { useDesigner, useGreenhouseData } from "../context";
 import { decodeDesign, getRarityTextColor } from "../utilities";
+import { layoutCodeFromDesignerLocation } from "../designerRoute";
 import type { DesignerGridHandle } from "../components";
 
 export const DesignerPage: React.FC = () => {
@@ -20,7 +21,7 @@ export const DesignerPage: React.FC = () => {
   // Narrow viewports collapse the rail behind one button, same as every split page.
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const gridRef = useRef<DesignerGridHandle>(null);
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { toast } = useToast();
   const { inputPlacements, targetPlacements, loadFromSolverResult } = useDesigner();
   const { getCropDef, getMutationDef, isLoading: isDataLoading } = useGreenhouseData();
@@ -141,14 +142,14 @@ export const DesignerPage: React.FC = () => {
     // Wait for greenhouse data to load and only run once
     if (isDataLoading || hasLoadedFromUrl) return;
     
-    const layoutCode = searchParams.get("layout");
-    if (!layoutCode) {
-      setHasLoadedFromUrl(true);
-      return;
-    }
-
-    setHasLoadedFromUrl(true);
     try {
+      const layoutCode = layoutCodeFromDesignerLocation(location.hash, location.search);
+      if (!layoutCode) {
+        setHasLoadedFromUrl(true);
+        return;
+      }
+
+      setHasLoadedFromUrl(true);
       const { inputs, targets } = loadLayoutFromCode(layoutCode);
       toast({
         title: "Layout loaded",
@@ -164,7 +165,7 @@ export const DesignerPage: React.FC = () => {
         duration: 5000,
       });
     }
-  }, [searchParams, isDataLoading, hasLoadedFromUrl, loadLayoutFromCode, toast]);
+  }, [location.hash, location.search, isDataLoading, hasLoadedFromUrl, loadLayoutFromCode, toast]);
 
   return (
     /* The signature split: tools in the rail under the logo, the plot canvas

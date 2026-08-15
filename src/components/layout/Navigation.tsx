@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, Settings, X } from "lucide-react";
 import { FOCUS } from "../../ui/kit";
 import { Wordmark } from "../../ui/Wordmark";
+import { parseGreenhouseHash } from "../../greenhouse/route";
 
 /**
  * The masthead, ported from the design bench (the glass re-vamp).
@@ -62,12 +63,12 @@ export const SECTIONS: Section[] = [
   { label: "Forge", path: "/forge", match: ["/forge"], tools: [] },
   {
     label: "Greenhouse",
-    path: "/greenhouse/planner",
+    path: "/greenhouse",
     match: ["/greenhouse"],
     tools: [
-      { label: "Planner", path: "/greenhouse/planner" },
-      { label: "Solver", path: "/greenhouse" },
-      { label: "Designer", path: "/greenhouse/designer" },
+      { label: "Planner", path: "/greenhouse#planner" },
+      { label: "Solver", path: "/greenhouse#solver" },
+      { label: "Designer", path: "/greenhouse#designer" },
     ],
   },
   {
@@ -103,21 +104,10 @@ const sectionFor = (pathname: string): Section | null => {
 
 export const Navigation: React.FC = () => {
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
   const active = sectionFor(location.pathname);
 
-
-  /* Settings opens as an overlay over the current page (SettingsOverlay
-     watches this flag), so the cog toggles a search param instead of
-     navigating away. */
-  const settingsOpen = searchParams.has("settings");
-  const openSettings = () => {
-    const next = new URLSearchParams(searchParams);
-    next.set("settings", "1");
-    setSearchParams(next);
-    setOpen(false);
-  };
+  const settingsOpen = location.pathname === "/settings";
 
   /* One font, one size. What differs is only how "current" is drawn: a rule
      under the word. No horizontal padding on the tabs: the first tab's left
@@ -208,18 +198,15 @@ export const Navigation: React.FC = () => {
           </div>
 
           <div className="ml-auto hidden shrink-0 items-center gap-2 md:flex">
-            <button
-              type="button"
-              onClick={openSettings}
+            <Link
+              to="/settings"
               aria-label="Settings"
-              aria-haspopup="dialog"
-              aria-expanded={settingsOpen}
               className={`cursor-pointer rounded-md p-2 transition-colors active:translate-y-px ${FOCUS} ${
                 settingsOpen ? "bg-emerald-500/15 text-emerald-200" : "text-slate-300 hover:bg-white/8 hover:text-slate-50"
               }`}
             >
               <Settings className="h-[18px] w-[18px]" />
-            </button>
+            </Link>
           </div>
 
           <button
@@ -248,7 +235,11 @@ export const Navigation: React.FC = () => {
           style={{ paddingLeft: "calc(var(--sd-col) + var(--sd-inset))" }}
         >
           {active.tools.map((t) => {
-            const isActive = location.pathname === t.path;
+            const isActive =
+              t.path.startsWith("/greenhouse#")
+                ? location.pathname === "/greenhouse" &&
+                  t.path === `/greenhouse#${parseGreenhouseHash(location.hash).tool}`
+                : location.pathname === t.path;
             return (
               <Link
                 key={t.path}
@@ -288,7 +279,12 @@ export const Navigation: React.FC = () => {
                       to={t.path}
                       onClick={() => setOpen(false)}
                       className={`cursor-pointer rounded-sm text-[13px] ${FOCUS} ${
-                        location.pathname === t.path ? "text-emerald-300" : "text-slate-400 hover:text-slate-200"
+                        (t.path.startsWith("/greenhouse#")
+                          ? location.pathname === "/greenhouse" &&
+                            t.path === `/greenhouse#${parseGreenhouseHash(location.hash).tool}`
+                          : location.pathname === t.path)
+                          ? "text-emerald-300"
+                          : "text-slate-400 hover:text-slate-200"
                       }`}
                     >
                       {t.label}
@@ -298,15 +294,15 @@ export const Navigation: React.FC = () => {
               )}
             </div>
           ))}
-          <button
-            type="button"
-            onClick={openSettings}
+          <Link
+            to="/settings"
+            onClick={() => setOpen(false)}
             className={`flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-[13px] ${FOCUS} ${
               settingsOpen ? "text-emerald-200" : "text-slate-300 hover:text-slate-50"
             }`}
           >
             <Settings className="h-3.5 w-3.5" /> Settings
-          </button>
+          </Link>
         </div>
       )}
     </nav>

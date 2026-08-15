@@ -166,7 +166,7 @@ export const LandingPage: React.FC = () => {
 
       {resume && (
         <Link
-          to="/greenhouse/planner"
+          to="/greenhouse#planner"
           className={`group mt-5 flex w-full max-w-[34rem] flex-col gap-1.5 rounded-md border border-white/12 bg-gradient-to-b from-slate-900/55 to-slate-900/45 px-3.5 py-2.5 backdrop-blur-[18px] backdrop-saturate-[1.15] transition-colors hover:border-white/22 ${FOCUS}`}
         >
           <span className="flex items-baseline gap-2">

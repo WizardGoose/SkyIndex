@@ -87,7 +87,7 @@ describe("the key", () => {
         key: "greenhouse:choconut",
         name: "Choconut",
         destination: "greenhouse",
-        href: "/greenhouse/planner?target=choconut",
+        href: "/greenhouse#planner?target=choconut",
         rarity: "common",
         iconSrc: "/greenhouse/crops/choconut.png",
       })
@@ -100,7 +100,7 @@ describe("the key", () => {
     expect(row.key).toBe("greenhouse:choconut");
     expect(row.name).toBe("Choconut");
     expect(row.destination).toBe("greenhouse");
-    expect(row.href).toBe("/greenhouse/planner?target=choconut");
+    expect(row.href).toBe("/greenhouse#planner?target=choconut");
     expect(row.rarity).toBe("common");
     expect(row.iconSrc).toBe("/greenhouse/crops/choconut.png");
   });

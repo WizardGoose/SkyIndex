@@ -362,7 +362,7 @@ export const SolverResults: React.FC<SolverResultsProps> = ({
       duration: 3000,
     });
     
-    navigate("/designer");
+    navigate("/greenhouse#designer");
   }, [lockedPlacements, result, getCropDef, getMutationDef, loadFromSolverResult, toast, navigate]);
   
   // Grid configuration

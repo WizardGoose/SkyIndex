@@ -176,25 +176,22 @@ describe("letter-to-crop binding is positional", () => {
 describe("buildShareUrl", () => {
   const code = encodeDesign(inputs, targets);
 
-  it("builds a link on our own origin at the designer route", () => {
-    expect(buildShareUrl(code, "https://wizard.example", "/")).toBe(
-      `https://wizard.example/greenhouse/designer?layout=${code}`
+  it("builds a canonical fragment link on our own origin", () => {
+    expect(buildShareUrl(code, "https://skydex.ca", "/")).toBe(
+      `https://skydex.ca/greenhouse#designer?layout=${code}`,
     );
   });
 
-  it("keeps the deploy sub-path GitHub Pages serves under", () => {
-    // The router basename in src/App.tsx comes from this same value, so a link
-    // that drops it lands on a 404 rather than on the designer.
-    expect(buildShareUrl(code, "https://user.github.io", "/SkyShards/")).toBe(
-      `https://user.github.io/SkyShards/greenhouse/designer?layout=${code}`
+  it("keeps the legacy base argument source-compatible without using it", () => {
+    expect(buildShareUrl(code, "https://skydex.ca", "/Skydex/")).toBe(
+      `https://skydex.ca/greenhouse#designer?layout=${code}`,
     );
   });
 
-  it("does not double the slash, or lose it, whatever the base looks like", () => {
+  it("always uses the canonical origin root whatever the legacy base looks like", () => {
     for (const base of ["/", "/SkyShards/", "/SkyShards", ""]) {
       const url = buildShareUrl(code, "https://wizard.example", base);
-      expect(url).not.toMatch(/[^:]\/\//);
-      expect(url).toMatch(/^https:\/\/wizard\.example\/[\w/-]*greenhouse\/designer\?layout=/);
+      expect(url).toBe(`https://wizard.example/greenhouse#designer?layout=${code}`);
     }
   });
 
@@ -220,8 +217,11 @@ describe("extractLayoutCode", () => {
     expect(extractLayoutCode(code)).toBe(code);
   });
 
-  it("reads our own designer link", () => {
-    expect(extractLayoutCode(`https://wizard.example/greenhouse/designer?layout=${code}`)).toBe(code);
+  it("reads canonical absolute and relative fragment links", () => {
+    expect(
+      extractLayoutCode(`https://skydex.ca/greenhouse#designer?layout=${code}`),
+    ).toBe(code);
+    expect(extractLayoutCode(`/greenhouse#designer?layout=${code}`)).toBe(code);
   });
 
   it("reads our own link when the site is served under a sub-path", () => {
@@ -381,6 +381,23 @@ describe("codes naming crops this build does not have", () => {
 });
 
 describe("decodeDesign rejections", () => {
+
+  it("rejects a tiny compressed code before it can expand into an oversized payload", () => {
+    const expansionBomb = codeFor("x".repeat(128 * 1024));
+
+    expect(failureOf(expansionBomb).message).toMatch(/too large/i);
+  });
+
+  it("rejects an oversized compressed payload before attempting to unpack it", () => {
+    let state = 0x5eed1234;
+    const bytes = Uint8Array.from({ length: 16 * 1024 }, () => {
+      state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+      return state >>> 24;
+    });
+    const oversizedCode = b64url(deflateRaw(bytes, { level: 9 }));
+
+    expect(failureOf(oversizedCode).message).toMatch(/too large/i);
+  });
 
   it("says so when nothing was pasted", () => {
     expect(failureOf("").message).toMatch(/paste a layout code/i);

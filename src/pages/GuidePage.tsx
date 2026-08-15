@@ -23,10 +23,7 @@ export const GuidePage: React.FC = () => {
   useEffect(() => {
     const fetchGuideContent = async () => {
       try {
-        // BASE_URL rather than a root-absolute path, for the same reason every
-        // other public asset here is prefixed: the Pages deploy serves the app
-        // from "/Skydex/", where "/guide.md" resolves against the domain root
-        // and 404s. BASE_URL carries its own trailing slash.
+        // BASE_URL carries the canonical root and its trailing slash.
         const response = await fetch(`${import.meta.env.BASE_URL}guide.md`);
         if (!response.ok) {
           throw new Error("Failed to fetch guide content");

@@ -1,9 +1,11 @@
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, useLocation } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import { Layout } from "./components";
 import { CalculatorStateProvider, RecipeStateProvider } from "./context";
 import { usePageTitle } from "./hooks";
 import { ToastProvider } from "./components";
+import { GreenhouseHashRoute } from "./greenhouse/GreenhouseHashRoute";
+import { legacyGreenhouseHref } from "./greenhouse/route";
 
 const LandingPage = lazy(() => import("./pages/LandingPage").then((module) => ({ default: module.LandingPage })));
 const ItemsPage = lazy(() => import("./pages/ItemsPage").then((module) => ({ default: module.ItemsPage })));
@@ -13,6 +15,7 @@ const GreenhouseShell = lazy(() => import("./greenhouse/GreenhouseShell").then((
 const GreenhouseSolverPage = lazy(() => import("./greenhouse/pages/CalculatorPage").then((module) => ({ default: module.CalculatorPage })));
 const GreenhouseDesignerPage = lazy(() => import("./greenhouse/pages/DesignerPage").then((module) => ({ default: module.DesignerPage })));
 const GreenhousePlannerPage = lazy(() => import("./greenhouse/pages/PlannerPage").then((module) => ({ default: module.PlannerPage })));
+const SiteSettingsPage = lazy(() => import("./pages/SiteSettingsPage"));
 const CalculatorPage = lazy(() => import("./pages/CalculatorPage").then((module) => ({ default: module.CalculatorPage })));
 const SettingsPage = lazy(() => import("./pages/SettingsPage").then((module) => ({ default: module.SettingsPage })));
 /*
@@ -60,10 +63,11 @@ const ProtectedLayout = () => {
   );
 };
 
-const isProd = import.meta.env.PROD;
-// Matches vite.config.ts's Pages base: the repo is WizardGoose/Skydex.
-const isGitHubPages = import.meta.env.BASE_URL.includes("/Skydex/");
-const basename = isProd && isGitHubPages ? "/Skydex" : "";
+const LegacyGreenhouseRedirect = () => {
+  const location = useLocation();
+  const target = legacyGreenhouseHref(location.pathname, location.search);
+  return <Navigate to={target ?? "/greenhouse"} replace />;
+};
 
 const router = createBrowserRouter(
   [
@@ -100,27 +104,15 @@ const router = createBrowserRouter(
           children: [
             {
               index: true,
-              element: (
-                <Suspense fallback={<LoadingSpinner />}>
-                  <GreenhouseSolverPage />
-                </Suspense>
-              ),
+              element: <GreenhouseHashRoute PlannerPage={GreenhousePlannerPage} SolverPage={GreenhouseSolverPage} DesignerPage={GreenhouseDesignerPage} />,
             },
             {
               path: "designer",
-              element: (
-                <Suspense fallback={<LoadingSpinner />}>
-                  <GreenhouseDesignerPage />
-                </Suspense>
-              ),
+              element: <LegacyGreenhouseRedirect />,
             },
             {
               path: "planner",
-              element: (
-                <Suspense fallback={<LoadingSpinner />}>
-                  <GreenhousePlannerPage />
-                </Suspense>
-              ),
+              element: <LegacyGreenhouseRedirect />,
             },
           ],
         },
@@ -131,6 +123,10 @@ const router = createBrowserRouter(
               <ItemsPage />
             </Suspense>
           ),
+        },
+        {
+          path: "crafting",
+          element: <Navigate to="/items" replace />,
         },
         {
           /*
@@ -150,6 +146,10 @@ const router = createBrowserRouter(
               <IslandPage />
             </Suspense>
           ),
+        },
+        {
+          path: "profile",
+          element: <Navigate to="/island" replace />,
         },
         {
           path: "forge",
@@ -176,17 +176,12 @@ const router = createBrowserRouter(
           ),
         },
         {
-          /*
-           * Added, not moved. Every existing route keeps the path it had; this
-           * is a new leaf beside them, which is why the nav needs no change for
-           * the page to be reachable and linkable.
-           */
-          /* Settings is an overlay, not a page: the layout renders it over
-             whatever route is current when `?settings=1` is in the address
-             (see SettingsOverlay). This path survives for old links and
-             redirects into that state over the dashboard. */
           path: "settings",
-          element: <Navigate to="/?settings=1" replace />,
+          element: (
+            <Suspense fallback={<LoadingSpinner />}>
+              <SiteSettingsPage />
+            </Suspense>
+          ),
         },
         /* The Tour Lab exists on dev builds only: the condition is statically
            false in production, so the route, the page, and its chunk are all
@@ -267,7 +262,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename,
+    basename: "",
   }
 );
 

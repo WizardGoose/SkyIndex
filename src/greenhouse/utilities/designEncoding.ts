@@ -1,4 +1,4 @@
-import { deflateRaw, inflateRaw } from "pako";
+import { deflateRaw, Inflate } from "pako";
 import { CROP_IDS, MUTATION_IDS, CROP_TO_INDEX, MUTATION_TO_INDEX } from "../constants/cropMapping";
 
 /**
@@ -21,6 +21,15 @@ const TOTAL_CELLS = GRID_SIZE * GRID_SIZE;
 const LETTERS = "abcdefghijklmnopqrstuvwxyz";
 const MAX_SINGLE_CROPS = 26; // a-z
 const MAX_DOUBLE_CROPS = 26 * 26; // aa-zz = 676
+
+// A real payload is at most a few hundred bytes. These intentionally generous
+// ceilings leave old links alone while preventing a pasted deflate stream from
+// consuming unbounded memory in the browser.
+const MAX_ENCODED_LENGTH = 12 * 1024;
+const MAX_COMPRESSED_BYTES = 8 * 1024;
+const MAX_INFLATED_BYTES = 4 * 1024;
+const TOO_LARGE_MESSAGE =
+  "That layout code is too large to open safely. Ask for a fresh copy of the link.";
 
 function indexToDouble(idx: number): string {
   const first = LETTERS[Math.floor(idx / LETTERS.length)];
@@ -314,12 +323,8 @@ const EMPTY_LINK_MESSAGE =
 /**
  * The share link, on our own origin, as the inverse of `extractLayoutCode`.
  *
- * `base` is Vite's `import.meta.env.BASE_URL`: "/" locally and "/Skydex/" on
- * GitHub Pages, which is the same value src/App.tsx derives the router basename
- * from. Gluing the route onto it keeps the copied link openable on whichever
- * deployment produced it, instead of assuming the app sits at the root of its
- * origin. It lives here, next to the parser, so the sub-path case is a unit
- * test rather than a thing somebody checks by eye once.
+ * `base` remains accepted for callers built before the custom-domain move, but
+ * canonical links deliberately always start at the origin root.
  *
  * This link used to point at `https://api.skyshards.com/share/<code>`, a host
  * we do not run, and copying one also fired a POST at that host to warm a
@@ -331,9 +336,8 @@ const EMPTY_LINK_MESSAGE =
  * link is self-contained.
  */
 export function buildShareUrl(code: string, origin: string, base: string): string {
-  const root = base || "/";
-  const prefix = root.endsWith("/") ? root : `${root}/`;
-  return `${origin}${prefix}greenhouse/designer?layout=${code}`;
+  void base;
+  return `${origin}/greenhouse#designer?layout=${code}`;
 }
 
 /**
@@ -341,7 +345,7 @@ export function buildShareUrl(code: string, origin: string, base: string): strin
  *
  * Three shapes have to keep working, because all three are already in the wild:
  *
- *   1. our own share link, `.../greenhouse/designer?layout=<code>`
+ *   1. our canonical fragment link, `.../greenhouse#designer?layout=<code>`
  *   2. the legacy `https://api.skyshards.com/share/<code>` link, which is what
  *      every code shared before we cut that dependency looks like. We no longer
  *      produce these and the host is not ours, but a player pasting one should
@@ -357,7 +361,7 @@ export function extractLayoutCode(input: string | null | undefined): string {
   const clean = scrub(input);
   if (!clean) return "";
 
-  if (/[?&]layout=/.test(clean)) {
+  if (/[?#&]layout=/.test(clean)) {
     let param: string | null = null;
     try {
       param = new URL(clean).searchParams.get("layout");
@@ -366,7 +370,7 @@ export function extractLayoutCode(input: string | null | undefined): string {
       // still carries the parameter, and a regex does not care about origins.
     }
     if (param === null) {
-      const match = clean.match(/[?&]layout=([^&#]*)/);
+      const match = clean.match(/[?#&]layout=([^&#]*)/);
       param = match ? match[1] : null;
     }
     if (param) return param;
@@ -395,12 +399,18 @@ export function decodeDesign(encoded: string | null | undefined): {
   if (!clean) {
     throw new Error("Paste a layout code or share link first.");
   }
+  if (clean.length > MAX_ENCODED_LENGTH) {
+    throw new Error(TOO_LARGE_MESSAGE);
+  }
 
   let compressed: Uint8Array;
   try {
     compressed = fromUrlSafeBase64(clean);
   } catch {
     throw new Error("That code is damaged (it is not valid base64). Copy the whole link again.");
+  }
+  if (compressed.byteLength > MAX_COMPRESSED_BYTES) {
+    throw new Error(TOO_LARGE_MESSAGE);
   }
 
   /*
@@ -414,16 +424,39 @@ export function decodeDesign(encoded: string | null | undefined): {
   const unpackFailed = () =>
     new Error("That code could not be unpacked (the compressed data is corrupt or incomplete).");
 
-  let inflated: unknown;
+  const inflater = new Inflate({ raw: true, chunkSize: 1024 });
+  const chunks: Uint8Array[] = [];
+  let inflatedBytes = 0;
+  let streamEnded = false;
+  const outputLimitReached = {};
+
+  inflater.onData = (chunk) => {
+    const bytes = chunk instanceof Uint8Array ? chunk : new Uint8Array(chunk);
+    inflatedBytes += bytes.byteLength;
+    if (inflatedBytes > MAX_INFLATED_BYTES) throw outputLimitReached;
+    chunks.push(bytes.slice());
+  };
+  inflater.onEnd = (status) => {
+    streamEnded = status === 0;
+  };
+
   try {
-    inflated = inflateRaw(compressed, { to: "string" });
-  } catch {
+    inflater.push(compressed, true);
+  } catch (err) {
+    if (err === outputLimitReached) throw new Error(TOO_LARGE_MESSAGE);
     throw unpackFailed();
   }
-  if (typeof inflated !== "string" || !inflated) {
+  if (!streamEnded || inflater.err || inflatedBytes === 0) {
     throw unpackFailed();
   }
-  const gridString: string = inflated;
+
+  const inflated = new Uint8Array(inflatedBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    inflated.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  const gridString = new TextDecoder().decode(inflated);
 
   let grouped: { inputs: GroupedPlacements; targets: GroupedPlacements };
   try {
