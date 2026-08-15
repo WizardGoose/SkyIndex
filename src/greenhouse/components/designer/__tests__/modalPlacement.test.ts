@@ -34,5 +34,7 @@ describe("designer modal placement", () => {
 
     expect(source).toMatch(/createPortal\([\s\S]*document\.body[\s\S]*\)/);
     expect(source).toContain("z-[100]");
+    expect(source).toContain("left-1/2 -translate-x-1/2");
+    expect(source).not.toContain("right-3");
   });
 });

@@ -92,7 +92,7 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
       <style>{`
         @keyframes toastProgress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
       `}</style>
-      <div className="fixed top-3 right-3 z-[100] flex flex-col gap-2 w-[min(92vw,380px)]">
+      <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-2 w-[min(92vw,380px)]">
         {toasts.map((t) => {
           const s = variantStyles[t.variant];
           return (

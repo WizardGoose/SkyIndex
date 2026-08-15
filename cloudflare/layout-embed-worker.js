@@ -397,6 +397,15 @@ export const handleLayoutEmbedRequest = async (request, env) => {
       headers: { ...securityHeaders, "content-type": "image/png" },
     });
   } catch {
+    if (!route.preview && !route.oembed) {
+      const destination = new URL("/greenhouse", url.origin);
+      destination.searchParams.set("layout", route.code);
+      destination.hash = "designer";
+      return new Response(null, {
+        status: 302,
+        headers: { ...securityHeaders, location: destination.toString() },
+      });
+    }
     return new Response("That shared layout could not be rendered.", {
       status: 400,
       headers: { ...securityHeaders, "content-type": "text/plain; charset=utf-8" },

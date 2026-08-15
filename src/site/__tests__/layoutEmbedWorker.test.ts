@@ -4,6 +4,7 @@ import {
   buildLayoutPreviewDocument,
   buildLayoutShareDocument,
   decodeSharedLayout,
+  handleLayoutEmbedRequest,
   layoutShareRoute,
 } from "../../../cloudflare/layout-embed-worker.js";
 import { encodeSharedDesign } from "../../greenhouse/utilities/designEncoding";
@@ -204,5 +205,27 @@ describe("stateless layout link embeds", () => {
     expect(html).toContain("2 ready");
     expect(html).toContain("1 delayed");
     expect(html).toContain("0 blocked");
+  });
+
+  it("returns failed share-page visitors to the Designer instead of a bare edge error", async () => {
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () => Response.json(DATASET);
+
+    try {
+      const response = await handleLayoutEmbedRequest(
+        new Request("https://skydex.ca/greenhouse/share/A"),
+        {},
+      );
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get("location")).toBe(
+        "https://skydex.ca/greenhouse?layout=A#designer",
+      );
+      expect(await response.text()).not.toContain(
+        "That shared layout could not be rendered.",
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
