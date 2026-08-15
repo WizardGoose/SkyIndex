@@ -1338,6 +1338,19 @@ main > * {
   -webkit-backdrop-filter: blur(var(--sd-frost-image-blur, 26px)) saturate(115%);
 }
 
+/* Designer notifications stay in the requested top-right corner. On very
+   wide screens, cap them to the free gutter beside the centred 72rem modal so
+   the toast and the modal close control do not visually collide. */
+.sd-toast-stack {
+  width: min(92vw, 380px);
+}
+
+@media (min-width: 1840px) {
+  .sd-toast-stack {
+    width: min(380px, calc((100vw - 72rem) / 2 - 1.5rem));
+  }
+}
+
 /* Content that genuinely needs to lift OFF the curtain. Tint only: see the
    block comment for why it must never blur. */
 .sd-panel {

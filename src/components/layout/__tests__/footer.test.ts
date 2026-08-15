@@ -21,7 +21,23 @@ describe("footer composition", () => {
     expect(layout).toContain("Skydex Project Credits");
     expect(layout).toContain("Thank you to everyone who helped make Skydex possible.");
     expect(layout).toMatch(/<details className="basis-full">/);
+    expect(layout).not.toContain("cursor-pointer list-none");
     expect(layout).toContain("NOT AN OFFICIAL MINECRAFT PRODUCT");
+    expect(layout.indexOf("NOT AN OFFICIAL MINECRAFT PRODUCT")).toBeLessThan(
+      layout.indexOf("Skydex Project Credits"),
+    );
+  });
+
+  it("keeps the long data attribution inside the project credits disclosure", () => {
+    const details = layout.slice(
+      layout.indexOf('<details className="basis-full">'),
+      layout.indexOf("</details>") + "</details>".length,
+    );
+
+    expect(details).toContain("Item, recipe and mutation data and all item images");
+    expect(details).toContain("Hypixel SkyBlock Wiki");
+    expect(details).toContain("CC BY-NC-SA 3.0");
+    expect(details).toContain("Prices from the public Hypixel API.");
   });
 
   it("keeps the footer readable without transparency support", () => {
