@@ -326,18 +326,33 @@ const EMPTY_LINK_MESSAGE =
  * `base` remains accepted for callers built before the custom-domain move, but
  * canonical links deliberately always start at the origin root.
  *
- * This link used to point at `https://api.skyshards.com/share/<code>`, a host
- * we do not run, and copying one also fired a POST at that host to warm a
- * server-side Discord preview image. Both are gone, and the preview image went
- * with them: we cannot render one on someone else's server. That is a
- * deliberate trade, not an oversight. Please do not add the POST back.
+ * The crawler-visible path lets the stateless Cloudflare Worker render Discord
+ * metadata. The code is still the whole layout and is never written to a
+ * database; a human opening it is sent straight back to the Designer.
  *
  * Nothing was ever uploaded by any of it. The code is the whole layout, so the
  * link is self-contained.
  */
-export function buildShareUrl(code: string, origin: string, base: string): string {
+export function buildShareUrl(
+  code: string,
+  origin: string,
+  base: string,
+  savedName?: string,
+): string {
   void base;
-  return `${origin}/greenhouse#designer?layout=${code}`;
+  const url = new URL(`/greenhouse/share/${code}`, origin);
+  const name = savedName === undefined
+    ? undefined
+    : Array.from(savedName, (character) => {
+        const codePoint = character.codePointAt(0) ?? 0;
+        return codePoint < 32 || codePoint === 127 ? " " : character;
+      })
+        .join("")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 80);
+  if (name) url.searchParams.set("name", name);
+  return url.toString();
 }
 
 /**
@@ -345,7 +360,8 @@ export function buildShareUrl(code: string, origin: string, base: string): strin
  *
  * Three shapes have to keep working, because all three are already in the wild:
  *
- *   1. our canonical fragment link, `.../greenhouse#designer?layout=<code>`
+ *   1. our canonical share path, `.../greenhouse/share/<code>` (plus the older
+ *      fragment form, `.../greenhouse#designer?layout=<code>`)
  *   2. the legacy `https://api.skyshards.com/share/<code>` link, which is what
  *      every code shared before we cut that dependency looks like. We no longer
  *      produce these and the host is not ours, but a player pasting one should

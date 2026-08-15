@@ -36,9 +36,10 @@ const PrivacyPolicy: React.FC = () => (
       <h1 className="text-2xl font-semibold tracking-tight text-slate-100">Privacy Policy</h1>
       <div className="mt-3 h-px bg-gradient-to-r from-emerald-500/60 via-slate-800 to-transparent" />
       <p className="mt-4 text-sm leading-[1.8] text-slate-300">
-        Skydex is a personal Hypixel SkyBlock toolkit that runs entirely in your browser. There is no Skydex account, no Skydex login, and no Skydex
-        server: the site is a folder of static files, and every calculation happens on your own machine. This page says what that means in practice,
-        including the handful of places your browser does reach out to.
+        Skydex does not store any of your data or information. Your data is yours: it is stored only on your device. There is no Skydex account or
+        login, the app is served as static files, and every calculation happens on your own machine. A shared Designer link may pass through the
+        stateless preview worker described below; its layout is decoded in memory and discarded immediately. This page says what that means in
+        practice, including the handful of places your browser does reach out to.
       </p>
     </header>
 
@@ -83,7 +84,7 @@ const PrivacyPolicy: React.FC = () => (
 
     <Section title="Where your browser connects">
       <p className={P}>
-        Skydex has no server of its own, so anything it needs comes straight from the source, from your browser. These are all of them, and what each
+        Skydex has no data-collecting application server, so source data comes straight to your browser. These are all of those sources, and what each
         one can see:
       </p>
       <ul className={UL}>
@@ -117,15 +118,16 @@ const PrivacyPolicy: React.FC = () => (
         or anyone else, and no IP address is handed over to render text.
       </p>
       <p className={P}>
-        Every one of these is a request your browser makes directly. Skydex is not in the middle of it, keeps no copy, and has nowhere to keep one.
+        Every source request in this list is made directly by your browser. Skydex is not in the middle of it and keeps no copy.
       </p>
     </Section>
 
     <Section title="The companion mod">
       <p className={P}>
-        If you run the companion mod, the site talks to it at <span className={HOST}>127.0.0.1</span>, which is your own computer. It checks whether
-        the mod is up, listens for live updates, and sends a greenhouse layout across when you press the button to do so. That traffic never leaves
-        your machine, and none of it is reachable from the network.
+        Skydex does not contact the companion mod unless you choose <span className={HOST}>Link companion mod</span> in Settings. That deliberate
+        click checks <span className={HOST}>127.0.0.1</span>, which is your own computer, and is when your browser may ask for local-device access.
+        Once linked, Skydex listens for live updates and can send a greenhouse layout when you press its button. Unlinking stops those local
+        connections without deleting your saved snapshot. The traffic never leaves your machine, and none of it is reachable from the network.
       </p>
     </Section>
 
@@ -137,8 +139,8 @@ const PrivacyPolicy: React.FC = () => (
       <ul className={UL}>
         <li>
           <span className={HOST}>localStorage</span> holds your settings, saved planners and greenhouse layouts, owned-shard inventory, recent
-          searches, the API key record described above, and cached copies of the wiki and Hypixel data already fetched, so the site is not re-fetching
-          the same public lists on every visit.
+          searches, the companion-mod link preference, the API key record described above, and cached copies of the wiki and Hypixel data already
+          fetched, so the site is not re-fetching the same public lists on every visit.
         </li>
         <li>
           <span className={HOST}>sessionStorage</span> holds one entry, briefly. Opening a deep link on a static host lands on a fallback page first,
@@ -159,8 +161,10 @@ const PrivacyPolicy: React.FC = () => (
       <p className={P}>
         The site is served as static files by GitHub Pages, with Cloudflare handling the public skydex.ca connection in front of it. Like any host and
         delivery network, they receive ordinary request details such as your IP address, browser user agent, and the path or query string requested.
-        Anything after a <span className={HOST}>#</span> stays in your browser and is never part of that request. GitHub and Cloudflare apply their own
-        privacy terms to the traffic they handle. Skydex adds no logging of its own and has no application back end that stores it.
+        Anything after a <span className={HOST}>#</span> stays in your browser and is never part of that request. A Designer share link is the deliberate
+        exception: its encoded layout is in the path so Cloudflare can render the Discord preview. The stateless preview worker decodes it in memory,
+        returns the page or image, and discards it immediately; Skydex has no database or application log for shared layouts. GitHub and Cloudflare
+        apply their own privacy terms to the traffic they handle. Skydex adds no logging of its own and has no application back end that stores it.
       </p>
     </Section>
 

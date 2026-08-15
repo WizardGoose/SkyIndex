@@ -247,7 +247,19 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
   const handleExportCode = useCallback(() => {
     try {
       const encoded = encodeDesign(inputPlacements, targetPlacements);
-      const shareUrl = buildShareUrl(encoded, window.location.origin, import.meta.env.BASE_URL);
+      const savedName = savedLayouts.find((layout) => {
+        try {
+          return encodeDesign(layout.inputs, layout.targets) === encoded;
+        } catch {
+          return false;
+        }
+      })?.name;
+      const shareUrl = buildShareUrl(
+        encoded,
+        window.location.origin,
+        import.meta.env.BASE_URL,
+        savedName,
+      );
       navigator.clipboard.writeText(shareUrl);
 
       toast({
@@ -264,7 +276,7 @@ export const DesignerActions: React.FC<DesignerActionsProps> = ({
         duration: 5000,
       });
     }
-  }, [inputPlacements, targetPlacements, toast]);
+  }, [inputPlacements, targetPlacements, savedLayouts, toast]);
   
   // Open import modal
   const handleOpenImport = useCallback(() => {

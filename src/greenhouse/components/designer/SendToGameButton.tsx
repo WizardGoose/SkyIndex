@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Check, Gamepad2, Loader2 } from "lucide-react";
 import { BTN_PRIMARY } from "../../../ui/kit";
 import { GRID_SIZE } from "../../constants";
-import { buildLayoutPush, modReachable, sendLayout } from "../../../island/layout";
+import { buildLayoutPush, sendLayout } from "../../../island/layout";
+import { useCompanionLink } from "../../../island/companionLink";
+import { useIsland } from "../../../island/useIsland";
 import type { LayoutItem } from "../../../island/layout";
 import { estimateLayoutSeconds } from "./layoutTiming";
 
@@ -13,12 +15,9 @@ import { estimateLayoutSeconds } from "./layoutTiming";
  *
  * Two things here are deliberate.
  *
- * The reachability check is a single `GET /v1/health`, not a subscription to the
- * island store. That store is the obvious source - it already knows whether the
- * mod is up - but it opens an SSE stream on its first subscriber, so reading one
- * boolean from it here would start a live connection on the designer and solver
- * pages for every visitor who has no mod and no interest in one. A lone probe
- * costs one refused socket and tells the truth just as well.
+ * Reachability comes from the island store only after the user has explicitly
+ * linked the companion mod in Settings. Merely mounting this control therefore
+ * performs no localhost request and cannot trigger a browser permission prompt.
  *
  * The feedback is inline and next to the button rather than a toast, because the
  * failure people will actually hit is "the mod is not listening", and that is
@@ -31,9 +30,6 @@ import { estimateLayoutSeconds } from "./layoutTiming";
  */
 const CLEAR_MS = 4_000;
 
-/** Floor between focus-triggered re-probes, so alt-tabbing is not a request storm. */
-const REPROBE_MS = 10_000;
-
 type Status = "idle" | "sending" | "sent" | "failed";
 
 interface SendToGameButtonProps {
@@ -43,45 +39,11 @@ interface SendToGameButtonProps {
 }
 
 export const SendToGameButton: React.FC<SendToGameButtonProps> = ({ items, className = "" }) => {
-  const [reachable, setReachable] = useState(false);
+  const { linked } = useCompanionLink();
+  const { status: islandStatus } = useIsland();
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const probedAt = useRef(0);
-  // Read by the focus handler, which is registered once and must not close over
-  // a stale value; state alone would force the whole effect to re-run - and
-  // re-probe - every time reachability changed.
-  const reachableRef = useRef(false);
-  reachableRef.current = reachable;
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const probe = () => {
-      probedAt.current = Date.now();
-      void modReachable(controller.signal).then((ok) => {
-        if (!controller.signal.aborted) setReachable(ok);
-      });
-    };
-
-    probe();
-
-    // The mod only answers once Minecraft is running in Locally hosted mode, and
-    // the usual order is site first, game second. Without this the button would
-    // stay hidden until a reload, which reads as broken. Only while we believe
-    // it is down, and never more than once every REPROBE_MS.
-    const onFocus = () => {
-      if (reachableRef.current) return;
-      if (Date.now() - probedAt.current < REPROBE_MS) return;
-      probe();
-    };
-
-    window.addEventListener("focus", onFocus);
-    return () => {
-      controller.abort();
-      window.removeEventListener("focus", onFocus);
-    };
-  }, []);
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
@@ -145,12 +107,9 @@ export const SendToGameButton: React.FC<SendToGameButtonProps> = ({ items, class
 
     setStatus("failed");
     setMessage(result.reason);
-    // It answered before and does not now, so stop offering the button until a
-    // probe says otherwise rather than leaving a control that cannot work.
-    if (result.kind === "unreachable") setReachable(false);
   }, [items]);
 
-  if (!reachable) return null;
+  if (!linked || islandStatus !== "live") return null;
 
   const busy = status === "sending";
 

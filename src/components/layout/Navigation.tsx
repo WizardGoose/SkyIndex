@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, Settings, X } from "lucide-react";
+import { Coffee, Github, Menu, Settings, X } from "lucide-react";
 import { FOCUS } from "../../ui/kit";
 import { Wordmark } from "../../ui/Wordmark";
 import { parseGreenhouseHash } from "../../greenhouse/route";
+import { SETTINGS_PARAM, settingsLocation } from "./settingsRoute";
 
 /**
  * The masthead, ported from the design bench (the glass re-vamp).
@@ -107,7 +108,7 @@ export const Navigation: React.FC = () => {
   const [open, setOpen] = useState(false);
   const active = sectionFor(location.pathname);
 
-  const settingsOpen = location.pathname === "/settings";
+  const settingsOpen = new URLSearchParams(location.search).get(SETTINGS_PARAM) === "1";
 
   /* One font, one size. What differs is only how "current" is drawn: a rule
      under the word. No horizontal padding on the tabs: the first tab's left
@@ -198,8 +199,28 @@ export const Navigation: React.FC = () => {
           </div>
 
           <div className="ml-auto hidden shrink-0 items-center gap-2 md:flex">
+            <a
+              href="https://github.com/WizardGoose/Skydex"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+              title="Skydex on GitHub"
+              className={`cursor-pointer rounded-md p-2 text-slate-300 transition-colors hover:bg-white/8 hover:text-slate-50 active:translate-y-px ${FOCUS}`}
+            >
+              <Github className="h-[18px] w-[18px]" />
+            </a>
+            <a
+              href="https://ko-fi.com/wizardgoose"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Ko-fi"
+              title="Support Skydex on Ko-fi"
+              className={`cursor-pointer rounded-md p-2 text-slate-300 transition-colors hover:bg-white/8 hover:text-slate-50 active:translate-y-px ${FOCUS}`}
+            >
+              <Coffee className="h-[18px] w-[18px]" />
+            </a>
             <Link
-              to="/settings"
+              to={settingsLocation(location)}
               aria-label="Settings"
               className={`cursor-pointer rounded-md p-2 transition-colors active:translate-y-px ${FOCUS} ${
                 settingsOpen ? "bg-emerald-500/15 text-emerald-200" : "text-slate-300 hover:bg-white/8 hover:text-slate-50"
@@ -294,8 +315,28 @@ export const Navigation: React.FC = () => {
               )}
             </div>
           ))}
+          <a
+            href="https://github.com/WizardGoose/Skydex"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub"
+            onClick={() => setOpen(false)}
+            className={`flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-[13px] text-slate-300 hover:text-slate-50 ${FOCUS}`}
+          >
+            <Github className="h-3.5 w-3.5" /> GitHub
+          </a>
+          <a
+            href="https://ko-fi.com/wizardgoose"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Ko-fi"
+            onClick={() => setOpen(false)}
+            className={`flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-[13px] text-slate-300 hover:text-slate-50 ${FOCUS}`}
+          >
+            <Coffee className="h-3.5 w-3.5" /> Ko-fi
+          </a>
           <Link
-            to="/settings"
+            to={settingsLocation(location)}
             onClick={() => setOpen(false)}
             className={`flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-[13px] ${FOCUS} ${
               settingsOpen ? "text-emerald-200" : "text-slate-300 hover:text-slate-50"

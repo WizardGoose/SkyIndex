@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Trash2, FolderOpen, Search, Edit2, Check } from "lucide-react";
+import { Check, Edit2, FolderOpen, Search, Trash2, X } from "lucide-react";
 import type { SavedLayout } from "../../types/layout";
-import { getCropPreviewColor } from "../../data/cropColors";
-import { useGreenhouseData } from "../../context";
 import { FOCUS } from "../../../ui/kit";
+import { DesignerLayoutPreview } from "./DesignerLayoutPreview";
+import { mostRecentLayoutNickname } from "./layoutPreviewPresentation";
 
 interface LoadLayoutModalProps {
   isOpen: boolean;
@@ -17,138 +17,54 @@ interface LoadLayoutModalProps {
   mostRecentLayout: SavedLayout | null;
 }
 
-// Mini grid preview component
-const LayoutPreview: React.FC<{ layout: SavedLayout }> = ({ layout }) => {
-  const { getCropDef, getMutationDef } = useGreenhouseData();
-  const cellSize = 14; // pixels
-  const gap = 1; // pixels
-  const gridSize = 10;
+const formatDate = (timestamp: number): string =>
+  new Date(timestamp).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
-  // Create a map of position to crop info
-  const cellMap = useMemo(() => {
-    const map = new Map<string, { cropId: string; isTarget: boolean }>();
-
-    // Add inputs - fill all cells based on crop size
-    layout.inputs.forEach(placement => {
-      const [row, col] = placement.position;
-      const cropDef = getCropDef(placement.cropId);
-      const mutationDef = getMutationDef(placement.cropId);
-      const size = cropDef?.size || mutationDef?.size || 1;
-      
-      // Fill all cells this crop occupies
-      for (let dr = 0; dr < size; dr++) {
-        for (let dc = 0; dc < size; dc++) {
-          map.set(`${row + dr},${col + dc}`, { cropId: placement.cropId, isTarget: false });
-        }
-      }
-    });
-
-    // Add targets - fill all cells based on mutation size
-    layout.targets.forEach(placement => {
-      const [row, col] = placement.position;
-      const mutationDef = getMutationDef(placement.cropId);
-      const cropDef = getCropDef(placement.cropId);
-      const size = mutationDef?.size || cropDef?.size || 1;
-      
-      // Fill all cells this mutation occupies
-      for (let dr = 0; dr < size; dr++) {
-        for (let dc = 0; dc < size; dc++) {
-          map.set(`${row + dr},${col + dc}`, { cropId: placement.cropId, isTarget: true });
-        }
-      }
-    });
-
-    return map;
-  }, [layout, getCropDef, getMutationDef]);
-
-  return createPortal(
-    <div
-      className="inline-block bg-slate-950 rounded border border-slate-700/50 p-1"
-      style={{
-        width: gridSize * cellSize + (gridSize - 1) * gap + 8, // +8 for padding
-        height: gridSize * cellSize + (gridSize - 1) * gap + 8,
-      }}
-    >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${gridSize}, ${cellSize}px)`,
-          gridTemplateRows: `repeat(${gridSize}, ${cellSize}px)`,
-          gap: `${gap}px`,
-        }}
-      >
-        {Array.from({ length: gridSize * gridSize }, (_, i) => {
-          const row = Math.floor(i / gridSize);
-          const col = i % gridSize;
-          const cellData = cellMap.get(`${row},${col}`);
-
-          const bgColor = cellData
-            ? getCropPreviewColor(cellData.cropId, cellData.isTarget)
-            // The SITE's slate-800 token (#1e232c, retinted in index.css),
-            // not stock Tailwind's #1e293b, which this used to hardcode.
-            : 'var(--color-slate-800)';
-
-          return (
-            <div
-              key={i}
-              style={{
-                width: `${cellSize}px`,
-                height: `${cellSize}px`,
-                backgroundColor: bgColor,
-                borderRadius: '2px',
-              }}
-            />
-          );
-        })}
-      </div>
-    </div>,
-    document.body,
-  );
-};
-
-// Individual layout card
 const LayoutCard: React.FC<{
   layout: SavedLayout;
   onLoad: () => void;
   onDelete?: () => void;
   onRename?: (newName: string) => void;
   isMostRecent?: boolean;
-}> = ({ layout, onLoad, onDelete, onRename, isMostRecent = false }) => {
-  const { getMutationDef } = useGreenhouseData();
+  displayName?: string;
+}> = ({ layout, onLoad, onDelete, onRename, isMostRecent = false, displayName }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(layout.name);
   const [renameError, setRenameError] = useState("");
   const renameInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-focus rename input
   useEffect(() => {
-    if (isRenaming && renameInputRef.current) {
-      renameInputRef.current.focus();
-      renameInputRef.current.select();
-    }
+    if (!isRenaming) return;
+    renameInputRef.current?.focus();
+    renameInputRef.current?.select();
   }, [isRenaming]);
 
-  // Get unique target mutations
-  const targetMutations = useMemo(() => {
-    const mutationMap = new Map<string, number>();
-    layout.targets.forEach(target => {
-      mutationMap.set(target.cropId, (mutationMap.get(target.cropId) || 0) + 1);
-    });
-    return Array.from(mutationMap.entries()).map(([cropId, count]) => ({
-      cropId,
-      count,
-      def: getMutationDef(cropId),
-    }));
-  }, [layout.targets, getMutationDef]);
+  useEffect(() => {
+    setRenameValue(layout.name);
+  }, [layout.name]);
 
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString(undefined, { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
+  const handleRenameSubmit = () => {
+    if (!onRename) return;
+    const trimmed = renameValue.trim();
+    if (!trimmed) {
+      setRenameError("Enter a layout name.");
+      return;
+    }
+    if (trimmed !== layout.name) onRename(trimmed);
+    setRenameValue(trimmed || layout.name);
+    setRenameError("");
+    setIsRenaming(false);
+  };
+
+  const cancelRename = () => {
+    setRenameValue(layout.name);
+    setRenameError("");
+    setIsRenaming(false);
   };
 
   const handleDelete = () => {
@@ -160,168 +76,102 @@ const LayoutCard: React.FC<{
     onDelete();
   };
 
-  const handleRenameSubmit = () => {
-    if (!onRename) return;
-    const trimmed = renameValue.trim();
-    if (!trimmed) {
-      setRenameError("Name cannot be empty");
-      return;
-    }
-    if (trimmed === layout.name) {
-      // No change, just cancel
-      setIsRenaming(false);
-      setRenameValue(layout.name);
-      setRenameError("");
-      return;
-    }
-    // Call parent rename handler - it will handle duplicate checking
-    onRename(trimmed);
-    setIsRenaming(false);
-    setRenameValue(trimmed);
-    setRenameError("");
-  };
-
-  const handleRenameCancel = () => {
-    setIsRenaming(false);
-    setRenameValue(layout.name);
-    setRenameError("");
-  };
-
-  const handleRenameKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleRenameSubmit();
-    } else if (e.key === 'Escape') {
-      handleRenameCancel();
-    }
-  };
-
   return (
-    <div className="rounded-md border border-slate-800 bg-slate-900/50 p-4 hover:border-slate-500/50 transition-colors">
-      {/* Main Layout: Left side (info) and Right side (grid) */}
-      <div className="flex gap-4">
-        {/* Left side: Name and info */}
-        <div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-          {/* Header */}
-          <div className="mb-2 min-w-0">
-            {isRenaming ? (
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 min-w-0">
-                  <input
-                    ref={renameInputRef}
-                    type="text"
-                    value={renameValue}
-                    onChange={(e) => {
-                      setRenameValue(e.target.value);
-                      setRenameError("");
-                    }}
-                    onKeyDown={handleRenameKeyDown}
-                    onBlur={handleRenameSubmit}
-                    className={`flex-1 min-w-0 px-2 py-1 bg-slate-900/60 border rounded text-sm text-slate-100 ${FOCUS} ${
-                      renameError 
-                        ? 'border-red-500/50' 
-                        : 'border-slate-600/50'
-                    }`}
-                    maxLength={50}
-                  />
-                  <button
-                    onClick={handleRenameSubmit}
-                    className="p-1 text-emerald-400 hover:text-emerald-300 flex-shrink-0"
-                    title="Save"
-                  >
-                    <Check className="w-4 h-4" />
-                  </button>
-                </div>
-                {renameError && (
-                  <p className="mt-1 text-xs text-red-400">{renameError}</p>
-                )}
+    <article className="overflow-hidden rounded-md border border-white/12 bg-slate-900/45 transition-colors hover:border-white/20">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-white/10 px-3 py-2.5 sm:px-4">
+        <div className="min-w-0 flex-1">
+          {isRenaming ? (
+            <form
+              className="flex max-w-md items-start gap-2"
+              onSubmit={(event) => {
+                event.preventDefault();
+                handleRenameSubmit();
+              }}
+            >
+              <div className="min-w-0 flex-1">
+                <input
+                  ref={renameInputRef}
+                  type="text"
+                  value={renameValue}
+                  onChange={(event) => {
+                    setRenameValue(event.target.value);
+                    setRenameError("");
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      event.preventDefault();
+                      cancelRename();
+                    }
+                  }}
+                  className={`w-full rounded-md border px-2 py-1 text-[13px] text-slate-100 ${
+                    renameError ? "border-red-500/60 bg-red-500/5" : "border-slate-600 bg-slate-800/80"
+                  } ${FOCUS}`}
+                  maxLength={50}
+                  aria-label="Layout name"
+                />
+                {renameError && <p className="mt-1 text-[11px] text-red-400">{renameError}</p>}
               </div>
-            ) : (
-              <div className="flex items-center gap-2 group">
-                <h3 className="text-base font-medium text-slate-100 truncate flex-1">
-                  {layout.name}
-                </h3>
-                {onRename && (
-                  <button
-                    onClick={() => setIsRenaming(true)}
-                    className="p-1 text-slate-500 hover:text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Rename"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            )}
-            <div className="text-xs text-slate-500 mt-0.5">
-              {isMostRecent ? "Updated" : "Saved"} {formatDate(layout.savedAt)}
-              {!isMostRecent && layout.modifiedAt !== layout.savedAt && (
-                <span> • Modified {formatDate(layout.modifiedAt)}</span>
+              <button
+                type="submit"
+                title="Save name"
+                className={`cursor-pointer rounded-md p-1.5 text-emerald-300 transition-colors hover:bg-emerald-500/10 ${FOCUS}`}
+              >
+                <Check className="h-4 w-4" />
+              </button>
+            </form>
+          ) : (
+            <div className="flex min-w-0 items-center gap-2">
+              <h3 className="truncate text-[14px] font-semibold text-slate-100">{displayName ?? layout.name}</h3>
+              {onRename && (
+                <button
+                  type="button"
+                  onClick={() => setIsRenaming(true)}
+                  title="Rename layout"
+                  className={`cursor-pointer rounded-md p-1 text-slate-500 transition-colors hover:bg-white/8 hover:text-slate-200 ${FOCUS}`}
+                >
+                  <Edit2 className="h-3.5 w-3.5" />
+                </button>
               )}
             </div>
-          </div>
-
-          {/* Stats */}
-          <div className="flex items-center gap-4 text-sm mb-3">
-            <span className="text-slate-400">
-              <span className="font-medium text-purple-400">{layout.targets.length}</span> targets
-            </span>
-            <span className="text-slate-400">
-              <span className="font-medium text-emerald-400">{layout.inputs.length}</span> inputs
-            </span>
-          </div>
-
-          {/* Target Mutations List */}
-          {targetMutations.length > 0 && (
-            <div className="mb-3 flex-1">
-              <div className="text-xs text-slate-500 mb-1.5">Target Mutations:</div>
-              <div className="space-y-1 max-h-20 overflow-y-auto">
-                {targetMutations.map(({ cropId, count, def }) => (
-                  <div key={cropId} className="text-xs text-slate-300 flex items-center gap-1.5">
-                    <div
-                      className="w-2 h-2 rounded-sm flex-shrink-0"
-                      style={{ backgroundColor: getCropPreviewColor(cropId, true) }}
-                    />
-                    <span className="truncate">
-                      {def?.name || cropId.replace(/_/g, ' ')}
-                      <span className="text-slate-500 ml-1">({count})</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
           )}
-
-          {/* Action Buttons */}
-          <div className="flex gap-2 mt-auto">
-            <button
-              onClick={onLoad}
-              className="flex-1 px-3 py-2 bg-emerald-500/80 hover:bg-emerald-500 rounded-md text-sm text-white transition-colors flex items-center justify-center gap-2"
-            >
-              <FolderOpen className="w-4 h-4" />
-              Load Layout
-            </button>
-            {onDelete && (
-              <button
-                onClick={handleDelete}
-                onBlur={() => setShowDeleteConfirm(false)}
-                className={`px-3 py-2 rounded-md text-sm transition-colors flex items-center justify-center gap-2 ${
-                  showDeleteConfirm
-                    ? 'bg-red-500/80 text-white hover:bg-red-500'
-                    : 'bg-slate-700/60 text-slate-300 hover:bg-red-500/10 hover:text-red-400'
-                }`}
-                title={showDeleteConfirm ? 'Click again to confirm' : 'Delete layout'}
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+          <p className="mt-0.5 text-[11px] text-slate-500">
+            {isMostRecent ? "Updated" : "Saved"} {formatDate(layout.savedAt)}
+            {!isMostRecent && layout.modifiedAt !== layout.savedAt && ` · Modified ${formatDate(layout.modifiedAt)}`}
+          </p>
         </div>
-
-        {/* Right side: Preview grid */}
-        <div className="flex items-center justify-center">
-          <LayoutPreview layout={layout} />
-        </div>
+        <span className="shrink-0 font-mono text-[11px] tabular-nums text-slate-400">
+          {layout.targets.length} target{layout.targets.length === 1 ? "" : "s"} · {layout.inputs.length} input{layout.inputs.length === 1 ? "" : "s"}
+        </span>
       </div>
-    </div>
+
+      <DesignerLayoutPreview layout={layout} className="p-3 sm:p-4" />
+
+      <div className="flex gap-2 border-t border-white/10 bg-black/10 px-3 py-2.5 sm:justify-end sm:px-4">
+        <button
+          type="button"
+          onClick={onLoad}
+          className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/20 px-4 py-2 text-[12px] font-medium text-emerald-200 transition-colors hover:bg-emerald-500/30 sm:flex-none ${FOCUS}`}
+        >
+          <FolderOpen className="h-4 w-4" />
+          Load layout
+        </button>
+        {onDelete && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            onBlur={() => setShowDeleteConfirm(false)}
+            title={showDeleteConfirm ? "Select again to delete" : "Delete layout"}
+            className={`cursor-pointer rounded-md border px-3 py-2 text-[12px] transition-colors ${FOCUS} ${
+              showDeleteConfirm
+                ? "border-red-500/50 bg-red-500/20 text-red-200"
+                : "border-slate-600 bg-slate-800/70 text-slate-400 hover:border-red-500/35 hover:bg-red-500/10 hover:text-red-300"
+            }`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+    </article>
   );
 };
 
@@ -336,143 +186,109 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
   mostRecentLayout,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<'saved' | 'name'>('saved');
-  const modalRef = useRef<HTMLDivElement>(null);
+  const [sortBy, setSortBy] = useState<"saved" | "name">("saved");
 
-  // Reset state when modal closes
   useEffect(() => {
-    if (!isOpen) {
-      setSearchTerm("");
-    }
+    if (!isOpen) setSearchTerm("");
   }, [isOpen]);
 
-  // Close modal on escape key
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
+    if (!isOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
     };
-
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    const previousOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.documentElement.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
   }, [isOpen, onClose]);
 
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
-  // Click outside to close
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      onClose();
-    }
-  };
-
-  // Filter and sort layouts
   const filteredAndSortedLayouts = useMemo(() => {
-    let filtered = layouts;
-
-    // Apply search filter
-    if (searchTerm.trim()) {
-      const search = searchTerm.toLowerCase();
-      filtered = layouts.filter(layout =>
-        layout.name.toLowerCase().includes(search)
-      );
-    }
-
-    // Apply sorting
-    const sorted = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case 'saved':
-          return b.savedAt - a.savedAt;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-
-    return sorted;
+    const search = searchTerm.trim().toLocaleLowerCase();
+    const filtered = search ? layouts.filter((layout) => layout.name.toLocaleLowerCase().includes(search)) : layouts;
+    return [...filtered].sort((left, right) =>
+      sortBy === "name" ? left.name.localeCompare(right.name) : right.savedAt - left.savedAt,
+    );
   }, [layouts, searchTerm, sortBy]);
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto"
-      onClick={handleBackdropClick}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 backdrop-blur-sm sm:p-4"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
     >
       <div
-        ref={modalRef}
-        className="bg-slate-900 border border-slate-700 rounded-md shadow-2xl w-full max-w-4xl max-h-[95vh] my-auto overflow-hidden flex flex-col"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="load-layout-title"
+        className="sd-lip my-auto flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-md border border-slate-700 bg-slate-900 shadow-2xl"
       >
-        {/* Modal Header */}
-        <div className="bg-slate-900 border-b border-slate-700 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between flex-shrink-0">
-          <h2 className="text-lg sm:text-xl font-semibold text-slate-100">Load Layout</h2>
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-700 bg-slate-800/50 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <FolderOpen className="h-5 w-5 text-emerald-300" />
+            <h2 id="load-layout-title" className="text-lg font-semibold text-slate-50">
+              Load layout
+            </h2>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded-md transition-colors text-slate-400 hover:text-slate-200"
-            aria-label="Close modal"
+            aria-label="Close Load layout"
+            className={`cursor-pointer rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-100 ${FOCUS}`}
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Search and Sort Controls */}
-        <div className="px-3 sm:px-6 py-3 sm:py-4 border-b border-slate-700/50 flex-shrink-0">
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Search */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <div className="shrink-0 border-b border-slate-700/70 px-4 py-3">
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="relative min-w-0 flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
-                type="text"
+                type="search"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search layouts..."
-                className={`w-full pl-9 pr-3 py-2 bg-slate-800/60 border border-slate-600/50 rounded-md text-sm text-slate-200 placeholder-slate-500 ${FOCUS}`}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Search saved layouts"
+                className={`w-full rounded-md border border-slate-600/60 bg-slate-800/70 py-2 pl-9 pr-3 text-[12px] text-slate-100 placeholder:text-slate-500 ${FOCUS}`}
               />
             </div>
-
-            {/* Sort */}
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value === "name" ? "name" : "saved")}
-              className={`px-3 py-2 bg-slate-700/50 border border-slate-600/30 rounded-md text-sm text-slate-200 hover:bg-slate-700/70 cursor-pointer transition-colors ${FOCUS}`}
+              onChange={(event) => setSortBy(event.target.value === "name" ? "name" : "saved")}
+              aria-label="Sort saved layouts"
+              className={`cursor-pointer rounded-md border border-slate-600/60 bg-slate-800/70 px-3 py-2 text-[12px] text-slate-200 ${FOCUS}`}
             >
-              <option value="saved">Sort by Saved</option>
-              <option value="name">Sort by Name</option>
+              <option value="saved">Newest saved</option>
+              <option value="name">Name</option>
             </select>
           </div>
-
-          {/* Results count */}
-          <div className="mt-2 text-xs text-slate-500">
-            {filteredAndSortedLayouts.length} {filteredAndSortedLayouts.length === 1 ? 'layout' : 'layouts'}
-            {searchTerm && ` matching "${searchTerm}"`}
-          </div>
+          <p className="mt-1.5 text-[11px] text-slate-500">
+            {filteredAndSortedLayouts.length} saved layout{filteredAndSortedLayouts.length === 1 ? "" : "s"}
+            {searchTerm.trim() ? ` matching “${searchTerm.trim()}”` : ""}
+          </p>
         </div>
 
-        {/* Modal Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
           {mostRecentLayout || filteredAndSortedLayouts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
               {mostRecentLayout && (
                 <LayoutCard
-                  key={mostRecentLayout.id}
                   layout={mostRecentLayout}
+                  displayName={`Most Recent (${mostRecentLayoutNickname(mostRecentLayout)})`}
                   onLoad={onLoadMostRecent}
                   isMostRecent
                 />
               )}
-              {filteredAndSortedLayouts.map(layout => (
+              {filteredAndSortedLayouts.map((layout) => (
                 <LayoutCard
                   key={layout.id}
                   layout={layout}
@@ -483,20 +299,27 @@ export const LoadLayoutModal: React.FC<LoadLayoutModalProps> = ({
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <FolderOpen className="w-12 h-12 text-slate-500 mx-auto mb-3" />
-              <p className="text-slate-400 text-sm">
-                {searchTerm ? 'No layouts found matching your search' : 'No saved layouts'}
+            <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+              <FolderOpen className="h-8 w-8 text-slate-600" />
+              <p className="text-[12px] font-medium text-slate-300">
+                {searchTerm.trim() ? "No saved layouts match that search" : "No saved layouts yet"}
               </p>
-              {!searchTerm && layouts.length === 0 && (
-                <p className="text-slate-500 text-xs mt-2">
-                  Save your first layout to see it here
-                </p>
-              )}
+              {!searchTerm.trim() && <p className="text-[11px] text-slate-500">Save the current design to keep it here.</p>}
             </div>
           )}
         </div>
+
+        <div className="flex shrink-0 justify-end border-t border-slate-700 bg-slate-900 px-4 py-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className={`cursor-pointer rounded-md border border-slate-600 bg-slate-800/70 px-4 py-2 text-[12px] font-medium text-slate-300 transition-colors hover:bg-slate-700 ${FOCUS}`}
+          >
+            Close
+          </button>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

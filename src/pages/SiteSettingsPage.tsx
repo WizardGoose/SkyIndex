@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { Cog, RefreshCw, Wifi, WifiOff } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Cog, Link2, Loader2, RefreshCw, Unlink, Wifi, WifiOff } from "lucide-react";
 import greenhouseData from "../../public/greenhouse/data.json";
 import { HypixelPanel } from "../island/HypixelPanel";
 import { TexturePackPanel } from "../ui/TexturePackPanel";
@@ -28,6 +28,8 @@ import {
 } from "../ui/kit";
 import { replayTour } from "../components/layout/WelcomeTour";
 import { clearBackdrop, readBackdropFlag, saveBackdrop, type BackdropFlag } from "../ui/backdrop";
+import { SETTINGS_SECTION_PARAM } from "../components/layout/settingsRoute";
+import { useCompanionLink } from "../island/companionLink";
 
 /**
  * One place for everything that is a setting.
@@ -179,10 +181,46 @@ const MODE_OPTIONS: ReadonlyArray<{ value: GameMode; label: string; title: strin
 ];
 
 export const SiteSettingsPage: React.FC = () => {
+  const [settingsParams] = useSearchParams();
   const { mode, source, setMode, clearOverride } = useProfile();
   const { access } = useApiAccess();
   const { status, sources, modVersion, apiProfiles, snapshot } = useIsland();
+  const { linked: companionLinked, link: linkCompanion, unlink: unlinkCompanion } = useCompanionLink();
   const wiki = useWikiCache();
+  const [companionBusy, setCompanionBusy] = useState(false);
+  const [companionError, setCompanionError] = useState<string | null>(null);
+  const companionAbort = useRef<AbortController | null>(null);
+
+  useEffect(() => () => companionAbort.current?.abort(), []);
+
+  const onLinkCompanion = async () => {
+    companionAbort.current?.abort();
+    const controller = new AbortController();
+    companionAbort.current = controller;
+    setCompanionBusy(true);
+    setCompanionError(null);
+    const ok = await linkCompanion(controller.signal);
+    if (controller.signal.aborted) return;
+    setCompanionBusy(false);
+    if (!ok) {
+      setCompanionError(
+        "Skydex could not reach the mod. Start Minecraft in Locally hosted mode, then allow local-device access when your browser asks.",
+      );
+    }
+  };
+
+  const onUnlinkCompanion = () => {
+    companionAbort.current?.abort();
+    setCompanionBusy(false);
+    setCompanionError(null);
+    unlinkCompanion();
+  };
+
+  const settingsSection = settingsParams.get(SETTINGS_SECTION_PARAM);
+  useEffect(() => {
+    if (!settingsSection) return;
+    document.getElementById(settingsSection)?.scrollIntoView({ block: "nearest" });
+  }, [settingsSection]);
 
   /*
    * The planner's own hook, used the way the Dashboard already uses it, rather
@@ -380,15 +418,20 @@ export const SiteSettingsPage: React.FC = () => {
         <SectionHead
           title="Island connection"
           right={
-            status === "live" ? (
+            companionLinked && status === "live" ? (
               <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400">
                 <Wifi className="h-3 w-3" />
                 mod live
               </span>
+            ) : companionLinked ? (
+              <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
+                <WifiOff className="h-3 w-3" />
+                mod offline
+              </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
                 <WifiOff className="h-3 w-3" />
-                {status === "offline" ? "stored snapshot" : "nothing stored"}
+                not linked
               </span>
             )
           }
@@ -410,6 +453,30 @@ export const SiteSettingsPage: React.FC = () => {
               <ControlRow label="Snapshot profile" value={<span className="text-slate-300">{snapshot.profile.name}</span>} />
             )}
           </ControlGrid>
+
+          <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-2">
+            {companionLinked ? (
+              <button type="button" className={BTN_QUIET} onClick={onUnlinkCompanion}>
+                <Unlink className="h-3 w-3" />
+                Unlink companion mod
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={BTN_QUIET}
+                onClick={() => void onLinkCompanion()}
+                disabled={companionBusy}
+              >
+                {companionBusy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Link2 className="h-3 w-3" />}
+                {companionBusy ? "Checking…" : "Link companion mod"}
+              </button>
+            )}
+            <span className="text-[11px] leading-snug text-slate-400">
+              Linking is the only action that asks your browser for access to the mod on this device.
+            </span>
+          </div>
+
+          {companionError && <p className="text-[11px] leading-snug text-red-300">{companionError}</p>}
 
           <p className="text-[11px] leading-snug text-slate-400">
             The snapshot itself, and the button that clears it, stay on the{" "}

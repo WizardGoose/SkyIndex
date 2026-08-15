@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "skydex-layout-embeds",
+  "main": "cloudflare/layout-embed-worker.js",
+  "compatibility_date": "2026-08-15",
+  "browser": {
+    "binding": "BROWSER"
+  },
+  "routes": [
+    {
+      "pattern": "skydex.ca/greenhouse/share/*",
+      "zone_name": "skydex.ca"
+    }
+  ]
+}

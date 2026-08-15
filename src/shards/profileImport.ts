@@ -280,9 +280,6 @@ export type ImportResult =
 export const NO_KEY_MESSAGE =
   "This import reads the Hypixel API directly from your browser, so it needs your own Hypixel API key. Add it in Site Settings, then try again.";
 
-/** Where that key is entered. Kept here so the message and the link cannot drift apart. */
-export const KEY_SETTINGS_PATH = "/settings";
-
 /**
  * Import one player's shards and attributes.
  *

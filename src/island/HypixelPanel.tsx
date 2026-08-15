@@ -5,6 +5,7 @@ import { useGreenhouseStats } from "./profileStats";
 import { useIsland, apiCooldownUntil } from "./useIsland";
 import { resolveAccount } from "./hypixel";
 import { ago } from "./format";
+import { API_CREDENTIAL_FIELD_ATTRIBUTES } from "./apiCredentialField";
 import { PANEL, LABEL, NUM, INPUT, BTN_PRIMARY, BTN_QUIET, SectionHead } from "../ui/kit";
 
 /**
@@ -181,7 +182,7 @@ export const HypixelPanel: React.FC = () => {
               value={access.key}
               onChange={(e) => setKey(e.target.value)}
               placeholder="••••••••-••••-••••-••••-••••••••••••"
-              autoComplete="off"
+              {...API_CREDENTIAL_FIELD_ATTRIBUTES}
               spellCheck={false}
               className={`${INPUT} w-full mt-1`}
             />

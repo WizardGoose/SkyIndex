@@ -10,6 +10,8 @@ import { applyApiGameMode } from "../profile/useProfile";
 import type { FeedSet, MergedIsland } from "./merge";
 import type { ApiProfile, HypixelAccount } from "./hypixel";
 import type { IslandSnapshot, StoredIsland } from "./types";
+import { isCompanionLinked, subscribeCompanionLink } from "./companionLink";
+import { createCompanionTransportGate } from "./companionTransportGate";
 
 /**
  * The island store: two feeds, one view.
@@ -28,9 +30,9 @@ import type { IslandSnapshot, StoredIsland } from "./types";
  *        stream, which the browser parses natively so the mod can push the
  *        moment a chest changes instead of us asking twice a minute whether
  *        anything happened. Falls back to the older poll (5 s while healthy,
- *        30 s while not) if the stream will not open. Either way it starts on
- *        the first subscriber and stops with the last, so an ordinary visitor
- *        with no mod is not hammering a closed port forever.
+ *        30 s while not) if the stream will not open. Either way it starts only
+ *        after the player explicitly links the mod in Settings and a consumer
+ *        subscribes, then stops on unlink or with the last subscriber.
  *   api  authenticated, remote, rate limited, and someone else's server. Never
  *        polled. Pulled on demand behind a five minute TTL, with a floor
  *        between attempts so a frustrated click cannot become a burst.
@@ -418,6 +420,7 @@ const openStream = (mine: number) => {
 
 const start = () => {
   if (typeof window === "undefined") return;
+  if (!isCompanionLinked()) return;
   if (timer !== null || stream !== null) return;
   // Stream first. Only one transport ever runs, and polling is what we fall
   // back to rather than what we start with.
@@ -448,12 +451,18 @@ const stop = () => {
   }
 };
 
+const transportGate = createCompanionTransportGate(
+  { getSnapshot: isCompanionLinked, subscribe: subscribeCompanionLink },
+  start,
+  stop,
+);
+
 const subscribe = (fn: () => void) => {
   listeners.add(fn);
-  if (listeners.size === 1) start();
+  const releaseTransport = transportGate.request();
   return () => {
     listeners.delete(fn);
-    if (listeners.size === 0) stop();
+    releaseTransport();
   };
 };
 

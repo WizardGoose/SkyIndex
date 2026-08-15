@@ -1,6 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import {
+  PUBLIC_PAGE_METADATA,
+  renderPageMetadataHtml,
+} from "./src/site/pageMetadata";
 
 /*
  * Chunk grouping is keyed on package name rather than written as the object
@@ -96,6 +102,26 @@ export default defineConfig(() => {
           return html.replaceAll(
             "__SKYDEX_DEPLOY_REVISION__",
             deployRevision,
+          );
+        },
+      },
+      {
+        name: "skydex-page-link-metadata",
+        async closeBundle() {
+          const outputRoot = resolve(process.cwd(), "dist");
+          const rootIndexPath = resolve(outputRoot, "index.html");
+          const rootIndex = await readFile(rootIndexPath, "utf8");
+
+          await Promise.all(
+            PUBLIC_PAGE_METADATA.map(async (page) => {
+              const routeDirectory = resolve(outputRoot, page.path.slice(1));
+              await mkdir(routeDirectory, { recursive: true });
+              await writeFile(
+                resolve(routeDirectory, "index.html"),
+                renderPageMetadataHtml(rootIndex, page),
+                "utf8",
+              );
+            }),
           );
         },
       },

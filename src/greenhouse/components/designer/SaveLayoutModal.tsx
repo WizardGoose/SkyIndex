@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { X, Save } from "lucide-react";
-import { useDesigner, useGreenhouseData } from "../../context";
-import type { DesignerPlacement } from "../../context/DesignerContext";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Save, X } from "lucide-react";
+import { useDesigner } from "../../context";
 import { FOCUS } from "../../../ui/kit";
+import { DesignerLayoutPreview } from "./DesignerLayoutPreview";
 
 interface SaveLayoutModalProps {
   isOpen: boolean;
@@ -11,225 +12,162 @@ interface SaveLayoutModalProps {
   existingLayouts: Array<{ id: string; name: string }>;
 }
 
-export const SaveLayoutModal: React.FC<SaveLayoutModalProps> = ({ 
-  isOpen, 
-  onClose, 
+export const SaveLayoutModal: React.FC<SaveLayoutModalProps> = ({
+  isOpen,
+  onClose,
   onSave,
-  existingLayouts
+  existingLayouts,
 }) => {
   const { inputPlacements, targetPlacements } = useDesigner();
-  const { getMutationDef } = useGreenhouseData();
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [showOverwriteWarning, setShowOverwriteWarning] = useState(false);
   const [existingLayoutId, setExistingLayoutId] = useState<string | null>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-focus input when modal opens
+  const currentLayout = useMemo(
+    () => ({
+      inputs: inputPlacements.map(({ cropId, position }) => ({ cropId, position })),
+      targets: targetPlacements.map(({ cropId, position }) => ({ cropId, position })),
+    }),
+    [inputPlacements, targetPlacements],
+  );
+
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
+    if (!isOpen) return;
+    setName("");
+    setError("");
+    setShowOverwriteWarning(false);
+    setExistingLayoutId(null);
+    inputRef.current?.focus();
   }, [isOpen]);
 
-  // Reset state when modal opens
   useEffect(() => {
-    if (isOpen) {
-      setName("");
-      setError("");
-      setShowOverwriteWarning(false);
-      setExistingLayoutId(null);
-    }
-  }, [isOpen]);
-
-  // Close modal on escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
+    if (!isOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
     };
-
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    const previousOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.documentElement.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
   }, [isOpen, onClose]);
 
-  // Prevent body scroll when modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
-
-  // Click outside to close
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      onClose();
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      setError("Please enter a layout name");
-      return;
-    }
-    
-    if (trimmedName.length > 50) {
-      setError("Layout name must be 50 characters or less");
-      return;
-    }
-    
-    // Check if name exists
-    const existing = existingLayouts.find(l => l.name === trimmedName);
-    if (existing && !showOverwriteWarning) {
-      setExistingLayoutId(existing.id);
-      setShowOverwriteWarning(true);
-      setError(`A layout named "${trimmedName}" already exists. Click Save again to overwrite it.`);
-      return;
-    }
-    
-    // Save or overwrite
-    onSave(trimmedName, existingLayoutId || undefined);
-  };
-
-  const handleNameChange = (newName: string) => {
-    setName(newName);
+  const handleNameChange = (nextName: string) => {
+    setName(nextName);
     setError("");
     setShowOverwriteWarning(false);
     setExistingLayoutId(null);
   };
 
-  // Get unique target mutations for summary
-  const getTargetMutationsSummary = () => {
-    const mutationMap = new Map<string, DesignerPlacement>();
-    
-    targetPlacements.forEach(placement => {
-      if (!mutationMap.has(placement.cropId)) {
-        mutationMap.set(placement.cropId, placement);
-      }
-    });
-    
-    return Array.from(mutationMap.values());
-  };
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError("Enter a layout name.");
+      return;
+    }
+    if (trimmedName.length > 50) {
+      setError("Layout names can be up to 50 characters.");
+      return;
+    }
 
-  const targetMutations = getTargetMutationsSummary();
+    const existing = existingLayouts.find((layout) => layout.name === trimmedName);
+    if (existing && !showOverwriteWarning) {
+      setExistingLayoutId(existing.id);
+      setShowOverwriteWarning(true);
+      setError(`“${trimmedName}” already exists. Select Save layout again to replace it.`);
+      return;
+    }
+
+    onSave(trimmedName, existingLayoutId ?? undefined);
+  };
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/50 backdrop-blur-sm overflow-y-auto"
-      onClick={handleBackdropClick}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-3 backdrop-blur-sm sm:p-4"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
     >
       <div
-        ref={modalRef}
-        className="bg-slate-900 border border-slate-700 rounded-md shadow-2xl w-full max-w-md my-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="save-layout-title"
+        className="sd-lip my-auto flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-md border border-slate-700 bg-slate-900 shadow-2xl"
       >
-        {/* Modal Header */}
-        <div className="bg-slate-900 border-b border-slate-700 px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between rounded-t-xl">
-          <h2 className="text-base sm:text-lg font-semibold text-slate-100">Save Layout</h2>
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-700 bg-slate-800/50 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Save className="h-5 w-5 text-emerald-300" />
+            <h2 id="save-layout-title" className="text-lg font-semibold text-slate-50">
+              Save layout
+            </h2>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded-md transition-colors text-slate-400 hover:text-slate-200"
-            aria-label="Close modal"
+            aria-label="Close Save layout"
+            className={`cursor-pointer rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-100 ${FOCUS}`}
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Modal Content */}
-        <form onSubmit={handleSubmit} className="p-3 sm:p-6">
-          {/* Layout Name Input */}
-          <div className="mb-6">
-            <label htmlFor="layout-name" className="block text-sm font-medium text-slate-300 mb-2">
-              Layout Name
-            </label>
-            <input
-              ref={inputRef}
-              id="layout-name"
-              type="text"
-              value={name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="e.g., My Perfect Garden"
-              className={`w-full px-3 py-2 bg-slate-800/60 border border-slate-600/50 rounded-md text-sm text-slate-200 placeholder-slate-500 ${FOCUS}`}
-              maxLength={50}
-            />
-            {error && (
-              <p className={`mt-1.5 text-xs ${showOverwriteWarning ? 'text-yellow-400' : 'text-red-400'}`}>{error}</p>
-            )}
-          </div>
-
-          {/* Layout Summary */}
-          <div className="mb-6 p-4 rounded-md border border-slate-800 bg-slate-900/50">
-            <h3 className="text-sm font-medium text-slate-200 mb-3">Layout Summary</h3>
-            <div className="space-y-2 text-sm text-slate-300">
-              <div className="flex items-center gap-2">
-                <span className="text-slate-400">•</span>
-                <span>
-                  <span className="font-medium text-purple-400">{targetPlacements.length}</span>
-                  {' '}target {targetPlacements.length === 1 ? 'mutation' : 'mutations'}
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-slate-400">•</span>
-                <span>
-                  <span className="font-medium text-emerald-400">{inputPlacements.length}</span>
-                  {' '}input {inputPlacements.length === 1 ? 'crop' : 'crops'}
-                </span>
-              </div>
-
-              {targetMutations.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-600/30">
-                  <div className="text-xs text-slate-400 mb-2">Target Mutations:</div>
-                  <div className="space-y-1 max-h-32 overflow-y-auto">
-                    {targetMutations.map(mutation => {
-                      const mutationDef = getMutationDef(mutation.cropId);
-                      return (
-                        <div key={mutation.cropId} className="text-xs text-slate-300 pl-4">
-                          - {mutation.cropName}
-                          {mutationDef && (
-                            <span className="text-slate-500 ml-1">
-                              ({targetPlacements.filter(p => p.cropId === mutation.cropId).length})
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
+            <div>
+              <label htmlFor="layout-name" className="mb-1.5 block text-[12px] font-medium text-slate-300">
+                Layout name
+              </label>
+              <input
+                ref={inputRef}
+                id="layout-name"
+                type="text"
+                value={name}
+                onChange={(event) => handleNameChange(event.target.value)}
+                placeholder="e.g., Soggybud pair"
+                className={`w-full rounded-md border border-slate-600/60 bg-slate-800/70 px-3 py-2 text-[13px] text-slate-100 placeholder:text-slate-500 ${FOCUS}`}
+                maxLength={50}
+                aria-invalid={Boolean(error) && !showOverwriteWarning}
+                aria-describedby={error ? "save-layout-error" : undefined}
+              />
+              {error && (
+                <p id="save-layout-error" className={`mt-1.5 text-[11px] ${showOverwriteWarning ? "text-amber-300" : "text-red-400"}`}>
+                  {error}
+                </p>
               )}
             </div>
+
+            <DesignerLayoutPreview layout={currentLayout} />
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3">
+          <div className="flex shrink-0 gap-2 border-t border-slate-700 bg-slate-900 px-4 py-3 sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 bg-slate-700/60 border border-slate-600/50 rounded-md text-sm text-slate-300 hover:bg-slate-600/60 transition-colors"
+              className={`flex-1 cursor-pointer rounded-md border border-slate-600 bg-slate-800/70 px-4 py-2 text-[12px] font-medium text-slate-300 transition-colors hover:bg-slate-700 sm:flex-none ${FOCUS}`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-emerald-500/80 rounded-md text-sm text-white hover:bg-emerald-500 transition-colors flex items-center justify-center gap-2"
+              className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/20 px-4 py-2 text-[12px] font-medium text-emerald-200 transition-colors hover:bg-emerald-500/30 sm:flex-none ${FOCUS}`}
             >
-              <Save className="w-4 h-4" />
-              Save Layout
+              <Save className="h-4 w-4" />
+              Save layout
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };

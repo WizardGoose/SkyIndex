@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Navigate, useLocation } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate, useLocation, useParams } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
 import { Layout } from "./components";
 import { CalculatorStateProvider, RecipeStateProvider } from "./context";
@@ -6,6 +6,8 @@ import { usePageTitle } from "./hooks";
 import { ToastProvider } from "./components";
 import { GreenhouseHashRoute } from "./greenhouse/GreenhouseHashRoute";
 import { legacyGreenhouseHref } from "./greenhouse/route";
+import { legacySettingsLocation } from "./components/layout/settingsRoute";
+import { sharedDesignerLocation } from "./greenhouse/designerRoute";
 
 const LandingPage = lazy(() => import("./pages/LandingPage").then((module) => ({ default: module.LandingPage })));
 const ItemsPage = lazy(() => import("./pages/ItemsPage").then((module) => ({ default: module.ItemsPage })));
@@ -15,7 +17,6 @@ const GreenhouseShell = lazy(() => import("./greenhouse/GreenhouseShell").then((
 const GreenhouseSolverPage = lazy(() => import("./greenhouse/pages/CalculatorPage").then((module) => ({ default: module.CalculatorPage })));
 const GreenhouseDesignerPage = lazy(() => import("./greenhouse/pages/DesignerPage").then((module) => ({ default: module.DesignerPage })));
 const GreenhousePlannerPage = lazy(() => import("./greenhouse/pages/PlannerPage").then((module) => ({ default: module.PlannerPage })));
-const SiteSettingsPage = lazy(() => import("./pages/SiteSettingsPage"));
 const CalculatorPage = lazy(() => import("./pages/CalculatorPage").then((module) => ({ default: module.CalculatorPage })));
 const SettingsPage = lazy(() => import("./pages/SettingsPage").then((module) => ({ default: module.SettingsPage })));
 /*
@@ -69,6 +70,16 @@ const LegacyGreenhouseRedirect = () => {
   return <Navigate to={target ?? "/greenhouse"} replace />;
 };
 
+const LegacySettingsRedirect = () => {
+  const location = useLocation();
+  return <Navigate to={legacySettingsLocation(location)} replace />;
+};
+
+const SharedDesignerRedirect = () => {
+  const { layoutCode = "" } = useParams();
+  return <Navigate to={sharedDesignerLocation(layoutCode)} replace />;
+};
+
 const router = createBrowserRouter(
   [
     {
@@ -113,6 +124,10 @@ const router = createBrowserRouter(
             {
               path: "planner",
               element: <LegacyGreenhouseRedirect />,
+            },
+            {
+              path: "share/:layoutCode",
+              element: <SharedDesignerRedirect />,
             },
           ],
         },
@@ -177,11 +192,7 @@ const router = createBrowserRouter(
         },
         {
           path: "settings",
-          element: (
-            <Suspense fallback={<LoadingSpinner />}>
-              <SiteSettingsPage />
-            </Suspense>
-          ),
+          element: <LegacySettingsRedirect />,
         },
         /* The Tour Lab exists on dev builds only: the condition is statically
            false in production, so the route, the page, and its chunk are all

@@ -178,20 +178,29 @@ describe("buildShareUrl", () => {
 
   it("builds a canonical fragment link on our own origin", () => {
     expect(buildShareUrl(code, "https://skydex.ca", "/")).toBe(
-      `https://skydex.ca/greenhouse#designer?layout=${code}`,
+      `https://skydex.ca/greenhouse/share/${code}`,
     );
   });
 
   it("keeps the legacy base argument source-compatible without using it", () => {
     expect(buildShareUrl(code, "https://skydex.ca", "/Skydex/")).toBe(
-      `https://skydex.ca/greenhouse#designer?layout=${code}`,
+      `https://skydex.ca/greenhouse/share/${code}`,
     );
+  });
+
+  it("includes a matching saved name without changing the encoded layout", () => {
+    const url = buildShareUrl(code, "https://skydex.ca", "/", "  My Gloom Garden  ");
+
+    expect(url).toBe(
+      `https://skydex.ca/greenhouse/share/${code}?name=My+Gloom+Garden`,
+    );
+    expect(extractLayoutCode(url)).toBe(code);
   });
 
   it("always uses the canonical origin root whatever the legacy base looks like", () => {
     for (const base of ["/", "/SkyShards/", "/SkyShards", ""]) {
       const url = buildShareUrl(code, "https://wizard.example", base);
-      expect(url).toBe(`https://wizard.example/greenhouse#designer?layout=${code}`);
+      expect(url).toBe(`https://wizard.example/greenhouse/share/${code}`);
     }
   });
 
