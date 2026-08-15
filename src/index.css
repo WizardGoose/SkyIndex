@@ -1325,6 +1325,19 @@ main > * {
   border: 1px solid rgb(232 237 243 / 0.12);
 }
 
+/* The footer is outside the fixed curtain's page-content region, so it needs
+   its own single glass pass. This is shared shell chrome, not a Shards-only
+   card; fixing it here keeps every route visually consistent. */
+.sd-footer {
+  background-image: linear-gradient(
+    180deg,
+    rgb(var(--sd-glass-rgb, 19 22 29) / var(--sd-panel-top, 0.55)) 0%,
+    rgb(var(--sd-glass-rgb, 19 22 29) / var(--sd-panel-bottom, 0.45)) 100%
+  );
+  backdrop-filter: blur(var(--sd-frost-image-blur, 26px)) saturate(115%);
+  -webkit-backdrop-filter: blur(var(--sd-frost-image-blur, 26px)) saturate(115%);
+}
+
 /* Content that genuinely needs to lift OFF the curtain. Tint only: see the
    block comment for why it must never blur. */
 .sd-panel {
@@ -1375,6 +1388,7 @@ main > * {
     background-color: rgb(14 16 20 / 0.92);
   }
   .sd-panel,
+  .sd-footer,
   .sd-glass {
     background-image: none;
     background-color: rgb(19 22 29 / 0.9);
@@ -1395,6 +1409,7 @@ main > * {
   .sd-bar,
   .sd-curtain,
   .sd-panel,
+  .sd-footer,
   .sd-glass {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -1405,6 +1420,7 @@ main > * {
   }
   .sd-curtain,
   .sd-panel,
+  .sd-footer,
   .sd-glass {
     background-color: var(--color-slate-900);
   }

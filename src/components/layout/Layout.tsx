@@ -171,35 +171,47 @@ export const Layout: React.FC = () => {
       {/* Compact on purpose. The credits stay complete and 11px (the
           floor a person can actually read); what shrank is the box around
           them: half the vertical padding and a tighter leading. */}
-      <footer className={`mt-2 border-t border-white/10 px-3 py-2 sm:px-4 ${curtainless ? "bg-slate-950/70" : ""}`}>
+      <footer className="sd-footer border-t border-white/10 px-3 py-2 sm:px-4">
         <div className="mx-auto w-full max-w-screen-2xl">
-          <p className="max-w-[120ch] text-[11px] leading-snug text-slate-300">
-            Item, recipe and mutation data and all item images are loaded live from the{" "}
-            <a href="https://hypixelskyblock.minecraft.wiki" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              Hypixel SkyBlock Wiki
-            </a>
-            , licensed{" "}
-            <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              CC BY-NC-SA 3.0
-            </a>
-            . Prices from the public Hypixel API. Fusion calculator and greenhouse solver forked from{" "}
-            <a href="https://github.com/Campionnn/SkyShards" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              SkyShards
-            </a>{" "}
-            by Campion and xKapy. Product and interface inspiration from{" "}
-            <a href="https://cupcake.shiiyu.moe" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              SkyCrypt
-            </a>{" "}
-            and{" "}
-            <a href="https://github.com/meowdding/SkyOcean" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              SkyOcean
-            </a>
-            . Thanks to{" "}
-            <a href="https://mc-heads.net" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              MCHeads
-            </a>{" "}
-            for providing Minecraft avatars.
-          </p>
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <p className="max-w-[120ch] text-[11px] leading-snug text-slate-300">
+              Item, recipe and mutation data and all item images are loaded live from the{" "}
+              <a href="https://hypixelskyblock.minecraft.wiki" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                Hypixel SkyBlock Wiki
+              </a>
+              , licensed{" "}
+              <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                CC BY-NC-SA 3.0
+              </a>
+              . Prices from the public Hypixel API.
+            </p>
+            <details className="basis-full">
+              <summary className={`w-fit cursor-pointer list-none rounded-sm text-[11px] leading-snug text-slate-300 transition-colors hover:text-sky-300 ${FOCUS}`}>
+                <span>Skydex Project Credits</span>
+                <span aria-hidden="true"> · </span>
+                <span>Thank you to everyone who helped make Skydex possible.</span>
+              </summary>
+              <p className="mt-1 max-w-[120ch] text-[11px] leading-snug text-slate-300">
+                Fusion calculator and greenhouse solver forked from{" "}
+                <a href="https://github.com/Campionnn/SkyShards" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  SkyShards
+                </a>{" "}
+                by Campion and xKapy. Product and interface inspiration from{" "}
+                <a href="https://cupcake.shiiyu.moe" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  SkyCrypt
+                </a>{" "}
+                and{" "}
+                <a href="https://github.com/meowdding/SkyOcean" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  SkyOcean
+                </a>
+                . Thanks to{" "}
+                <a href="https://mc-heads.net" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  MCHeads
+                </a>{" "}
+                for providing Minecraft avatars.
+              </p>
+            </details>
+          </div>
           {/* Mojang's Commercial Use conditions require a non-affiliation
               disclaimer from anything that shares Minecraft material with a
               community, free or not, and this site renders Minecraft item
