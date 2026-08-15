@@ -44,7 +44,7 @@ describe("the Networth panel", () => {
 
   it("says what is missing and how to get it, rather than showing a zero", () => {
     expect(markup).toContain("Hypixel API key");
-    expect(markup).toContain("/settings#hypixel");
+    expect(markup).toContain('href="/?settings=1&amp;settingsSection=hypixel"');
   });
 
   it("never renders NaN", () => {

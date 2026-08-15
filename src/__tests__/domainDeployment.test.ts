@@ -7,7 +7,7 @@ const read = (path: string): string =>
 
 describe("skydex.ca deployment contract", () => {
   it("publishes the canonical custom-domain marker", () => {
-    expect(read("public/CNAME")).toBe("skydex.ca\n");
+    expect(read("public/CNAME").trim()).toBe("skydex.ca");
   });
 
   it("contains no repository-subpath deployment base", () => {

@@ -36,6 +36,9 @@ export * from "./layoutStorage";
 // Mutation layout generator
 export * from "./mutationLayoutGenerator";
 
+// Designer target readiness, including target-to-target dependency waves
+export * from "./mutationValidation";
+
 // Local storage manager
 export * from "./localStorageManager";
 

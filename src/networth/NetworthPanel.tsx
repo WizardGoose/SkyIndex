@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { ChevronRight, KeyRound, RefreshCw } from "lucide-react";
+import { SettingsLink } from "../components/layout/SettingsLink";
 import { BTN_QUIET, NUM, PANEL, SectionHead, Stat, Tag, TILE } from "../ui/kit";
 import { ago } from "../island/format";
 import { useNetworth } from "./useNetworth";
@@ -210,10 +210,10 @@ export const NetworthPanel: React.FC<NetworthPanelProps> = ({ chests, chestProve
             The key is stored in this browser and sent to api.hypixel.net and nowhere else. Prices come from a public
             file that needs no key at all.
           </p>
-          <Link to="/settings#hypixel" className={BTN_QUIET}>
+          <SettingsLink section="hypixel" className={BTN_QUIET}>
             <KeyRound className="h-3 w-3" />
             Set up your API key
-          </Link>
+          </SettingsLink>
         </div>
       </div>
     );

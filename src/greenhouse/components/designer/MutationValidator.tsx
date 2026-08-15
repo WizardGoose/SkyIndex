@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock3 } from "lucide-react";
 import { useDesigner, useGreenhouseData } from "../../context";
 import { CropImage } from "../shared";
 import type { MutationValidationInfo, DesignerPlacement } from "../../context/DesignerContext";
@@ -13,32 +13,20 @@ interface MutationValidatorProps {
 }
 
 export const MutationValidator: React.FC<MutationValidatorProps> = ({ className = "" }) => {
-  const { inputPlacements, targetPlacements, getPossibleMutations, hoveredTargetId, getTargetValidation } = useDesigner();
+  const { targetPlacements, hoveredTargetId, getTargetValidation } = useDesigner();
   const { mutations, getCropDef } = useGreenhouseData();
-  
-  // Get possible mutations based on current input placements
-  const possibleMutations = useMemo(() => {
-    if (inputPlacements.length === 0) return [];
-    return getPossibleMutations(mutations);
-  }, [inputPlacements, mutations, getPossibleMutations]);
-  
+
   // Check which target mutations are satisfied
   const targetValidation = useMemo(() => {
-    return targetPlacements.map(target => {
-      const possible = possibleMutations.find(p => p.mutation.id === target.cropId);
-      const isValid = possible?.positions.some(
-        pos => pos[0] === target.position[0] && pos[1] === target.position[1]
-      );
-      return {
-        target,
-        isValid: !!isValid,
-        mutation: possible?.mutation,
-      };
-    });
-  }, [targetPlacements, possibleMutations]);
+    return targetPlacements.map((target) => ({
+      target,
+      ...getTargetValidation(target.id, mutations),
+    }));
+  }, [targetPlacements, mutations, getTargetValidation]);
   
-  const validCount = targetValidation.filter(t => t.isValid).length;
-  const invalidCount = targetValidation.filter(t => !t.isValid).length;
+  const validCount = targetValidation.filter((target) => target.state === "valid").length;
+  const delayedCount = targetValidation.filter((target) => target.state === "delayed").length;
+  const invalidCount = targetValidation.filter((target) => target.state === "invalid").length;
   
   // Get the hovered target's validation info
   const hoveredValidation: HoveredValidation | null = useMemo(() => {
@@ -69,6 +57,8 @@ export const MutationValidator: React.FC<MutationValidatorProps> = ({ className 
       <div className={`p-3 rounded-md border ${
         invalidCount > 0 
           ? "bg-red-500/10 border-red-500/30" 
+          : delayedCount > 0
+            ? "bg-yellow-500/10 border-yellow-400/35"
           : "bg-green-500/10 border-green-500/30"
       }`}>
         <div className="flex items-center gap-2">
@@ -83,6 +73,15 @@ export const MutationValidator: React.FC<MutationValidatorProps> = ({ className 
             {validCount}/{targetPlacements.length} targets valid
           </span>
         </div>
+
+        {delayedCount > 0 && (
+          <div className="mt-1.5 flex items-center gap-2 text-yellow-300">
+            <Clock3 className="h-4 w-4" />
+            <span className="text-sm font-medium">
+              {delayedCount}/{targetPlacements.length} delayed
+            </span>
+          </div>
+        )}
         
         {invalidCount > 0 && !hoveredValidation && (
           <p className="text-xs text-red-400/80 mt-1 ml-7">
@@ -94,8 +93,10 @@ export const MutationValidator: React.FC<MutationValidatorProps> = ({ className 
       {/* Hovered target's requirements */}
       {hoveredValidation && (
         <div className={`p-3 rounded-md border ${
-          hoveredValidation.isValid 
+          hoveredValidation.state === "valid"
             ? "bg-green-500/10 border-green-500/30" 
+            : hoveredValidation.state === "delayed"
+              ? "bg-yellow-500/10 border-yellow-400/30"
             : "bg-slate-800/50 border-slate-600/30"
         }`}>
           <div className="flex items-center gap-2 mb-2">
@@ -106,11 +107,21 @@ export const MutationValidator: React.FC<MutationValidatorProps> = ({ className 
               showFallback={false}
             />
             <span className={`text-sm font-medium ${
-              hoveredValidation.isValid ? "text-green-300" : "text-slate-200"
+              hoveredValidation.state === "valid"
+                ? "text-green-300"
+                : hoveredValidation.state === "delayed"
+                  ? "text-yellow-300"
+                  : "text-slate-200"
             }`}>
               {hoveredValidation.target.cropName}
             </span>
           </div>
+
+          {hoveredValidation.state === "delayed" && (
+            <p className="mb-2 ml-7 text-xs text-yellow-300/90">
+              Delayed by {hoveredValidation.delay} mutation generation{hoveredValidation.delay === 1 ? "" : "s"}
+            </p>
+          )}
           
           {/* Missing requirements */}
           {hoveredValidation.missingRequirements.length > 0 && (

@@ -8,6 +8,7 @@ import {
   validateGridBounds,
   generatePlacementId,
   LocalStorageManager,
+  evaluateMutationTargets,
 } from "../utilities";
 import { loadLayouts, saveLayouts } from "../utilities/layoutStorage";
 import {
@@ -51,6 +52,9 @@ export interface RequirementInfo {
 
 // Mutation validation result
 export interface MutationValidationInfo {
+  state: "valid" | "delayed" | "invalid";
+  /** Zero is ready now; positive values are target-dependency generations. */
+  delay: number | null;
   isValid: boolean;
   missingRequirements: Array<RequirementInfo>;
   satisfiedRequirements: Array<RequirementInfo>;
@@ -156,7 +160,7 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const commitWorkspace = useCallback((
     update: (workspace: DesignerWorkspace) => DesignerWorkspace,
-    options: { captureMostRecent?: boolean; now?: number } = {},
+    options: { now?: number } = {},
   ): boolean => {
     const current = timelineRef.current;
     const nextWorkspace = update(current.present);
@@ -298,27 +302,18 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Clear functions
   const clearInputPlacements = useCallback(() => {
     if (timelineRef.current.present.inputPlacements.length === 0) return;
-    commitWorkspace(
-      (workspace) => ({ ...workspace, inputPlacements: [] }),
-      { captureMostRecent: true },
-    );
+    commitWorkspace((workspace) => ({ ...workspace, inputPlacements: [] }));
   }, [commitWorkspace]);
   
   const clearTargetPlacements = useCallback(() => {
     if (timelineRef.current.present.targetPlacements.length === 0) return;
-    commitWorkspace(
-      (workspace) => ({ ...workspace, targetPlacements: [] }),
-      { captureMostRecent: true },
-    );
+    commitWorkspace((workspace) => ({ ...workspace, targetPlacements: [] }));
   }, [commitWorkspace]);
   
   const clearAllPlacements = useCallback(() => {
     const current = timelineRef.current.present;
     if (current.inputPlacements.length === 0 && current.targetPlacements.length === 0) return;
-    commitWorkspace(
-      (workspace) => ({ ...workspace, inputPlacements: [], targetPlacements: [] }),
-      { captureMostRecent: true },
-    );
+    commitWorkspace((workspace) => ({ ...workspace, inputPlacements: [], targetPlacements: [] }));
   }, [commitWorkspace]);
   
   // Get placement at position
@@ -354,27 +349,21 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       isMutation: true,
     }));
     
-    commitWorkspace(
-      (workspace) => ({
-        ...workspace,
-        inputPlacements: newInputs,
-        targetPlacements: newTargets,
-      }),
-      { captureMostRecent: true },
-    );
+    commitWorkspace((workspace) => ({
+      ...workspace,
+      inputPlacements: newInputs,
+      targetPlacements: newTargets,
+    }));
   }, [commitWorkspace]);
 
   const restoreMostRecent = useCallback((): boolean => {
     const point = timelineRef.current.present.mostRecent;
     if (!point) return false;
-    return commitWorkspace(
-      (workspace) => ({
-        ...workspace,
-        inputPlacements: point.inputPlacements,
-        targetPlacements: point.targetPlacements,
-      }),
-      { captureMostRecent: true },
-    );
+    return commitWorkspace((workspace) => ({
+      ...workspace,
+      inputPlacements: point.inputPlacements,
+      targetPlacements: point.targetPlacements,
+    }));
   }, [commitWorkspace]);
 
   const saveNamedLayout = useCallback((layout: SavedLayout, overwriteId?: string): boolean => {
@@ -537,89 +526,13 @@ export const DesignerProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     targetId: string,
     mutations: MutationDefinition[]
   ): MutationValidationInfo => {
-    const target = targetPlacements.find(t => t.id === targetId);
-    if (!target) {
-      return { isValid: false, missingRequirements: [], satisfiedRequirements: [] };
-    }
-    
-    // Find the mutation definition
-    const mutationDef = mutations.find(m => m.id === target.cropId);
-    if (!mutationDef) {
-      return { isValid: false, missingRequirements: [], satisfiedRequirements: [] };
-    }
-    
-    // Build a map of what crops are at each cell
-    const cropAtCell = new Map<string, string>();
-    for (const placement of inputPlacements) {
-      const [row, col] = placement.position;
-      for (let dr = 0; dr < placement.size; dr++) {
-        for (let dc = 0; dc < placement.size; dc++) {
-          cropAtCell.set(`${row + dr},${col + dc}`, placement.cropId);
-        }
-      }
-    }
-    
-    // Count adjacent cells by crop type for this target position
-    const [row, col] = target.position;
-    const adjacentCropCounts = new Map<string, Set<string>>();
-    
-    for (let dr = 0; dr < target.size; dr++) {
-      for (let dc = 0; dc < target.size; dc++) {
-        const cellRow = row + dr;
-        const cellCol = col + dc;
-
-        const neighbors = [
-          [cellRow - 1, cellCol],
-          [cellRow + 1, cellCol],
-          [cellRow, cellCol - 1],
-          [cellRow, cellCol + 1],
-          [cellRow - 1, cellCol - 1],
-          [cellRow - 1, cellCol + 1],
-          [cellRow + 1, cellCol - 1],
-          [cellRow + 1, cellCol + 1],
-        ];
-        
-        for (const [nr, nc] of neighbors) {
-          if (nr >= row && nr < row + target.size &&
-              nc >= col && nc < col + target.size) continue;
-          
-          const crop = cropAtCell.get(`${nr},${nc}`);
-          if (crop) {
-            if (!adjacentCropCounts.has(crop)) {
-              adjacentCropCounts.set(crop, new Set());
-            }
-            adjacentCropCounts.get(crop)!.add(`${nr},${nc}`);
-          }
-        }
-      }
-    }
-    
-    // Check requirements and collect missing ones
-    const missingRequirements: Array<RequirementInfo> = [];
-    const satisfiedRequirements: Array<RequirementInfo> = [];
-    let isValid = true;
-    
-    for (const req of mutationDef.requirements) {
-      const cellsOfThisCrop = adjacentCropCounts.get(req.crop);
-      const have = cellsOfThisCrop ? cellsOfThisCrop.size : 0;
-      const requirementInfo: RequirementInfo = {
-        crop: req.crop,
-        needed: req.count,
-        have,
-        satisfied: false,
-      };
-      
-      if (have < req.count) {
-        isValid = false;
-        requirementInfo.satisfied = false;
-        missingRequirements.push(requirementInfo);
-      } else {
-        requirementInfo.satisfied = true;
-        satisfiedRequirements.push(requirementInfo);
-      }
-    }
-    
-    return { isValid, missingRequirements, satisfiedRequirements };
+    return evaluateMutationTargets(inputPlacements, targetPlacements, mutations).get(targetId) ?? {
+      state: "invalid",
+      delay: null,
+      isValid: false,
+      missingRequirements: [],
+      satisfiedRequirements: [],
+    };
   }, [inputPlacements, targetPlacements]);
   
   const value: DesignerContextType = {

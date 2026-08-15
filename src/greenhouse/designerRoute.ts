@@ -9,3 +9,13 @@ export function layoutCodeFromDesignerLocation(hash: string, search: string): st
   }
   return new URLSearchParams(search).get("layout");
 }
+
+/** Prevents React's development effect replay from importing the same shared layout twice. */
+export function nextDesignerLayoutCode(
+  lastProcessedCode: string | null,
+  hash: string,
+  search: string,
+): string | null {
+  const next = layoutCodeFromDesignerLocation(hash, search);
+  return next && next !== lastProcessedCode ? next : null;
+}

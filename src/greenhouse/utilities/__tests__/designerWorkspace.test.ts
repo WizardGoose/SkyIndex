@@ -48,21 +48,33 @@ const workspace = (id = "active"): DesignerWorkspace => ({
 });
 
 describe("designer timeline", () => {
-  it("keeps exactly one Most Recent layout when a load replaces the active design", () => {
+  it("tracks the loaded design itself as Most Recent", () => {
     const before = workspace("before-load");
     const after = { ...before, inputPlacements: [placement("loaded", "carrot")] };
 
-    const timeline = pushDesignerTimeline(createDesignerTimeline(before), after, {
-      captureMostRecent: true,
-      now: 1234,
-    });
+    const timeline = pushDesignerTimeline(createDesignerTimeline(before), after, { now: 1234 });
 
     expect(timeline.present.inputPlacements[0].id).toBe("loaded");
     expect(timeline.present.mostRecent).toMatchObject({
-      inputPlacements: [{ id: "before-load" }],
+      inputPlacements: [{ id: "loaded", cropId: "carrot" }],
       capturedAt: 1234,
     });
     expect(toMostRecentLayout(timeline.present.mostRecent)?.name).toBe("Most Recent");
+  });
+
+  it("updates Most Recent automatically after an ordinary placement edit", () => {
+    const before = createDesignerTimeline(workspace("before-edit"));
+    const after = pushDesignerTimeline(
+      before,
+      { ...before.present, inputPlacements: [placement("after-edit", "melon")] },
+      { now: 4321 },
+    );
+
+    expect(toMostRecentLayout(after.present.mostRecent)).toMatchObject({
+      savedAt: 4321,
+      inputs: [{ cropId: "melon", position: [0, 0] }],
+      targets: [],
+    });
   });
 
   it("undoes and redoes edits, clears and loads in their original order", () => {
@@ -74,7 +86,7 @@ describe("designer timeline", () => {
     const cleared = pushDesignerTimeline(edited, {
       ...edited.present,
       inputPlacements: [],
-    }, { captureMostRecent: true, now: 2000 });
+    }, { now: 2000 });
 
     const undoClear = undoDesignerTimeline(cleared);
     expect(undoClear.present.inputPlacements[0].id).toBe("edited");
@@ -149,6 +161,24 @@ describe("designer crash recovery", () => {
     expect(loadDesignerRecovery()).toMatchObject({
       inputPlacements: [{ id: "active" }],
       mostRecent: { inputPlacements: [{ id: "recent" }], capturedAt: 321 },
+    });
+  });
+
+  it("persists an automatically captured Most Recent layout across a refresh", () => {
+    const initial = createDesignerTimeline(workspace("before-refresh"));
+    const edited = pushDesignerTimeline(
+      initial,
+      { ...initial.present, inputPlacements: [placement("latest", "melon")] },
+      { now: 9876 },
+    );
+
+    expect(saveDesignerRecovery(edited.present)).toBe(true);
+    expect(loadDesignerRecovery()).toMatchObject({
+      inputPlacements: [{ id: "latest", cropId: "melon" }],
+      mostRecent: {
+        inputPlacements: [{ id: "latest", cropId: "melon" }],
+        capturedAt: 9876,
+      },
     });
   });
 

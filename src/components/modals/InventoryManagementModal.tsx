@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Link } from "react-router-dom";
 import { X, Search, Package, RefreshCw, User, ChevronDown, AlertTriangle, Check, Filter, RotateCcw, Eye, EyeOff, Trash2 } from "lucide-react";
-import { importPlayerProfile, KEY_SETTINGS_PATH } from "../../shards/profileImport";
+import { importPlayerProfile } from "../../shards/profileImport";
 import type { HypixelProfileResponse, ProfileData } from "../../shards/profileImport";
 import { useShards } from "../../hooks";
 import { loadHypixelProfileMeta, saveHypixelProfileMeta, clearHypixelProfileMeta, clearDisabledShards, filterShards, DEFAULT_FILTER_CONFIG, sortByShardKey, sortShardsByNameWithPrefixAwareness } from "../../utilities";
 import type { HypixelProfileMeta } from "../../utilities";
 import { SHARD_DESCRIPTIONS, MAX_QUANTITIES, fusedCountToTierLevel } from "../../constants";
 import { FOCUS } from "../../ui/kit";
+import { SettingsLink } from "../layout/SettingsLink";
 
 interface InventoryManagementModalProps {
   open: boolean;
@@ -532,13 +532,13 @@ export const InventoryManagementModal: React.FC<InventoryManagementModalProps> =
                   {errorNeedsKey && (
                     <>
                       {" "}
-                      <Link
-                        to={KEY_SETTINGS_PATH}
+                      <SettingsLink
+                        section="hypixel"
                         onClick={onClose}
                         className="underline font-medium text-red-200 hover:text-white transition-colors"
                       >
                         Open Site Settings
-                      </Link>
+                      </SettingsLink>
                     </>
                   )}
                 </span>

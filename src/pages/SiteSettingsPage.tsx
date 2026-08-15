@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Cog, RefreshCw, Wifi, WifiOff } from "lucide-react";
 import greenhouseData from "../../public/greenhouse/data.json";
 import { HypixelPanel } from "../island/HypixelPanel";
@@ -28,6 +28,7 @@ import {
 } from "../ui/kit";
 import { replayTour } from "../components/layout/WelcomeTour";
 import { clearBackdrop, readBackdropFlag, saveBackdrop, type BackdropFlag } from "../ui/backdrop";
+import { SETTINGS_SECTION_PARAM } from "../components/layout/settingsRoute";
 
 /**
  * One place for everything that is a setting.
@@ -179,10 +180,17 @@ const MODE_OPTIONS: ReadonlyArray<{ value: GameMode; label: string; title: strin
 ];
 
 export const SiteSettingsPage: React.FC = () => {
+  const [settingsParams] = useSearchParams();
   const { mode, source, setMode, clearOverride } = useProfile();
   const { access } = useApiAccess();
   const { status, sources, modVersion, apiProfiles, snapshot } = useIsland();
   const wiki = useWikiCache();
+
+  const settingsSection = settingsParams.get(SETTINGS_SECTION_PARAM);
+  useEffect(() => {
+    if (!settingsSection) return;
+    document.getElementById(settingsSection)?.scrollIntoView({ block: "nearest" });
+  }, [settingsSection]);
 
   /*
    * The planner's own hook, used the way the Dashboard already uses it, rather

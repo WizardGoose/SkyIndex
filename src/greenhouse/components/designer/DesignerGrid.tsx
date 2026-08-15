@@ -76,7 +76,11 @@ interface DesignerPlacementCellProps {
   isInput: boolean;
   groundType: string;
   showImage?: boolean;
-  validationInfo?: { isValid: boolean; missingRequirements: Array<{ crop: string; needed: number; have: number }> };
+  validationInfo?: {
+    state: "valid" | "delayed" | "invalid";
+    isValid: boolean;
+    missingRequirements: Array<{ crop: string; needed: number; have: number }>;
+  };
   onMouseDown: (e: React.MouseEvent) => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
@@ -106,14 +110,18 @@ const DesignerPlacementCell: React.FC<DesignerPlacementCellProps> = ({
   const { top, left } = getCellPixelPosition(placement.position[0], placement.position[1], cellSize, gap);
   
   // Determine if this is an invalid target
-  const isInvalidTarget = !isInput && validationInfo && !validationInfo.isValid;
+  const isInvalidTarget = !isInput && validationInfo?.state === "invalid";
+  const isDelayedTarget = !isInput && validationInfo?.state === "delayed";
   
-  // Glow colors: no glow for inputs, blue glow for valid targets (only when showing image), red border for invalid targets
+  // Inputs stay neutral; targets are blue when ready, yellow when another
+  // target must grow first, and red when the layout cannot satisfy them.
   const baseGlow = isInput
     ? undefined
     : isInvalidTarget
       ? undefined // No glow for invalid, we use border instead
-      : showImage ? "0 0 8px rgba(0, 200, 255, 1), inset 0 0 8px rgba(0, 200, 255, 1)" : undefined;
+      : isDelayedTarget
+        ? showImage ? "0 0 10px color-mix(in srgb, var(--color-yellow-400) 90%, transparent), inset 0 0 8px color-mix(in srgb, var(--color-yellow-400) 55%, transparent)" : undefined
+        : showImage ? "0 0 8px rgba(0, 200, 255, 1), inset 0 0 8px rgba(0, 200, 255, 1)" : undefined;
   const hoverGlow = "0 0 8px rgba(239, 68, 68, 0.8), inset 0 0 8px rgba(239, 68, 68, 0.4)";
   
   const style: React.CSSProperties = {
@@ -134,7 +142,11 @@ const DesignerPlacementCell: React.FC<DesignerPlacementCellProps> = ({
     boxShadow: isHovered ? hoverGlow : baseGlow,
     // The site's red token, not stock #ef4444: index.css retints the ramp and
     // an off-ramp red reads as a foreign element on this ground.
-    border: isInvalidTarget ? "2px solid var(--color-red-500)" : undefined,
+    border: isInvalidTarget
+      ? "2px solid var(--color-red-500)"
+      : isDelayedTarget
+        ? "2px solid var(--color-yellow-400)"
+        : undefined,
     zIndex: isDragging ? 20 : (isHovered && isInvalidTarget ? 30 : 10), // Higher z-index when showing tooltip
     cursor: isDragging ? "grabbing" : (isPlacementMode ? "crosshair" : "grab"),
     opacity: isDragging ? 0.8 : 1,
@@ -165,7 +177,7 @@ const DesignerPlacementCell: React.FC<DesignerPlacementCellProps> = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onContextMenu={(e) => e.preventDefault()}
-      title={`${placement.cropName} - Drag to move, right-click to remove`}
+      title={`${placement.cropName}${isDelayedTarget ? " - delayed until adjacent target mutations grow" : ""} - Drag to move, right-click to remove`}
     >
       {showImage && (
         <CropImage

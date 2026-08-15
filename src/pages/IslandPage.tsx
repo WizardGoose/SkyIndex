@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { SettingsLink } from "../components/layout/SettingsLink";
 import { Boxes, ChevronDown, ChevronRight, HelpCircle, Info, KeyRound, Search, Sparkles, Trash2 } from "lucide-react";
 import { ItemIcon } from "../ui/ItemIcon";
 import { itemResourceVersion, requestItemResource, resourceTierFor, subscribeItemResource } from "../items/itemResource";
@@ -1985,10 +1986,10 @@ const ApiKeyLink: React.FC = () => {
           the mod. It cannot add chests, inventory or ender chest. Hypixel does not publish those at any privacy setting,
           which is why the mod exists.
         </p>
-        <Link to="/settings#hypixel" className={BTN_QUIET}>
+        <SettingsLink section="hypixel" className={BTN_QUIET}>
           <KeyRound className="w-3 h-3" />
           Set up your API key
-        </Link>
+        </SettingsLink>
       </div>
     </div>
   );

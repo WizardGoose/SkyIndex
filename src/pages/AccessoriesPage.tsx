@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { CircleCheck, Gem, Hourglass, KeyRound, PackageSearch, Search, SearchX } from "lucide-react";
+import { SettingsLink } from "../components/layout/SettingsLink";
 import {
   useAccessories,
   ATTAINABILITY_HINT,
@@ -317,10 +317,10 @@ export const AccessoriesView: React.FC = () => {
             hint="That is not the same as owning none, so nothing below is marked missing or owned. Everything else on this page works without a profile: the full catalogue is here, with where each accessory comes from."
             icon={KeyRound}
             action={
-              <Link to="/settings#hypixel" className={BTN_QUIET}>
+              <SettingsLink section="hypixel" className={BTN_QUIET}>
                 <KeyRound className="h-3 w-3" aria-hidden />
                 Where profiles and keys are set up
-              </Link>
+              </SettingsLink>
             }
           />
         </div>

@@ -21,7 +21,6 @@ export interface DesignerTimeline {
 }
 
 interface PushOptions {
-  captureMostRecent?: boolean;
   now?: number;
 }
 
@@ -60,7 +59,13 @@ const pointFrom = (workspace: DesignerWorkspace, capturedAt: number): DesignerRe
 };
 
 export const createDesignerTimeline = (present: DesignerWorkspace): DesignerTimeline => ({
-  present,
+  present: {
+    ...present,
+    // Most Recent is the latest active design, not the design that happened
+    // to be replaced by a load or clear. Normalizing here also upgrades an
+    // older recovery record whose slot used the previous semantics.
+    mostRecent: pointFrom(present, present.mostRecent?.capturedAt ?? Date.now()),
+  },
   past: [],
   future: [],
 });
@@ -70,10 +75,13 @@ export const pushDesignerTimeline = (
   next: DesignerWorkspace,
   options: PushOptions = {},
 ): DesignerTimeline => {
-  const present = options.captureMostRecent
+  const placementsChanged =
+    next.inputPlacements !== timeline.present.inputPlacements ||
+    next.targetPlacements !== timeline.present.targetPlacements;
+  const present = placementsChanged
     ? {
         ...next,
-        mostRecent: pointFrom(timeline.present, options.now ?? Date.now()) ?? next.mostRecent,
+        mostRecent: pointFrom(next, options.now ?? Date.now()),
       }
     : next;
 

@@ -13,7 +13,7 @@ import { CropImage } from "../components/shared";
 import { useToast } from "../components/ui/toastContext";
 import { useDesigner, useGreenhouseData } from "../context";
 import { decodeDesign, getRarityTextColor } from "../utilities";
-import { layoutCodeFromDesignerLocation } from "../designerRoute";
+import { nextDesignerLayoutCode } from "../designerRoute";
 import type { DesignerGridHandle } from "../components";
 
 export const DesignerPage: React.FC = () => {
@@ -25,7 +25,7 @@ export const DesignerPage: React.FC = () => {
   const { toast } = useToast();
   const { inputPlacements, targetPlacements, loadFromSolverResult } = useDesigner();
   const { getCropDef, getMutationDef, isLoading: isDataLoading } = useGreenhouseData();
-  const [hasLoadedFromUrl, setHasLoadedFromUrl] = useState(false);
+  const lastLoadedLayoutCodeRef = useRef<string | null>(null);
   
   // Responsive grid sizing
   const [gridSize, setGridSize] = useState(() => {
@@ -139,17 +139,17 @@ export const DesignerPage: React.FC = () => {
 
   // Auto-load layout from URL parameter
   useEffect(() => {
-    // Wait for greenhouse data to load and only run once
-    if (isDataLoading || hasLoadedFromUrl) return;
+    if (isDataLoading) return;
     
     try {
-      const layoutCode = layoutCodeFromDesignerLocation(location.hash, location.search);
-      if (!layoutCode) {
-        setHasLoadedFromUrl(true);
-        return;
-      }
+      const layoutCode = nextDesignerLayoutCode(
+        lastLoadedLayoutCodeRef.current,
+        location.hash,
+        location.search,
+      );
+      if (!layoutCode) return;
 
-      setHasLoadedFromUrl(true);
+      lastLoadedLayoutCodeRef.current = layoutCode;
       const { inputs, targets } = loadLayoutFromCode(layoutCode);
       toast({
         title: "Layout loaded",
@@ -165,7 +165,7 @@ export const DesignerPage: React.FC = () => {
         duration: 5000,
       });
     }
-  }, [location.hash, location.search, isDataLoading, hasLoadedFromUrl, loadLayoutFromCode, toast]);
+  }, [location.hash, location.search, isDataLoading, loadLayoutFromCode, toast]);
 
   return (
     /* The signature split: tools in the rail under the logo, the plot canvas
