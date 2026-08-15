@@ -25,4 +25,26 @@ describe("designer modal placement", () => {
 
     expect(preview).not.toContain("createPortal(");
   });
+
+  it("portals greenhouse notifications above the frosted modal layer at the top-right", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "src/greenhouse/components/ui/Toast.tsx"),
+      "utf8",
+    );
+    const styles = readFileSync(resolve(process.cwd(), "src/index.css"), "utf8");
+
+    expect(source).toMatch(/createPortal\([\s\S]*document\.body[\s\S]*\)/);
+    expect(source).toContain("z-[100]");
+    expect(source).toContain("top-3");
+    expect(source).toContain("right-3");
+    expect(source).toContain("sd-toast-stack");
+    expect(styles).toMatch(/\.sd-toast-stack\s*\{[\s\S]*?width:\s*min\(92vw, 380px\)/);
+    expect(styles).toMatch(
+      /@media \(min-width:\s*1840px\)[\s\S]*?\.sd-toast-stack\s*\{[\s\S]*?calc\(\(100vw - 72rem\) \/ 2 - 1\.5rem\)/,
+    );
+    expect(source).not.toContain("bottom-3");
+    expect(source).not.toContain("left-3");
+    expect(source).not.toContain("left-1/2");
+    expect(source).not.toContain("-translate-x-1/2");
+  });
 });

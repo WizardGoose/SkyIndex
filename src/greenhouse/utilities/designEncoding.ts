@@ -306,6 +306,51 @@ export function encodeDesign(
 }
 
 /**
+ * The name a player sees when a layout is shared.
+ *
+ * Control characters cannot be useful in a title, repeated whitespace makes
+ * visually identical names encode differently, and the social preview only
+ * has room for a short label. Slice the Array rather than the UTF-16 string so
+ * an emoji is one character and cannot be cut in half.
+ */
+export function normalizeSharedLayoutName(value: string): string {
+  const normalized = Array.from(String(value ?? ""), (character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return codePoint < 32 || codePoint === 127 ? " " : character;
+  })
+    .join("")
+    .replace(/\s+/g, " ")
+    .trim();
+  return Array.from(normalized).slice(0, 80).join("");
+}
+
+/**
+ * A v2 share freezes the display name beside the existing v1 grid text before
+ * using the same raw-deflate/base64url transport. `encodeURIComponent` keeps a
+ * name containing `|` from becoming part of the envelope structure.
+ */
+export function encodeSharedDesign(
+  inputPlacements: Array<{ cropId: string; position: [number, number] }>,
+  targetPlacements: Array<{ cropId: string; position: [number, number] }>,
+  displayName: string,
+): string {
+  const name = normalizeSharedLayoutName(displayName);
+  if (!name) throw new Error("Enter a layout name before sharing.");
+
+  let encodedName: string;
+  try {
+    encodedName = encodeURIComponent(name);
+  } catch {
+    throw new Error("That layout name contains text that cannot be shared.");
+  }
+
+  const inputs = groupPlacements(inputPlacements);
+  const targets = groupPlacements(targetPlacements);
+  const gridString = encodeGridString(inputs, targets);
+  return toUrlSafeBase64(deflateRaw(`v2|${encodedName}|${gridString}`, { level: 9 }));
+}
+
+/**
  * Every whitespace character, not just the ends.
  *
  * Codes get pasted out of chat clients that hard-wrap long strings, and neither
@@ -337,22 +382,11 @@ export function buildShareUrl(
   code: string,
   origin: string,
   base: string,
-  savedName?: string,
+  _savedName?: string,
 ): string {
   void base;
-  const url = new URL(`/greenhouse/share/${code}`, origin);
-  const name = savedName === undefined
-    ? undefined
-    : Array.from(savedName, (character) => {
-        const codePoint = character.codePointAt(0) ?? 0;
-        return codePoint < 32 || codePoint === 127 ? " " : character;
-      })
-        .join("")
-        .replace(/\s+/g, " ")
-        .trim()
-        .slice(0, 80);
-  if (name) url.searchParams.set("name", name);
-  return url.toString();
+  void _savedName; // Kept source-compatible while callers move to the v2 payload.
+  return new URL(`/greenhouse/share/${code}`, origin).toString();
 }
 
 /**
@@ -402,6 +436,7 @@ export function extractLayoutCode(input: string | null | undefined): string {
 export function decodeDesign(encoded: string | null | undefined): {
   inputs: Array<{ cropId: string; position: [number, number] }>;
   targets: Array<{ cropId: string; position: [number, number] }>;
+  name?: string;
 } {
   /*
    * Each failure gets its own sentence. This message is rendered in a toast to
@@ -472,10 +507,22 @@ export function decodeDesign(encoded: string | null | undefined): {
     inflated.set(chunk, offset);
     offset += chunk.byteLength;
   }
-  const gridString = new TextDecoder().decode(inflated);
+  const inflatedText = new TextDecoder().decode(inflated);
 
   let grouped: { inputs: GroupedPlacements; targets: GroupedPlacements };
+  let name: string | undefined;
   try {
+    let gridString = inflatedText;
+    if (inflatedText.startsWith("v2|")) {
+      const parts = inflatedText.split("|");
+      if (parts.length !== 5) throw new Error("Invalid v2 envelope");
+      const decodedName = decodeURIComponent(parts[1]);
+      if (!decodedName || normalizeSharedLayoutName(decodedName) !== decodedName) {
+        throw new Error("Invalid v2 name");
+      }
+      name = decodedName;
+      gridString = parts.slice(2).join("|");
+    }
     grouped = decodeGridString(gridString);
   } catch (err) {
     // "Your site is out of date" is a genuinely different problem from "your
@@ -488,6 +535,7 @@ export function decodeDesign(encoded: string | null | undefined): {
   return {
     inputs: ungroupPlacements(grouped.inputs),
     targets: ungroupPlacements(grouped.targets),
+    ...(name ? { name } : {}),
   };
 }
 

@@ -4,6 +4,7 @@ export interface SharedPlacement {
 }
 
 export interface SharedLayout {
+  name?: string;
   inputs: SharedPlacement[];
   targets: SharedPlacement[];
 }
@@ -12,6 +13,7 @@ export interface GreenhouseDefinition {
   name: string;
   size: number;
   ground: string;
+  requirements?: Array<{ crop: string; count: number }>;
 }
 
 export interface GreenhouseDataset {
@@ -21,6 +23,7 @@ export interface GreenhouseDataset {
 
 export function layoutShareRoute(pathname: string): {
   code: string;
+  oembed?: boolean;
   preview: boolean;
 } | null;
 
@@ -37,6 +40,21 @@ export function buildLayoutPreviewDocument(
   dataset?: GreenhouseDataset,
   requestedName?: string,
 ): Promise<string>;
+export function buildLayoutOembed(
+  code: string,
+  origin: string,
+  dataset?: GreenhouseDataset,
+  requestedName?: string,
+): Promise<{
+  version: "1.0";
+  type: "photo";
+  title: string;
+  provider_name: "Skydex";
+  provider_url: string;
+  url: string;
+  width: 1200;
+  height: 630;
+}>;
 export function handleLayoutEmbedRequest(
   request: Request,
   env: unknown,

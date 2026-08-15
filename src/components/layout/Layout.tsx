@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Navigation } from "./Navigation";
 import { SettingsOverlay } from "./SettingsOverlay";
 import { WelcomeTour } from "./WelcomeTour";
+import { AttributionNotice } from "./AttributionNotice";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { FOCUS } from "../../ui/kit";
 import { BACKDROP_UPDATED_EVENT, loadBackdropUrl } from "../../ui/backdrop";
@@ -161,62 +162,54 @@ export const Layout: React.FC = () => {
           )}
         </main>
 
-      {/* The attribution used to hang `max-w-screen-2xl` directly on the <p>,
-          which made the shell width double as the line length: one unbroken
-          1536px line of 11px text, and worse once the shell steps up on a large
-          monitor. Split in two. The outer div keeps the paragraph aligned with
-          the left edge of the page content above it, and the inner cap is a
-          reading measure. Generous at 100ch, because this is dense credit text
-          rather than body copy, but bounded. */}
-      {/* Compact on purpose. The credits stay complete and 11px (the
-          floor a person can actually read); what shrank is the box around
-          them: half the vertical padding and a tighter leading. */}
-      <footer className={`mt-2 border-t border-white/10 px-3 py-2 sm:px-4 ${curtainless ? "bg-slate-950/70" : ""}`}>
+      <footer className="sd-footer border-t border-white/10 px-3 py-2 sm:px-4">
         <div className="mx-auto w-full max-w-screen-2xl">
-          <p className="max-w-[120ch] text-[11px] leading-snug text-slate-300">
-            Item, recipe and mutation data and all item images are loaded live from the{" "}
-            <a href="https://hypixelskyblock.minecraft.wiki" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              Hypixel SkyBlock Wiki
-            </a>
-            , licensed{" "}
-            <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              CC BY-NC-SA 3.0
-            </a>
-            . Prices from the public Hypixel API. Fusion calculator and greenhouse solver forked from{" "}
-            <a href="https://github.com/Campionnn/SkyShards" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              SkyShards
-            </a>{" "}
-            by Campion and xKapy. Product and interface inspiration from{" "}
-            <a href="https://cupcake.shiiyu.moe" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              SkyCrypt
-            </a>{" "}
-            and{" "}
-            <a href="https://github.com/meowdding/SkyOcean" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              SkyOcean
-            </a>
-            . Thanks to{" "}
-            <a href="https://mc-heads.net" target="_blank" rel="noopener noreferrer" className={attributionLink}>
-              MCHeads
-            </a>{" "}
-            for providing Minecraft avatars.
-          </p>
-          {/* Mojang's Commercial Use conditions require a non-affiliation
-              disclaimer from anything that shares Minecraft material with a
-              community, free or not, and this site renders Minecraft item
-              icons throughout. The wording is Mojang's own prescribed line and
-              is not paraphrased. Quieter than the attribution above it because
-              it is a legal notice rather than a credit somebody is meant to
-              follow, but it stays above the contrast floor. NOTICE.md records
-              the obligation this satisfies. */}
-          <p className="mt-1.5 text-[10px] leading-snug text-slate-500">
-            NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT
-          </p>
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+            <p className="max-w-[120ch] text-[11px] leading-snug text-slate-300">
+              NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT
+            </p>
+            <details className="basis-full">
+              <summary className={`w-fit cursor-pointer rounded-sm text-[10px] leading-snug text-slate-500 transition-colors marker:text-slate-500 hover:text-sky-300 ${FOCUS}`}>
+                <span>Skydex Project Credits</span>
+                <span aria-hidden="true"> · </span>
+                <span>Thank you to everyone who helped make Skydex possible.</span>
+              </summary>
+              <p className="mt-1 max-w-[120ch] text-[11px] leading-snug text-slate-300">
+                Item, recipe and mutation data and all item images are loaded live from the{" "}
+                <a href="https://hypixelskyblock.minecraft.wiki" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  Hypixel SkyBlock Wiki
+                </a>
+                , licensed{" "}
+                <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  CC BY-NC-SA 3.0
+                </a>
+                . Prices from the public Hypixel API. Fusion calculator and greenhouse solver forked from{" "}
+                <a href="https://github.com/Campionnn/SkyShards" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  SkyShards
+                </a>{" "}
+                by Campion and xKapy. Product and interface inspiration from{" "}
+                <a href="https://cupcake.shiiyu.moe" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  SkyCrypt
+                </a>{" "}
+                and{" "}
+                <a href="https://github.com/meowdding/SkyOcean" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  SkyOcean
+                </a>
+                . Thanks to{" "}
+                <a href="https://mc-heads.net" target="_blank" rel="noopener noreferrer" className={attributionLink}>
+                  MCHeads
+                </a>{" "}
+                for providing Minecraft avatars.
+              </p>
+            </details>
+          </div>
         </div>
       </footer>
       </div>
 
       <SettingsOverlay />
       <WelcomeTour />
+      <AttributionNotice />
       {/* Dev builds only, and only when src/dev-local/ is present on this
           machine: the markup pin for pointing at elements. Statically
           eliminated from production. */}

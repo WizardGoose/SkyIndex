@@ -6,6 +6,8 @@
  * no KV, D1, R2, cache write, analytics engine, or application logging binding.
  */
 
+import { evaluateMutationTargets } from "../src/greenhouse/utilities/mutationValidation.ts";
+
 const CROP_IDS = [
   "wheat", "potato", "carrot", "pumpkin", "melon", "cocoa_beans",
   "sugar_cane", "cactus", "nether_wart", "red_mushroom",
@@ -47,14 +49,14 @@ const escapeHtml = (value) => String(value)
   .replaceAll(">", "&gt;");
 
 const normalizeSharedName = (value) => {
-  const name = Array.from(String(value ?? ""), (character) => {
+  const normalized = Array.from(String(value ?? ""), (character) => {
     const codePoint = character.codePointAt(0) ?? 0;
     return codePoint < 32 || codePoint === 127 ? " " : character;
   })
     .join("")
     .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 80);
+    .trim();
+  const name = Array.from(normalized).slice(0, 80).join("");
   return name || null;
 };
 
@@ -108,17 +110,35 @@ const doubleIndex = (characters) => {
 };
 
 export const layoutShareRoute = (pathname) => {
-  const match = pathname.match(/^\/greenhouse\/share\/([A-Za-z0-9_-]{1,12288})(\/preview\.png)?$/);
+  const match = pathname.match(/^\/greenhouse\/share\/([A-Za-z0-9_-]{1,12288})(\/(?:preview\.png|oembed\.json))?$/);
   if (!match) return null;
-  return { code: match[1], preview: Boolean(match[2]) };
+  if (match[2] === "/oembed.json") {
+    return { code: match[1], oembed: true, preview: false };
+  }
+  return { code: match[1], preview: match[2] === "/preview.png" };
 };
 
 export const decodeSharedLayout = async (code) => {
   if (!/^[A-Za-z0-9_-]+$/.test(code) || code.length > MAX_ENCODED_LENGTH) {
     throw new Error("Invalid layout code");
   }
-  const gridString = await inflateBounded(decodeBase64Url(code));
-  const parts = gridString.split("|");
+  const inflatedText = await inflateBounded(decodeBase64Url(code));
+  let parts = inflatedText.split("|");
+  let name;
+  if (parts[0] === "v2") {
+    if (parts.length !== 5) throw new Error("Invalid layout format");
+    let decodedName;
+    try {
+      decodedName = decodeURIComponent(parts[1]);
+    } catch {
+      throw new Error("Invalid layout name");
+    }
+    if (!decodedName || normalizeSharedName(decodedName) !== decodedName) {
+      throw new Error("Invalid layout name");
+    }
+    name = decodedName;
+    parts = parts.slice(2);
+  }
   if (parts.length !== 3) throw new Error("Invalid layout format");
   const [inputIndexText, targetIndexText, grid] = parts;
   const inputsByLetter = inputIndexText
@@ -152,7 +172,7 @@ export const decodeSharedLayout = async (code) => {
       throw new Error("Invalid layout cell");
     }
   }
-  return { inputs, targets };
+  return { inputs, targets, ...(name ? { name } : {}) };
 };
 
 const definitionFor = (dataset, id) => dataset.mutations?.[id] ?? dataset.crops?.[id];
@@ -206,7 +226,33 @@ const summarizeLayout = (layout, dataset) => {
   return { name: layoutNickname(layout), makes, plants, grounds };
 };
 
-const itemText = (items) => items.map((item) => `${item.name} ×${item.count}`).join(", ");
+const summarizeMutationStatus = (layout, dataset) => {
+  const toPlacement = (placement, kind, index) => {
+    const definition = definitionFor(dataset, placement.cropId);
+    return {
+      id: `${kind}-${index}-${placement.cropId}-${placement.position.join("-")}`,
+      cropId: placement.cropId,
+      cropName: definition?.name ?? title(placement.cropId),
+      size: Math.max(1, Number(definition?.size) || 1),
+      position: placement.position,
+      isMutation: kind === "target",
+    };
+  };
+  const inputs = layout.inputs.map((placement, index) => toPlacement(placement, "input", index));
+  const targets = layout.targets.map((placement, index) => toPlacement(placement, "target", index));
+  const mutations = Object.entries(dataset.mutations ?? {}).map(([id, definition]) => ({
+    ...definition,
+    id,
+    requirements: Array.isArray(definition.requirements) ? definition.requirements : [],
+  }));
+  const evaluated = evaluateMutationTargets(inputs, targets, mutations);
+  const counts = { valid: 0, delayed: 0, invalid: 0 };
+  for (const target of targets) {
+    const state = evaluated.get(target.id)?.state ?? "invalid";
+    counts[state] += 1;
+  }
+  return counts;
+};
 
 const itemChips = (items, origin, kind) => items.map((item) => `
   <span class="chip">
@@ -230,29 +276,26 @@ export const buildLayoutShareDocument = async (code, origin, suppliedDataset, re
     resolveDataset(origin, suppliedDataset),
   ]);
   const summary = summarizeLayout(layout, dataset);
-  const displayName = normalizeSharedName(requestedName) ?? summary.name;
+  const legacyName = layout.name ? null : normalizeSharedName(requestedName);
+  const displayName = layout.name ?? legacyName ?? summary.name;
   const shareUrl = new URL(`${origin}/greenhouse/share/${code}`);
-  if (normalizeSharedName(requestedName)) shareUrl.searchParams.set("name", displayName);
+  if (legacyName) shareUrl.searchParams.set("name", displayName);
   const imageUrl = new URL(`${origin}/greenhouse/share/${code}/preview.png`);
-  if (normalizeSharedName(requestedName)) imageUrl.searchParams.set("name", displayName);
+  if (legacyName) imageUrl.searchParams.set("name", displayName);
+  const oembedUrl = new URL(`${origin}/greenhouse/share/${code}/oembed.json`);
+  if (legacyName) oembedUrl.searchParams.set("name", displayName);
   const destination = `/greenhouse?layout=${encodeURIComponent(code)}#designer`;
   const cardTitle = `Oooo a ${displayName}! - Open in Skydex!`;
-  const description = [
-    `Makes ${itemText(summary.makes) || "a fresh plot"}`,
-    summary.plants.length ? `Plant ${itemText(summary.plants)}` : null,
-    summary.grounds.length ? `Ground ${itemText(summary.grounds)}` : null,
-  ].filter(Boolean).join(" • ");
 
   return `<!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>${escapeHtml(cardTitle)}</title>
-  <meta name="description" content="${escapeHtml(description)}" />
+  <link rel="alternate" type="application/json+oembed" href="${oembedUrl.toString()}" title="Skydex layout" />
   <meta property="og:site_name" content="Skydex" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escapeHtml(cardTitle)}" />
-  <meta property="og:description" content="${escapeHtml(description)}" />
   <meta property="og:url" content="${shareUrl.toString()}" />
   <meta property="og:image" content="${imageUrl.toString()}" />
   <meta property="og:image:type" content="image/png" />
@@ -261,7 +304,6 @@ export const buildLayoutShareDocument = async (code, origin, suppliedDataset, re
   <meta property="og:image:alt" content="${escapeHtml(`${displayName} mutation layout`)}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(cardTitle)}" />
-  <meta name="twitter:description" content="${escapeHtml(description)}" />
   <meta name="twitter:image" content="${imageUrl.toString()}" />
   <meta http-equiv="refresh" content="0;url=${escapeHtml(destination)}" />
 </head><body style="background:#070b12;color:#e8edf7;font-family:system-ui,sans-serif">
@@ -270,13 +312,38 @@ export const buildLayoutShareDocument = async (code, origin, suppliedDataset, re
 </body></html>`;
 };
 
+export const buildLayoutOembed = async (code, origin, suppliedDataset, requestedName) => {
+  const [layout, dataset] = await Promise.all([
+    decodeSharedLayout(code),
+    resolveDataset(origin, suppliedDataset),
+  ]);
+  const summary = summarizeLayout(layout, dataset);
+  const legacyName = layout.name ? null : normalizeSharedName(requestedName);
+  const displayName = layout.name ?? legacyName ?? summary.name;
+  const imageUrl = new URL(`${origin}/greenhouse/share/${code}/preview.png`);
+  if (legacyName) imageUrl.searchParams.set("name", displayName);
+
+  return {
+    version: "1.0",
+    type: "photo",
+    title: `Oooo a ${displayName}! - Open in Skydex!`,
+    provider_name: "Skydex",
+    provider_url: origin,
+    url: imageUrl.toString(),
+    width: 1200,
+    height: 630,
+  };
+};
+
 export const buildLayoutPreviewDocument = async (code, origin, suppliedDataset, requestedName) => {
   const [layout, dataset] = await Promise.all([
     decodeSharedLayout(code),
     resolveDataset(origin, suppliedDataset),
   ]);
   const summary = summarizeLayout(layout, dataset);
-  const displayName = normalizeSharedName(requestedName) ?? summary.name;
+  const status = summarizeMutationStatus(layout, dataset);
+  const legacyName = layout.name ? null : normalizeSharedName(requestedName);
+  const displayName = layout.name ?? legacyName ?? summary.name;
   const cells = Array.from({ length: 100 }, () => '<div class="cell"></div>').join("");
   const placements = [...layout.inputs.map((item) => ({ ...item, target: false })), ...layout.targets.map((item) => ({ ...item, target: true }))]
     .map((placement) => {
@@ -287,8 +354,9 @@ export const buildLayoutPreviewDocument = async (code, origin, suppliedDataset, 
     }).join("");
 
   return `<!doctype html><html><head><meta charset="utf-8" /><style>
-    *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#070b12;color:#f4f7fb;font-family:Arial,sans-serif}body{border-top:6px solid #20b8e6}.page{height:624px;padding:34px 42px 38px;display:grid;grid-template-rows:46px 1fr;gap:26px}.brand{display:flex;align-items:center;gap:24px}.brand strong{font-size:38px;letter-spacing:2px}.brand strong span{color:#22b7e6}.brand small{font-size:14px;font-weight:700;letter-spacing:5px;color:#b6c2d8}.content{display:grid;grid-template-columns:500px 1fr;gap:54px;min-height:0}.grid{position:relative;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;width:500px;height:500px;padding:8px;border:2px solid #263246;border-radius:10px;background:#0b111d}.cell{border:1px solid #344156;border-radius:4px;background:#151d2a}.placement{z-index:2;display:grid;place-items:center;border:2px solid #526175;border-radius:5px;background-color:#392313;background-repeat:repeat;background-size:34px;overflow:hidden}.placement.target{border-color:#20c4ee;box-shadow:0 0 14px #12bde9aa}.placement img{width:88%;height:88%;object-fit:contain;image-rendering:auto}.info{min-width:0;padding-top:4px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:5px;color:#27c4ef}.info h1{margin:10px 0 22px;font-size:42px;line-height:1.05}.row{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:20px 0;border-top:1px solid #273246}.row label{padding-top:12px;font-size:13px;font-weight:800;letter-spacing:3px;color:#a6b4cb}.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{display:inline-flex;align-items:center;gap:9px;min-height:54px;padding:8px 13px;border:1px solid #38465b;border-radius:8px;background:#141c29;font-size:18px}.chip img{width:38px;height:38px;object-fit:contain}.chip span{color:#aebbd0;font-weight:700}
-  </style></head><body><main class="page"><header class="brand"><strong>SKY<span>DEX</span></strong><small>GREENHOUSE DESIGNER</small></header><section class="content"><div class="grid">${cells}${placements}</div><div class="info"><div class="eyebrow">SHARED MUTATION LAYOUT</div><h1>${escapeHtml(displayName)}</h1><div class="row"><label>YIELDS</label><div class="chips">${itemChips(summary.makes, origin, "crops")}</div></div><div class="row"><label>PLANT</label><div class="chips">${itemChips(summary.plants, origin, "crops")}</div></div><div class="row"><label>GROUND</label><div class="chips">${itemChips(summary.grounds, origin, "ground")}</div></div></div></section></main></body></html>`;
+    @font-face{font-family:"Skydex Chrome";src:url('${origin}/fonts/montserrat-latin-var.woff2') format('woff2');font-style:normal;font-weight:100 900;font-display:swap}
+    *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#070b12;color:#f4f7fb;font-family:Arial,sans-serif}body{border-top:6px solid #20b8e6}.page{height:624px;padding:34px 42px 38px;display:grid;grid-template-rows:46px 1fr;gap:26px}.brand{display:flex;align-items:center;gap:24px}.brand strong{display:inline-block;margin-right:-.055em;background-image:linear-gradient(171.3deg,#e8edf3 0 47.4%,#20b8e6 47.4% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:"Skydex Chrome","Space Grotesk",sans-serif;font-size:38px;font-weight:800;line-height:1;letter-spacing:.055em}.brand small{font-size:14px;font-weight:700;letter-spacing:5px;color:#b6c2d8}.content{display:grid;grid-template-columns:500px 1fr;gap:54px;min-height:0}.grid{position:relative;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;width:500px;height:500px;padding:8px;border:2px solid #263246;border-radius:10px;background:#0b111d}.cell{border:1px solid #344156;border-radius:4px;background:#151d2a}.placement{z-index:2;display:grid;place-items:center;border:2px solid #526175;border-radius:5px;background-color:#392313;background-repeat:repeat;background-size:34px;overflow:hidden}.placement.target{border-color:#20c4ee;box-shadow:0 0 14px #12bde9aa}.placement img{width:88%;height:88%;object-fit:contain;image-rendering:auto}.info{min-width:0;padding-top:4px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:5px;color:#27c4ef}.info h1{margin:10px 0 22px;font-size:42px;line-height:1.05}.row{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:18px 0;border-top:1px solid #273246}.row label{padding-top:12px;font-size:13px;font-weight:800;letter-spacing:3px;color:#a6b4cb}.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{display:inline-flex;align-items:center;gap:9px;min-height:54px;padding:8px 13px;border:1px solid #38465b;border-radius:8px;background:#141c29;font-size:18px}.chip img{width:38px;height:38px;object-fit:contain}.chip span{color:#aebbd0;font-weight:700}.status-row{padding:14px 0}.status-row label{padding-top:9px}.statuses{display:flex;flex-wrap:wrap;gap:8px}.status{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:8px 10px;border:1px solid;border-radius:7px;font-size:15px;font-weight:800}.status b{font-size:16px}.status.ready{border-color:#168aa1;background:#0b2b35;color:#9ae8f5}.status.delayed{border-color:#8a7119;background:#2d2812;color:#ffe46f}.status.blocked{border-color:#8e3440;background:#2b171c;color:#ffabb5}
+  </style></head><body><main class="page"><header class="brand"><strong>SKYDEX</strong><small>GREENHOUSE DESIGNER</small></header><section class="content"><div class="grid">${cells}${placements}</div><div class="info"><div class="eyebrow">SHARED MUTATION LAYOUT</div><h1>${escapeHtml(displayName)}</h1><div class="row"><label>YIELDS</label><div class="chips">${itemChips(summary.makes, origin, "crops")}</div></div><div class="row"><label>PLANT</label><div class="chips">${itemChips(summary.plants, origin, "crops")}</div></div><div class="row"><label>GROUND</label><div class="chips">${itemChips(summary.grounds, origin, "ground")}</div></div><div class="row status-row"><label>MUTATION STATUS</label><div class="statuses"><span class="status ready"><b>✓</b>${status.valid} ready</span><span class="status delayed"><b>◷</b>${status.delayed} delayed</span><span class="status blocked"><b>!</b>${status.invalid} blocked</span></div></div></div></section></main></body></html>`;
 };
 
 const securityHeaders = {
@@ -305,6 +373,12 @@ export const handleLayoutEmbedRequest = async (request, env) => {
 
   try {
     const dataset = await resolveDataset(url.origin);
+    if (route.oembed) {
+      const oembed = await buildLayoutOembed(route.code, url.origin, dataset, url.searchParams.get("name"));
+      return Response.json(oembed, {
+        headers: { ...securityHeaders, "content-type": "application/json; charset=utf-8" },
+      });
+    }
     if (!route.preview) {
       const html = await buildLayoutShareDocument(route.code, url.origin, dataset, url.searchParams.get("name"));
       return new Response(html, {
@@ -323,6 +397,15 @@ export const handleLayoutEmbedRequest = async (request, env) => {
       headers: { ...securityHeaders, "content-type": "image/png" },
     });
   } catch {
+    if (!route.preview && !route.oembed) {
+      const destination = new URL("/greenhouse", url.origin);
+      destination.searchParams.set("layout", route.code);
+      destination.hash = "designer";
+      return new Response(null, {
+        status: 302,
+        headers: { ...securityHeaders, location: destination.toString() },
+      });
+    }
     return new Response("That shared layout could not be rendered.", {
       status: 400,
       headers: { ...securityHeaders, "content-type": "text/plain; charset=utf-8" },
