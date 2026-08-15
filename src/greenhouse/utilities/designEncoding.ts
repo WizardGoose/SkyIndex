@@ -306,6 +306,51 @@ export function encodeDesign(
 }
 
 /**
+ * The name a player sees when a layout is shared.
+ *
+ * Control characters cannot be useful in a title, repeated whitespace makes
+ * visually identical names encode differently, and the social preview only
+ * has room for a short label. Slice the Array rather than the UTF-16 string so
+ * an emoji is one character and cannot be cut in half.
+ */
+export function normalizeSharedLayoutName(value: string): string {
+  const normalized = Array.from(String(value ?? ""), (character) => {
+    const codePoint = character.codePointAt(0) ?? 0;
+    return codePoint < 32 || codePoint === 127 ? " " : character;
+  })
+    .join("")
+    .replace(/\s+/g, " ")
+    .trim();
+  return Array.from(normalized).slice(0, 80).join("");
+}
+
+/**
+ * A v2 share freezes the display name beside the existing v1 grid text before
+ * using the same raw-deflate/base64url transport. `encodeURIComponent` keeps a
+ * name containing `|` from becoming part of the envelope structure.
+ */
+export function encodeSharedDesign(
+  inputPlacements: Array<{ cropId: string; position: [number, number] }>,
+  targetPlacements: Array<{ cropId: string; position: [number, number] }>,
+  displayName: string,
+): string {
+  const name = normalizeSharedLayoutName(displayName);
+  if (!name) throw new Error("Enter a layout name before sharing.");
+
+  let encodedName: string;
+  try {
+    encodedName = encodeURIComponent(name);
+  } catch {
+    throw new Error("That layout name contains text that cannot be shared.");
+  }
+
+  const inputs = groupPlacements(inputPlacements);
+  const targets = groupPlacements(targetPlacements);
+  const gridString = encodeGridString(inputs, targets);
+  return toUrlSafeBase64(deflateRaw(`v2|${encodedName}|${gridString}`, { level: 9 }));
+}
+
+/**
  * Every whitespace character, not just the ends.
  *
  * Codes get pasted out of chat clients that hard-wrap long strings, and neither
@@ -326,18 +371,22 @@ const EMPTY_LINK_MESSAGE =
  * `base` remains accepted for callers built before the custom-domain move, but
  * canonical links deliberately always start at the origin root.
  *
- * This link used to point at `https://api.skyshards.com/share/<code>`, a host
- * we do not run, and copying one also fired a POST at that host to warm a
- * server-side Discord preview image. Both are gone, and the preview image went
- * with them: we cannot render one on someone else's server. That is a
- * deliberate trade, not an oversight. Please do not add the POST back.
+ * The crawler-visible path lets the stateless Cloudflare Worker render Discord
+ * metadata. The code is still the whole layout and is never written to a
+ * database; a human opening it is sent straight back to the Designer.
  *
  * Nothing was ever uploaded by any of it. The code is the whole layout, so the
  * link is self-contained.
  */
-export function buildShareUrl(code: string, origin: string, base: string): string {
+export function buildShareUrl(
+  code: string,
+  origin: string,
+  base: string,
+  _savedName?: string,
+): string {
   void base;
-  return `${origin}/greenhouse#designer?layout=${code}`;
+  void _savedName; // Kept source-compatible while callers move to the v2 payload.
+  return new URL(`/greenhouse/share/${code}`, origin).toString();
 }
 
 /**
@@ -345,7 +394,8 @@ export function buildShareUrl(code: string, origin: string, base: string): strin
  *
  * Three shapes have to keep working, because all three are already in the wild:
  *
- *   1. our canonical fragment link, `.../greenhouse#designer?layout=<code>`
+ *   1. our canonical share path, `.../greenhouse/share/<code>` (plus the older
+ *      fragment form, `.../greenhouse#designer?layout=<code>`)
  *   2. the legacy `https://api.skyshards.com/share/<code>` link, which is what
  *      every code shared before we cut that dependency looks like. We no longer
  *      produce these and the host is not ours, but a player pasting one should
@@ -386,6 +436,7 @@ export function extractLayoutCode(input: string | null | undefined): string {
 export function decodeDesign(encoded: string | null | undefined): {
   inputs: Array<{ cropId: string; position: [number, number] }>;
   targets: Array<{ cropId: string; position: [number, number] }>;
+  name?: string;
 } {
   /*
    * Each failure gets its own sentence. This message is rendered in a toast to
@@ -456,10 +507,22 @@ export function decodeDesign(encoded: string | null | undefined): {
     inflated.set(chunk, offset);
     offset += chunk.byteLength;
   }
-  const gridString = new TextDecoder().decode(inflated);
+  const inflatedText = new TextDecoder().decode(inflated);
 
   let grouped: { inputs: GroupedPlacements; targets: GroupedPlacements };
+  let name: string | undefined;
   try {
+    let gridString = inflatedText;
+    if (inflatedText.startsWith("v2|")) {
+      const parts = inflatedText.split("|");
+      if (parts.length !== 5) throw new Error("Invalid v2 envelope");
+      const decodedName = decodeURIComponent(parts[1]);
+      if (!decodedName || normalizeSharedLayoutName(decodedName) !== decodedName) {
+        throw new Error("Invalid v2 name");
+      }
+      name = decodedName;
+      gridString = parts.slice(2).join("|");
+    }
     grouped = decodeGridString(gridString);
   } catch (err) {
     // "Your site is out of date" is a genuinely different problem from "your
@@ -472,6 +535,7 @@ export function decodeDesign(encoded: string | null | undefined): {
   return {
     inputs: ungroupPlacements(grouped.inputs),
     targets: ungroupPlacements(grouped.targets),
+    ...(name ? { name } : {}),
   };
 }
 

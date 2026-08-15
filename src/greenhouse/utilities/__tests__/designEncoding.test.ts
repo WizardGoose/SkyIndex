@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { deflateRaw } from "pako";
-import { buildShareUrl, decodeDesign, encodeDesign, extractLayoutCode } from "../designEncoding";
+import {
+  buildShareUrl,
+  decodeDesign,
+  encodeDesign,
+  encodeSharedDesign,
+  extractLayoutCode,
+} from "../designEncoding";
 
 /**
  * The share transport.
@@ -58,9 +64,37 @@ const targets: Placement[] = [
 ];
 
 describe("design code round trip", () => {
+  it("freezes the normalized display name inside a v2 share payload", () => {
+    const code = encodeSharedDesign(inputs, targets, "  Wizard\u0007 | Waterworks  ");
+    const out = decodeDesign(code);
+
+    expect(out.name).toBe("Wizard | Waterworks");
+    expect(asSet(out.inputs)).toStrictEqual(asSet(inputs));
+    expect(asSet(out.targets)).toStrictEqual(asSet(targets));
+  });
+
+  it("round-trips Unicode and percent signs in a frozen name", () => {
+    expect(decodeDesign(encodeSharedDesign(inputs, targets, "Café 100% 水")).name).toBe(
+      "Café 100% 水",
+    );
+  });
+
+  it("limits frozen names by Unicode code point rather than UTF-16 units", () => {
+    const name = `${"💧".repeat(80)}extra`;
+    const frozen = decodeDesign(encodeSharedDesign(inputs, targets, name)).name;
+
+    expect(Array.from(frozen ?? "")).toHaveLength(80);
+    expect(frozen).toBe("💧".repeat(80));
+  });
+
+  it("rejects an empty frozen name", () => {
+    expect(() => encodeSharedDesign(inputs, targets, " \u0007 ")).toThrow(/name/i);
+  });
+
   it("survives encode then decode with inputs and targets", () => {
     const out = decodeDesign(encodeDesign(inputs, targets));
 
+    expect(out.name).toBeUndefined();
     expect(asSet(out.inputs)).toStrictEqual(asSet(inputs));
     expect(asSet(out.targets)).toStrictEqual(asSet(targets));
   });
@@ -178,20 +212,30 @@ describe("buildShareUrl", () => {
 
   it("builds a canonical fragment link on our own origin", () => {
     expect(buildShareUrl(code, "https://skydex.ca", "/")).toBe(
-      `https://skydex.ca/greenhouse#designer?layout=${code}`,
+      `https://skydex.ca/greenhouse/share/${code}`,
     );
   });
 
   it("keeps the legacy base argument source-compatible without using it", () => {
     expect(buildShareUrl(code, "https://skydex.ca", "/Skydex/")).toBe(
-      `https://skydex.ca/greenhouse#designer?layout=${code}`,
+      `https://skydex.ca/greenhouse/share/${code}`,
     );
+  });
+
+  it("builds a queryless canonical URL for a named v2 payload", () => {
+    const namedCode = encodeSharedDesign(inputs, targets, "My Gloom Garden");
+    const url = buildShareUrl(namedCode, "https://skydex.ca", "/");
+
+    expect(url).toBe(`https://skydex.ca/greenhouse/share/${namedCode}`);
+    expect(new URL(url).search).toBe("");
+    expect(extractLayoutCode(url)).toBe(namedCode);
+    expect(decodeDesign(extractLayoutCode(url)).name).toBe("My Gloom Garden");
   });
 
   it("always uses the canonical origin root whatever the legacy base looks like", () => {
     for (const base of ["/", "/SkyShards/", "/SkyShards", ""]) {
       const url = buildShareUrl(code, "https://wizard.example", base);
-      expect(url).toBe(`https://wizard.example/greenhouse#designer?layout=${code}`);
+      expect(url).toBe(`https://wizard.example/greenhouse/share/${code}`);
     }
   });
 
@@ -381,6 +425,20 @@ describe("codes naming crops this build does not have", () => {
 });
 
 describe("decodeDesign rejections", () => {
+  it("rejects malformed percent-encoding in a v2 name", () => {
+    const code = codeFor(`v2|%E0%A4%A|0|h|${grid({ 0: "a", 1: "A" })}`);
+    expect(failureOf(code).message).toMatch(/not a valid greenhouse layout/i);
+  });
+
+  it("rejects an empty v2 name", () => {
+    const code = codeFor(`v2||0|h|${grid({ 0: "a", 1: "A" })}`);
+    expect(failureOf(code).message).toMatch(/not a valid greenhouse layout/i);
+  });
+
+  it("rejects a non-canonical v2 name instead of silently renaming it", () => {
+    const code = codeFor(`v2|Soggy%20%20Field|0|h|${grid({ 0: "a", 1: "A" })}`);
+    expect(failureOf(code).message).toMatch(/not a valid greenhouse layout/i);
+  });
 
   it("rejects a tiny compressed code before it can expand into an oversized payload", () => {
     const expansionBomb = codeFor("x".repeat(128 * 1024));
