@@ -22,10 +22,27 @@ const SOGGY_TARGETS = [
 const DATASET = {
   crops: {
     melon: { name: "Melon", size: 1, ground: "farmland" },
+    pumpkin: { name: "Pumpkin", size: 1, ground: "farmland" },
   },
   mutations: {
-    gloomgourd: { name: "Gloomgourd", size: 1, ground: "farmland" },
-    soggybud: { name: "Soggybud", size: 1, ground: "farmland" },
+    gloomgourd: {
+      name: "Gloomgourd",
+      size: 1,
+      ground: "farmland",
+      requirements: [
+        { crop: "pumpkin", count: 1 },
+        { crop: "melon", count: 1 },
+      ],
+    },
+    soggybud: {
+      name: "Soggybud",
+      size: 1,
+      ground: "farmland",
+      requirements: [
+        { crop: "melon", count: 2 },
+        { crop: "gloomgourd", count: 2 },
+      ],
+    },
   },
 };
 
@@ -163,5 +180,29 @@ describe("stateless layout link embeds", () => {
     expect(html).toContain("background-clip:text");
     expect(html).toContain(">SKYDEX</strong>");
     expect(html).not.toContain("SKY<span>DEX</span>");
+  });
+
+  it("shows the Designer's ready, delayed, and blocked counts in the preview image", async () => {
+    const statusCode = encodeSharedDesign(
+      [
+        { cropId: "melon", position: [3, 3] },
+        { cropId: "melon", position: [5, 5] },
+        { cropId: "pumpkin", position: [4, 2] },
+        { cropId: "melon", position: [6, 2] },
+      ],
+      [
+        { cropId: "gloomgourd", position: [4, 3] },
+        { cropId: "gloomgourd", position: [5, 3] },
+        { cropId: "soggybud", position: [4, 4] },
+      ],
+      "Waterworks",
+    );
+
+    const html = await buildLayoutPreviewDocument(statusCode, "https://skydex.ca", DATASET);
+
+    expect(html).toContain("MUTATION STATUS");
+    expect(html).toContain("2 ready");
+    expect(html).toContain("1 delayed");
+    expect(html).toContain("0 blocked");
   });
 });

@@ -25,4 +25,14 @@ describe("designer modal placement", () => {
 
     expect(preview).not.toContain("createPortal(");
   });
+
+  it("portals greenhouse notifications above the frosted modal layer", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "src/greenhouse/components/ui/Toast.tsx"),
+      "utf8",
+    );
+
+    expect(source).toMatch(/createPortal\([\s\S]*document\.body[\s\S]*\)/);
+    expect(source).toContain("z-[100]");
+  });
 });

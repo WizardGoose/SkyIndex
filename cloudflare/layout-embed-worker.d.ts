@@ -13,6 +13,7 @@ export interface GreenhouseDefinition {
   name: string;
   size: number;
   ground: string;
+  requirements?: Array<{ crop: string; count: number }>;
 }
 
 export interface GreenhouseDataset {

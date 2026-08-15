@@ -6,6 +6,8 @@
  * no KV, D1, R2, cache write, analytics engine, or application logging binding.
  */
 
+import { evaluateMutationTargets } from "../src/greenhouse/utilities/mutationValidation.ts";
+
 const CROP_IDS = [
   "wheat", "potato", "carrot", "pumpkin", "melon", "cocoa_beans",
   "sugar_cane", "cactus", "nether_wart", "red_mushroom",
@@ -224,6 +226,34 @@ const summarizeLayout = (layout, dataset) => {
   return { name: layoutNickname(layout), makes, plants, grounds };
 };
 
+const summarizeMutationStatus = (layout, dataset) => {
+  const toPlacement = (placement, kind, index) => {
+    const definition = definitionFor(dataset, placement.cropId);
+    return {
+      id: `${kind}-${index}-${placement.cropId}-${placement.position.join("-")}`,
+      cropId: placement.cropId,
+      cropName: definition?.name ?? title(placement.cropId),
+      size: Math.max(1, Number(definition?.size) || 1),
+      position: placement.position,
+      isMutation: kind === "target",
+    };
+  };
+  const inputs = layout.inputs.map((placement, index) => toPlacement(placement, "input", index));
+  const targets = layout.targets.map((placement, index) => toPlacement(placement, "target", index));
+  const mutations = Object.entries(dataset.mutations ?? {}).map(([id, definition]) => ({
+    ...definition,
+    id,
+    requirements: Array.isArray(definition.requirements) ? definition.requirements : [],
+  }));
+  const evaluated = evaluateMutationTargets(inputs, targets, mutations);
+  const counts = { valid: 0, delayed: 0, invalid: 0 };
+  for (const target of targets) {
+    const state = evaluated.get(target.id)?.state ?? "invalid";
+    counts[state] += 1;
+  }
+  return counts;
+};
+
 const itemChips = (items, origin, kind) => items.map((item) => `
   <span class="chip">
     <img src="${origin}/greenhouse/${kind}/${encodeURIComponent(item.id)}.png" alt="" />
@@ -311,6 +341,7 @@ export const buildLayoutPreviewDocument = async (code, origin, suppliedDataset, 
     resolveDataset(origin, suppliedDataset),
   ]);
   const summary = summarizeLayout(layout, dataset);
+  const status = summarizeMutationStatus(layout, dataset);
   const legacyName = layout.name ? null : normalizeSharedName(requestedName);
   const displayName = layout.name ?? legacyName ?? summary.name;
   const cells = Array.from({ length: 100 }, () => '<div class="cell"></div>').join("");
@@ -324,8 +355,8 @@ export const buildLayoutPreviewDocument = async (code, origin, suppliedDataset, 
 
   return `<!doctype html><html><head><meta charset="utf-8" /><style>
     @font-face{font-family:"Skydex Chrome";src:url('${origin}/fonts/montserrat-latin-var.woff2') format('woff2');font-style:normal;font-weight:100 900;font-display:swap}
-    *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#070b12;color:#f4f7fb;font-family:Arial,sans-serif}body{border-top:6px solid #20b8e6}.page{height:624px;padding:34px 42px 38px;display:grid;grid-template-rows:46px 1fr;gap:26px}.brand{display:flex;align-items:center;gap:24px}.brand strong{display:inline-block;margin-right:-.055em;background-image:linear-gradient(171.3deg,#e8edf3 0 47.4%,#20b8e6 47.4% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:"Skydex Chrome","Space Grotesk",sans-serif;font-size:38px;font-weight:800;line-height:1;letter-spacing:.055em}.brand small{font-size:14px;font-weight:700;letter-spacing:5px;color:#b6c2d8}.content{display:grid;grid-template-columns:500px 1fr;gap:54px;min-height:0}.grid{position:relative;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;width:500px;height:500px;padding:8px;border:2px solid #263246;border-radius:10px;background:#0b111d}.cell{border:1px solid #344156;border-radius:4px;background:#151d2a}.placement{z-index:2;display:grid;place-items:center;border:2px solid #526175;border-radius:5px;background-color:#392313;background-repeat:repeat;background-size:34px;overflow:hidden}.placement.target{border-color:#20c4ee;box-shadow:0 0 14px #12bde9aa}.placement img{width:88%;height:88%;object-fit:contain;image-rendering:auto}.info{min-width:0;padding-top:4px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:5px;color:#27c4ef}.info h1{margin:10px 0 22px;font-size:42px;line-height:1.05}.row{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:20px 0;border-top:1px solid #273246}.row label{padding-top:12px;font-size:13px;font-weight:800;letter-spacing:3px;color:#a6b4cb}.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{display:inline-flex;align-items:center;gap:9px;min-height:54px;padding:8px 13px;border:1px solid #38465b;border-radius:8px;background:#141c29;font-size:18px}.chip img{width:38px;height:38px;object-fit:contain}.chip span{color:#aebbd0;font-weight:700}
-  </style></head><body><main class="page"><header class="brand"><strong>SKYDEX</strong><small>GREENHOUSE DESIGNER</small></header><section class="content"><div class="grid">${cells}${placements}</div><div class="info"><div class="eyebrow">SHARED MUTATION LAYOUT</div><h1>${escapeHtml(displayName)}</h1><div class="row"><label>YIELDS</label><div class="chips">${itemChips(summary.makes, origin, "crops")}</div></div><div class="row"><label>PLANT</label><div class="chips">${itemChips(summary.plants, origin, "crops")}</div></div><div class="row"><label>GROUND</label><div class="chips">${itemChips(summary.grounds, origin, "ground")}</div></div></div></section></main></body></html>`;
+    *{box-sizing:border-box}html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#070b12;color:#f4f7fb;font-family:Arial,sans-serif}body{border-top:6px solid #20b8e6}.page{height:624px;padding:34px 42px 38px;display:grid;grid-template-rows:46px 1fr;gap:26px}.brand{display:flex;align-items:center;gap:24px}.brand strong{display:inline-block;margin-right:-.055em;background-image:linear-gradient(171.3deg,#e8edf3 0 47.4%,#20b8e6 47.4% 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-family:"Skydex Chrome","Space Grotesk",sans-serif;font-size:38px;font-weight:800;line-height:1;letter-spacing:.055em}.brand small{font-size:14px;font-weight:700;letter-spacing:5px;color:#b6c2d8}.content{display:grid;grid-template-columns:500px 1fr;gap:54px;min-height:0}.grid{position:relative;display:grid;grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,1fr);gap:3px;width:500px;height:500px;padding:8px;border:2px solid #263246;border-radius:10px;background:#0b111d}.cell{border:1px solid #344156;border-radius:4px;background:#151d2a}.placement{z-index:2;display:grid;place-items:center;border:2px solid #526175;border-radius:5px;background-color:#392313;background-repeat:repeat;background-size:34px;overflow:hidden}.placement.target{border-color:#20c4ee;box-shadow:0 0 14px #12bde9aa}.placement img{width:88%;height:88%;object-fit:contain;image-rendering:auto}.info{min-width:0;padding-top:4px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:5px;color:#27c4ef}.info h1{margin:10px 0 22px;font-size:42px;line-height:1.05}.row{display:grid;grid-template-columns:130px 1fr;gap:18px;padding:18px 0;border-top:1px solid #273246}.row label{padding-top:12px;font-size:13px;font-weight:800;letter-spacing:3px;color:#a6b4cb}.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{display:inline-flex;align-items:center;gap:9px;min-height:54px;padding:8px 13px;border:1px solid #38465b;border-radius:8px;background:#141c29;font-size:18px}.chip img{width:38px;height:38px;object-fit:contain}.chip span{color:#aebbd0;font-weight:700}.status-row{padding:14px 0}.status-row label{padding-top:9px}.statuses{display:flex;flex-wrap:wrap;gap:8px}.status{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:8px 10px;border:1px solid;border-radius:7px;font-size:15px;font-weight:800}.status b{font-size:16px}.status.ready{border-color:#168aa1;background:#0b2b35;color:#9ae8f5}.status.delayed{border-color:#8a7119;background:#2d2812;color:#ffe46f}.status.blocked{border-color:#8e3440;background:#2b171c;color:#ffabb5}
+  </style></head><body><main class="page"><header class="brand"><strong>SKYDEX</strong><small>GREENHOUSE DESIGNER</small></header><section class="content"><div class="grid">${cells}${placements}</div><div class="info"><div class="eyebrow">SHARED MUTATION LAYOUT</div><h1>${escapeHtml(displayName)}</h1><div class="row"><label>YIELDS</label><div class="chips">${itemChips(summary.makes, origin, "crops")}</div></div><div class="row"><label>PLANT</label><div class="chips">${itemChips(summary.plants, origin, "crops")}</div></div><div class="row"><label>GROUND</label><div class="chips">${itemChips(summary.grounds, origin, "ground")}</div></div><div class="row status-row"><label>MUTATION STATUS</label><div class="statuses"><span class="status ready"><b>✓</b>${status.valid} ready</span><span class="status delayed"><b>◷</b>${status.delayed} delayed</span><span class="status blocked"><b>!</b>${status.invalid} blocked</span></div></div></div></section></main></body></html>`;
 };
 
 const securityHeaders = {

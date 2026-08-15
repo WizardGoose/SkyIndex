@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { ToastContext, type ToastContextValue } from "./toastContext";
 import { FOCUS } from "../../../ui/kit";
@@ -86,13 +87,12 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
 
   const value = useMemo<ToastContextValue>(() => ({ toast, dismiss, dismissAll }), [toast, dismiss, dismissAll]);
 
-  return (
-    <ToastContext.Provider value={value}>
-      {children}
+  const toastLayer = (
+    <>
       <style>{`
         @keyframes toastProgress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
       `}</style>
-      <div className="fixed top-3 right-3 z-[60] flex flex-col gap-2 w-[min(92vw,380px)]">
+      <div className="fixed top-3 right-3 z-[100] flex flex-col gap-2 w-[min(92vw,380px)]">
         {toasts.map((t) => {
           const s = variantStyles[t.variant];
           return (
@@ -129,6 +129,13 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
           );
         })}
       </div>
+    </>
+  );
+
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+      {typeof document === "undefined" ? toastLayer : createPortal(toastLayer, document.body)}
     </ToastContext.Provider>
   );
 };
